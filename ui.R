@@ -25,6 +25,7 @@ dashboardPage(
                         box(
                             title = "Luminescence files*",
                             width = 6,
+                            icon("question-circle", lib = "font-awesome"),
                             fileInput("luminescence_files", "Please select all luminescence readout CSV files",
                                       multiple = TRUE,
                                       accept = c("text/csv",
@@ -34,11 +35,13 @@ dashboardPage(
                         box(
                             title = "Dilutions*",
                             width = 6,
+                            icon("question-circle", lib = "font-awesome"),
                             rHandsontableOutput("dilutions")
                         ),
                         box(
                             title = "Plate metadata*",
                             width = 12,
+                            icon("question-circle", lib = "font-awesome"),
                             rHandsontableOutput("metadata")
                         )
                     )
