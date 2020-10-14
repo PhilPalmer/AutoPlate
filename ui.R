@@ -29,7 +29,7 @@ dashboardPage(
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
                                                  ".csv")),
-                            rHandsontableOutput("hot")
+                            rHandsontableOutput("dilutions")
                         )
                     )
             ),
