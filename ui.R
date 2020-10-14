@@ -1,3 +1,6 @@
+library(shinydashboard)
+library(rhandsontable)
+
 dashboardPage(
     dashboardHeader(title = "Assay Analyser"),
     dashboardSidebar(
