@@ -23,13 +23,23 @@ dashboardPage(
             tabItem(tabName = "input",
                     fluidRow(
                         box(
-                            title = "1) Input",
-                            fileInput("luminescence_files", "Please select all luminescence readout CSV files*",
+                            title = "Luminescence files*",
+                            width = 6,
+                            fileInput("luminescence_files", "Please select all luminescence readout CSV files",
                                       multiple = TRUE,
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
-                                                 ".csv")),
+                                                 ".csv"))
+                        ),
+                        box(
+                            title = "Dilutions*",
+                            width = 6,
                             rHandsontableOutput("dilutions")
+                        ),
+                        box(
+                            title = "Plate metadata*",
+                            width = 12,
+                            rHandsontableOutput("metadata")
                         )
                     )
             ),
