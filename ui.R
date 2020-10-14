@@ -10,5 +10,36 @@ dashboardPage(
             menuItem("3) Analyse", tabName = "analyse", icon = icon("chart-line"))
         )
     ),
-    dashboardBody()
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "home",
+                    fluidRow(
+                        box(
+                            title = "Home"
+                        )
+                    )
+            ),
+            tabItem(tabName = "input",
+                    fluidRow(
+                        box(
+                            title = "1) Input"
+                        )
+                    )
+            ),
+            tabItem(tabName = "qc",
+                    fluidRow(
+                        box(
+                            title = "2) QC"
+                        )
+                    )
+            ),
+            tabItem(tabName = "analyse",
+                    fluidRow(
+                        box(
+                            title = "3) Analyse"
+                        )
+                    )
+            )
+        )
+    )
 )
