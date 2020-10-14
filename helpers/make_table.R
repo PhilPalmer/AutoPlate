@@ -3,7 +3,7 @@
 # http://stla.github.io/stlapblog/posts/shiny_editTable.html
 ############################################################
 
-make_table <- function(input,output,df,table_name) {
+make_table <- function(input,output,df,table_name,values) {
   observe({
     if (!is.null(input[[table_name]])) {
       values[["previous"]] <- isolate(values[["df"]])
