@@ -1,5 +1,3 @@
-library(shinydashboard)
-
 dashboardPage(
     dashboardHeader(title = "Assay Analyser"),
     dashboardSidebar(
@@ -31,6 +29,7 @@ dashboardPage(
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
                                                  ".csv")),
+                            rHandsontableOutput("hot")
                         )
                     )
             ),
