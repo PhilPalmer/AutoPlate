@@ -26,7 +26,7 @@ dashboardPage(
                     fluidRow(
                         box(
                             title = "1) Input",
-                            fileInput("file1", "Please select all luminescence readout CSV files*",
+                            fileInput("luminescence_files", "Please select all luminescence readout CSV files*",
                                       multiple = TRUE,
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
