@@ -1,7 +1,7 @@
 library(shinydashboard)
 
 dashboardPage(
-    dashboardHeader(),
+    dashboardHeader(title = "Assay Analyser"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Home", tabName = "home", icon = icon("home")),
