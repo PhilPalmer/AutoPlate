@@ -36,7 +36,7 @@ dashboardPage(
                                                  ".csv"))
                         ),
                         box(
-                            title = "Dilutions*",
+                            title = "Concentrations/dilutions*",
                             width = 6,
                             icon("question-circle", lib = "font-awesome"),
                             rHandsontableOutput("dilutions")
