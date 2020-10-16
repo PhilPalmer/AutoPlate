@@ -47,6 +47,7 @@ dashboardPage(
                             icon("question-circle", lib = "font-awesome"),
                             # TODO: Hide message below once user has uploaded their luminescence files
                             "Before entering plate metadata you must upload your luminescence files above.",
+                            uiOutput('plate_tabs'),
                             rHandsontableOutput("metadata")
                         ),
                         box(

@@ -17,6 +17,17 @@ function(input, output, sessions) {
     dilution_values <- reactiveValues()
     metadata_values <- reactiveValues()
     
+    # Create a tab for each uploaded plate
+    output$plate_tabs = renderUI({
+        if (is.null(input$luminescence_files)) {
+            n_luminescence_files = 1
+        } else {
+            n_luminescence_files = length(input$luminescence_files$name)
+        }
+        plate_tabs = lapply(paste('Plate', 1: n_luminescence_files), tabPanel)
+        do.call(tabsetPanel, plate_tabs)
+    })
+    
     # Make tables
     luminescence_df <- reactive({
         # input$luminescence_files will be NULL initially. After the user selects
