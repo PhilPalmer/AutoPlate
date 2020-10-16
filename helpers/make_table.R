@@ -3,7 +3,7 @@
 # http://stla.github.io/stlapblog/posts/shiny_editTable.html
 ############################################################
 
-make_table <- function(input,output,df,table_name,values) {
+make_table <- function(input,output,df,table_name,values,row_headers) {
   observe({
     if (!is.null(input[[table_name]])) {
       values[["previous"]] <- isolate(values[["df"]])
@@ -19,6 +19,6 @@ make_table <- function(input,output,df,table_name,values) {
   output[[table_name]] <- renderRHandsontable({
     df <- values[["df"]]
     if (!is.null(df))
-      rhandsontable(df, stretchH = "all")
+      rhandsontable(df, stretchH = "all", rowHeaders = row_headers)
   })
 }
