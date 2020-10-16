@@ -46,6 +46,25 @@ dashboardPage(
                             width = 12,
                             icon("question-circle", lib = "font-awesome"),
                             rHandsontableOutput("metadata")
+                        ),
+                        box(
+                            title = "Other features*",
+                            width = 12,
+                            icon("question-circle", lib = "font-awesome"),
+                            tabBox(
+                                title = "",
+                                width = 8,
+                                # The id lets us use input$tabset_features on the server to find the current tab
+                                id = "tabset_features",
+                                tabPanel("Bleed",
+                                         selectInput("select", h3("Select existing feature"), 
+                                                     choices = list("All" = 1, "Types" = 2,
+                                                                    "Subject" = 3), selected = 1)
+                                         ),
+                                tabPanel("Inoculate"),
+                                tabPanel("Primary"),
+                                tabPanel("Study")
+                            )
                         )
                     )
             ),
