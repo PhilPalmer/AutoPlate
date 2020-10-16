@@ -33,7 +33,8 @@ dashboardPage(
                                       multiple = TRUE,
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
-                                                 ".csv"))
+                                                 ".csv")),
+                            tableOutput("contents")
                         ),
                         box(
                             title = "Concentrations/dilutions*",

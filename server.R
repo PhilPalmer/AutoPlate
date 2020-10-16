@@ -1,10 +1,30 @@
 library(shiny)
 library(shinydashboard)
 library(rhandsontable)
+library(tidyr)
+library(dplyr)
 
 source("helpers/make_table.R")
 
 function(input, output, sessions) {
+    
+    output$contents <- renderTable({
+        # input$luminescence_files will be NULL initially. After the user selects
+        # and uploads a file, head of that data file by default,
+        # or all rows if selected, will be shown.
+        req(input$luminescence_files)
+        luminescence_files <- input$luminescence_files$datapath
+        luminescence_file_names <- input$luminescence_files$name
+        luminescence_df <- read.csv(luminescence_files[1])
+        luminescence_df <- luminescence_df %>% 
+            tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
+            dplyr::select(WellCol, WellRow, RLU) %>%
+            tidyr::spread(key = WellCol, value = RLU) %>% 
+            dplyr::arrange(as.numeric(WellRow)) %>% 
+            dplyr::rename(Well = WellRow)
+        return(luminescence_df)
+    })
+
     
     # Define variables
     dilutions_file <- "data/dilutions.csv"
