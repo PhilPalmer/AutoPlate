@@ -25,7 +25,7 @@ function(input, output, sessions) {
             n_luminescence_files = length(input$luminescence_files$name)
         }
         plate_tabs = lapply(paste('Plate', 1: n_luminescence_files), tabPanel)
-        do.call(tabsetPanel, plate_tabs)
+        do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
     # Make tables
@@ -36,7 +36,8 @@ function(input, output, sessions) {
         req(input$luminescence_files)
         luminescence_files <- input$luminescence_files$datapath
         luminescence_file_names <- input$luminescence_files$name
-        luminescence_df <- read.csv(luminescence_files[1])
+        plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
+        luminescence_df <- read.csv(luminescence_files[[as.numeric(plate_n)]])
         luminescence_df <- luminescence_df %>% 
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
             dplyr::select(WellCol, WellRow, RLU) %>%
