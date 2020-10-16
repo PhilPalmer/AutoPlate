@@ -29,9 +29,8 @@ function(input, output, sessions) {
         luminescence_df <- luminescence_df %>% 
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
             dplyr::select(WellCol, WellRow, RLU) %>%
-            tidyr::spread(key = WellCol, value = RLU) %>% 
-            dplyr::arrange(as.numeric(WellRow)) %>% 
-            dplyr::rename(Well = WellRow)
+            tidyr::spread(key = WellRow, value = RLU)
+        names(luminescence_df) <- c(" ",sort(as.numeric(names(luminescence_df))))
         return(luminescence_df)
     })
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
