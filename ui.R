@@ -60,9 +60,8 @@ dashboardPage(
                                 # The id lets us use input$tabset_features on the server to find the current tab
                                 id = "tabset_features",
                                 tabPanel("Bleed",
-                                         selectInput("select", h3("Select existing feature"), 
-                                                     choices = list("All" = 1, "Types" = 2,
-                                                                    "Subject" = 3), selected = 1)
+                                         uiOutput("bleed"),
+                                         rHandsontableOutput("bleed_table")
                                          ),
                                 tabPanel("Inoculate"),
                                 tabPanel("Primary"),

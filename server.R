@@ -58,4 +58,19 @@ function(input, output, sessions) {
     output$metadata <- renderRHandsontable({
             rhandsontable(luminescence_df(), stretchH = "all", rowHeaders = NULL)
     })
+    
+    # Create dropdown for bleed
+    output$bleed <- renderUI({
+        selectInput("bleed", "Select existing feature", names(luminescence_raw_df()))
+    })
+    
+    # Create bleed table
+    output$bleed_table <- renderRHandsontable({
+        req(input$bleed)
+        feature_levels <- levels(luminescence_raw_df()[[input$bleed]])
+        bleed_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
+        names(bleed_df) <- input$bleed
+        bleed_df$bleed <- as.character(NA)
+        rhandsontable(bleed_df, stretchH = "all", rowHeaders = NULL)
+    })
 }
