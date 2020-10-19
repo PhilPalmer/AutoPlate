@@ -28,8 +28,8 @@ function(input, output, sessions) {
         do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
-    # Process the luminescence rawdata -> 96 well plate format
-    luminescence_df <- reactive({
+    # Read the luminescence raw data based on the selection of the current plate tab
+    luminescence_raw_df <- reactive({
         # input$luminescence_files will be NULL initially. After the user selects
         # and uploads a file, head of that data file by default,
         # or all rows if selected, will be shown.
@@ -37,8 +37,12 @@ function(input, output, sessions) {
         luminescence_files <- input$luminescence_files$datapath
         luminescence_file_names <- input$luminescence_files$name
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
-        luminescence_df <- read.csv(luminescence_files[[as.numeric(plate_n)]])
-        luminescence_df <- luminescence_df %>% 
+        luminescence_raw_df <- read.csv(luminescence_files[[as.numeric(plate_n)]])
+        return(luminescence_raw_df)
+    })
+    # Process the luminescence rawdata -> 96 well plate format
+    luminescence_df <- reactive({
+        luminescence_df <- luminescence_raw_df() %>% 
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
             dplyr::select(WellCol, WellRow, RLU) %>%
             tidyr::spread(key = WellRow, value = RLU) %>%
