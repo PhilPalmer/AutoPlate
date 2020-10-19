@@ -28,7 +28,7 @@ function(input, output, sessions) {
         do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
-    # Make tables
+    # Process the luminescence rawdata -> 96 well plate format
     luminescence_df <- reactive({
         # input$luminescence_files will be NULL initially. After the user selects
         # and uploads a file, head of that data file by default,
@@ -47,6 +47,11 @@ function(input, output, sessions) {
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
         return(luminescence_df)
     })
+    
+    # Make tables
+    # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
-    make_table(input,output,luminescence_df(),"metadata",metadata_values,NULL)
+    output$metadata <- renderRHandsontable({
+            rhandsontable(luminescence_df(), stretchH = "all", rowHeaders = NULL)
+    })
 }
