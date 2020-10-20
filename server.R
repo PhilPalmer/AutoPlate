@@ -8,7 +8,7 @@ source("helpers/make_table.R")
 # Define helper func to read CSVs + append name
 read_plus <- function(name,file) {
     read.csv(file) %>% 
-        mutate(filename = name)
+        dplyr::mutate(filename = name)
 }
 
 function(input, output, sessions) {
@@ -39,7 +39,9 @@ function(input, output, sessions) {
         luminescence_files <- input$luminescence_files
         assay_df <-
             apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
-            dplyr::bind_rows()
+            dplyr::bind_rows() %>%
+            dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename))
+        # TODO: extract date
         return(assay_df)
     })
     output$tmp <- renderRHandsontable({
