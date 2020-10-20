@@ -44,24 +44,12 @@ function(input, output, sessions) {
         # TODO: extract date
         return(assay_df)
     })
-    output$tmp <- renderRHandsontable({
-        rhandsontable(assay_df(), stretchH = "all", rowHeaders = NULL, useTypes = FALSE)
-    })
     
-    # Read the luminescence raw data based on the selection of the current plate tab
-    luminescence_raw_df <- reactive({
-        # input$luminescence_files will be NULL initially. After the user selects
-        # and uploads a file, head of that data file by default,
-        # or all rows if selected, will be shown.
-        req(input$luminescence_files)
-        luminescence_files <- input$luminescence_files$datapath
-        plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
-        luminescence_raw_df <- read.csv(luminescence_files[[as.numeric(plate_n)]])
-        return(luminescence_raw_df)
-    })
-    # Process the luminescence rawdata -> 96 well plate format
+    # Convert the luminescence rawdata -> 96 well plate format for the current plate tab
     luminescence_df <- reactive({
-        luminescence_df <- luminescence_raw_df() %>% 
+        plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
+        assay_df <- assay_df()
+        luminescence_df <- assay_df[assay_df$plate_number == plate_number, ] %>%
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
             dplyr::select(WellCol, WellRow, RLU) %>%
             tidyr::spread(key = WellRow, value = RLU) %>%
