@@ -48,7 +48,8 @@ dashboardPage(
                             # TODO: Hide message below once user has uploaded their luminescence files
                             "Before entering plate metadata you must upload your luminescence files above.",
                             uiOutput('plate_tabs'),
-                            rHandsontableOutput("metadata")
+                            rHandsontableOutput("metadata"),
+                            rHandsontableOutput("tmp")
                         ),
                         box(
                             title = "Other features*",

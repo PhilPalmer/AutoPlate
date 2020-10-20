@@ -5,6 +5,11 @@ library(tidyr)
 library(dplyr)
 
 source("helpers/make_table.R")
+# Define helper func to read CSVs + append name
+read_plus <- function(name,file) {
+    read.csv(file) %>% 
+        mutate(filename = name)
+}
 
 function(input, output, sessions) {
     
@@ -28,6 +33,19 @@ function(input, output, sessions) {
         do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
+    # Create main dataframe
+    assay_df <- reactive({
+        req(input$luminescence_files)
+        luminescence_files <- input$luminescence_files
+        assay_df <-
+            apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
+            dplyr::bind_rows()
+        return(assay_df)
+    })
+    output$tmp <- renderRHandsontable({
+        rhandsontable(assay_df(), stretchH = "all", rowHeaders = NULL, useTypes = FALSE)
+    })
+    
     # Read the luminescence raw data based on the selection of the current plate tab
     luminescence_raw_df <- reactive({
         # input$luminescence_files will be NULL initially. After the user selects
@@ -35,7 +53,6 @@ function(input, output, sessions) {
         # or all rows if selected, will be shown.
         req(input$luminescence_files)
         luminescence_files <- input$luminescence_files$datapath
-        luminescence_file_names <- input$luminescence_files$name
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
         luminescence_raw_df <- read.csv(luminescence_files[[as.numeric(plate_n)]])
         return(luminescence_raw_df)
@@ -56,7 +73,7 @@ function(input, output, sessions) {
     # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
     output$metadata <- renderRHandsontable({
-            rhandsontable(luminescence_df(), stretchH = "all", rowHeaders = NULL)
+            rhandsontable(luminescence_df(), stretchH = "all", rowHeaders = NULL, useTypes = FALSE)
     })
     
     # Create dropdown for bleed
