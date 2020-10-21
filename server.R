@@ -49,6 +49,17 @@ function(input, output, sessions) {
             dplyr::mutate(types = ifelse(WellRow == 1 & WellCol %in% c("F","G","H"), "c", types)) %>% 
             dplyr::mutate(types = ifelse(WellRow %in% seq(2,11), "x", types)) %>% 
             dplyr::mutate(types = ifelse(WellRow == 12, "m", types))
+        # Populate main assay df with default subject info
+        assay_df$subject <- NA
+        assay_df <- assay_df %>% 
+            dplyr::mutate(subject = case_when(
+                WellRow %in% c(2,3) ~ "Mouse 1",
+                WellRow %in% c(4,5) ~ "Mouse 2",
+                WellRow %in% c(6,7) ~ "Mouse 3",
+                WellRow %in% c(8,9) ~ "Mouse 4",
+                WellRow %in% c(10,11) ~ "Mouse 5",
+                WellRow == 12 ~ "Antibody"
+            ))
         # TODO: extract date
         return(assay_df)
     })
