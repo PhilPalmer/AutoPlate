@@ -33,14 +33,15 @@ function(input, output, sessions) {
         do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
-    # Create main dataframe
+    # Create main dataframe for assay data
     assay_df <- reactive({
         req(input$luminescence_files)
         luminescence_files <- input$luminescence_files
         assay_df <-
             apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
             dplyr::bind_rows() %>%
-            dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename))
+            dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
+            tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
         # TODO: extract date
         return(assay_df)
     })
