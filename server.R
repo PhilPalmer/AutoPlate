@@ -60,6 +60,12 @@ function(input, output, sessions) {
         luminescence_df[,2] <- c(rep('V',5),rep('C',3))
         luminescence_df[,3:12] <- 'X'
         luminescence_df[,13] <- 'M'
+        # Reformat the row & col names + add a subject row
+        subject <- paste("Mouse", names(luminescence_df))
+        subject[1] <- "Subject"
+        luminescence_df <- rbind(subject, luminescence_df)
+        row.names(luminescence_df) <- luminescence_df$Well
+        luminescence_df[1] <- NULL
         return(luminescence_df)
     })
     
@@ -67,7 +73,7 @@ function(input, output, sessions) {
     # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
     output$metadata <- renderRHandsontable({
-            rhandsontable(luminescence_df(), stretchH = "all", rowHeaders = NULL, useTypes = FALSE)
+            rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
     })
     
     # Create dropdown for bleed
