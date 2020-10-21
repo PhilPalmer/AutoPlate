@@ -42,18 +42,17 @@ function(input, output, sessions) {
             dplyr::bind_rows() %>%
             dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
-        # Populate main assay df with types using the default plate layout
         assay_df$types <- NA
+        assay_df$subject <- NA
         assay_df <- assay_df %>% 
+            # Populate main assay df with types using the default plate layout
             dplyr::mutate(types = case_when(
                 WellRow == 1 & WellCol %in% c("A","B","C","D","E") ~ "v",
                 WellRow == 1 & WellCol %in% c("F","G","H") ~ "c",
                 WellRow %in% seq(2,11) ~ "x",
                 WellRow == 12 ~ "m",
-            ))
-        # Populate main assay df with default subject info
-        assay_df$subject <- NA
-        assay_df <- assay_df %>% 
+            )) %>% 
+            # Populate main assay df with default subject info
             dplyr::mutate(subject = case_when(
                 WellRow %in% c(2,3) ~ "Mouse 1",
                 WellRow %in% c(4,5) ~ "Mouse 2",
