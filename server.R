@@ -95,8 +95,8 @@ function(input, output, sessions) {
     # Update main assay dataframe with types
     observeEvent(input$metadata, {
         if (!is.null(input$metadata$changes)) {
-            print(input$plate_tabs)
-            print(input$metadata$changes)
+            #print(input$plate_tabs)
+            #print(input$metadata$changes)
         }
     })
     
