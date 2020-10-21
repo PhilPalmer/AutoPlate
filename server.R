@@ -56,6 +56,10 @@ function(input, output, sessions) {
             dplyr::rename(Well = WellCol)
         # Re-order cols
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
+        # Convert luminescence values to type labels
+        luminescence_df[,2] <- c(rep('V',5),rep('C',3))
+        luminescence_df[,3:12] <- 'X'
+        luminescence_df[,13] <- 'M'
         return(luminescence_df)
     })
     
