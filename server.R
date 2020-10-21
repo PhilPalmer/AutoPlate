@@ -45,10 +45,12 @@ function(input, output, sessions) {
         # Populate main assay df with types using the default plate layout
         assay_df$types <- NA
         assay_df <- assay_df %>% 
-            dplyr::mutate(types = ifelse(WellRow == 1 & WellCol %in% c("A","B","C","D","E"), "v", types)) %>% 
-            dplyr::mutate(types = ifelse(WellRow == 1 & WellCol %in% c("F","G","H"), "c", types)) %>% 
-            dplyr::mutate(types = ifelse(WellRow %in% seq(2,11), "x", types)) %>% 
-            dplyr::mutate(types = ifelse(WellRow == 12, "m", types))
+            dplyr::mutate(types = case_when(
+                WellRow == 1 & WellCol %in% c("A","B","C","D","E") ~ "v",
+                WellRow == 1 & WellCol %in% c("F","G","H") ~ "c",
+                WellRow %in% seq(2,11) ~ "x",
+                WellRow == 12 ~ "m",
+            ))
         # Populate main assay df with default subject info
         assay_df$subject <- NA
         assay_df <- assay_df %>% 
@@ -88,6 +90,14 @@ function(input, output, sessions) {
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
     output$metadata <- renderRHandsontable({
             rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
+    })
+    
+    # Update main assay dataframe with types
+    observeEvent(input$metadata, {
+        if (!is.null(input$metadata$changes)) {
+            print(input$plate_tabs)
+            print(input$metadata$changes)
+        }
     })
     
     # Create dropdown for bleed
