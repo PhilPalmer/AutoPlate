@@ -42,6 +42,13 @@ function(input, output, sessions) {
             dplyr::bind_rows() %>%
             dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
             tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
+        # Populate main assay df with types using the default plate layout
+        assay_df$types <- NA
+        assay_df <- 
+            assay_df %>% dplyr::mutate(types = ifelse(WellRow == 1 & WellCol %in% c("A","B","C","D","E"), "v", types)) %>% 
+            assay_df %>% dplyr::mutate(types = ifelse(WellRow == 1 & WellCol %in% c("F","G","H"), "c", types)) %>% 
+            assay_df %>% dplyr::mutate(types = ifelse(WellRow %in% seq(2,11), "x", types)) %>% 
+            assay_df %>% dplyr::mutate(types = ifelse(WellRow == 12, "m", types))
         # TODO: extract date
         return(assay_df)
     })
