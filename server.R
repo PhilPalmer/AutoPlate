@@ -51,7 +51,6 @@ function(input, output, sessions) {
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
         luminescence_df <- assay_df[assay_df$plate_number == plate_number, ] %>%
-            tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":") %>%
             dplyr::select(WellCol, WellRow, RLU) %>%
             tidyr::spread(key = WellRow, value = RLU) %>%
             dplyr::rename(Well = WellCol)
