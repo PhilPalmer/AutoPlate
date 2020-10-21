@@ -58,15 +58,11 @@ function(input, output, sessions) {
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
         luminescence_df <- assay_df[assay_df$plate_number == plate_number, ] %>%
-            dplyr::select(WellCol, WellRow, RLU) %>%
-            tidyr::spread(key = WellRow, value = RLU) %>%
+            dplyr::select(WellCol, WellRow, types) %>%
+            tidyr::spread(key = WellRow, value = types) %>%
             dplyr::rename(Well = WellCol)
         # Re-order cols
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
-        # Convert luminescence values to type labels
-        luminescence_df[,2] <- c(rep('V',5),rep('C',3))
-        luminescence_df[,3:12] <- 'X'
-        luminescence_df[,13] <- 'M'
         # Reformat the row & col names + add a subject row
         subject <- paste("Mouse", names(luminescence_df))
         subject[1] <- "Subject"
