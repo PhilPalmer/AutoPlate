@@ -75,9 +75,12 @@ function(input, output, sessions) {
             dplyr::rename(Well = WellCol)
         # Re-order cols
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
+        # Get the subjects
+        subjects <- assay_df[assay_df$plate_number == plate_number, ] %>%
+            dplyr::filter(WellCol == "A") %>% 
+            dplyr::select(subject)
+        subject <- c("Subject", subjects$subject)
         # Reformat the row & col names + add a subject row
-        subject <- paste("Mouse", names(luminescence_df))
-        subject[1] <- "Subject"
         luminescence_df <- rbind(subject, luminescence_df)
         row.names(luminescence_df) <- luminescence_df$Well
         luminescence_df[1] <- NULL
