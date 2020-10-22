@@ -106,14 +106,6 @@ function(input, output, sessions) {
             rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
     })
     
-    # Update main assay dataframe with types
-    observeEvent(input$metadata, {
-        if (!is.null(input$metadata$changes)) {
-            #print(input$plate_tabs)
-            #print(input$metadata$changes)
-        }
-    })
-    
     # Create dropdown for bleed
     output$bleed <- renderUI({
         selectInput("bleed", "Select existing feature", names(assay_df()))
