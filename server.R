@@ -35,8 +35,9 @@ function(input, output, sessions) {
     
     # Create main dataframe for assay data
     assay_df <- reactive({
-        req(input$luminescence_files)
+        req(input$luminescence_files, input$plate_tabs)
         luminescence_files <- input$luminescence_files
+        plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <-
             apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
             dplyr::bind_rows() %>%
@@ -61,6 +62,16 @@ function(input, output, sessions) {
                 WellRow %in% c(10,11) ~ "Mouse 5",
                 WellRow == 12 ~ "Antibody"
             ))
+        # Update main assay dataframe with types
+        # TODO: make changes persistent when switching plates
+        if (!is.null(input$metadata)) {
+            updated_luminescence_df <- hot_to_r(input$metadata)
+            updated_subjects <- updated_luminescence_df[1,]
+            for (i in seq(1,length(updated_subjects))) {
+                assay_df <- assay_df %>% 
+                    dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (WellRow == i), updated_subjects[i], subject))
+            }
+        }
         # TODO: extract date
         return(assay_df)
     })
@@ -81,6 +92,7 @@ function(input, output, sessions) {
             dplyr::select(subject)
         subject <- c("Subject", subjects$subject)
         # Reformat the row & col names + add a subject row
+        names(subject) <- names(luminescence_df)
         luminescence_df <- rbind(subject, luminescence_df)
         row.names(luminescence_df) <- luminescence_df$Well
         luminescence_df[1] <- NULL
