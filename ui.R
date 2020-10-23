@@ -66,7 +66,9 @@ dashboardPage(
                                 tabPanel("Inoculate"),
                                 tabPanel("Primary"),
                                 tabPanel("Study")
-                            )
+                            ),
+                            h4("Export to CSV once data entry complete"),
+                            downloadButton("downloadData", "Download")
                         )
                     )
             ),

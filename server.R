@@ -126,4 +126,21 @@ function(input, output, sessions) {
         bleed_df$bleed <- as.character(NA)
         rhandsontable(bleed_df, stretchH = "all", rowHeaders = NULL)
     })
+
+    # Download/export data to CSV 
+    output$downloadData <- downloadHandler(
+        # TODO: generate more unique name for file based on experiment ID etc.
+        filename = function() {
+            paste("pmn_platelist", ".csv", sep = "")
+        },
+        content = function(file) {
+            write.table(isolate(apply(assay_df(),2,as.character)),  
+                file      = file,
+                append    = FALSE, 
+                quote     = FALSE, 
+                sep       = ",",
+                row.names = F,
+                col.names = T)
+        }
+    )
 }
