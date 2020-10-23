@@ -97,6 +97,32 @@ function(input, output, sessions) {
             }
             values[["assay_df"]] <- assay_df
         }
+        # Update main assay dataframe with new dilutions
+        if (!is.null(input$dilutions)) {
+            assay_df <- values[["assay_df"]]
+            dilutions <- hot_to_r(input$dilutions)
+            # TODO: add below to function to remove code duplication
+            assay_df <- assay_df %>% 
+                dplyr::mutate(dilution = case_when(
+                    WellCol == "A" & types == "x" ~ dilutions[1,1],
+                    WellCol == "B" & types == "x" ~ dilutions[2,1],
+                    WellCol == "C" & types == "x" ~ dilutions[3,1],
+                    WellCol == "D" & types == "x" ~ dilutions[4,1],
+                    WellCol == "E" & types == "x" ~ dilutions[5,1],
+                    WellCol == "F" & types == "x" ~ dilutions[6,1],
+                    WellCol == "G" & types == "x" ~ dilutions[7,1],
+                    WellCol == "H" & types == "x" ~ dilutions[8,1],
+                    WellCol == "A" & types == "m" ~ dilutions[1,2],
+                    WellCol == "B" & types == "m" ~ dilutions[2,2],
+                    WellCol == "C" & types == "m" ~ dilutions[3,2],
+                    WellCol == "D" & types == "m" ~ dilutions[4,2],
+                    WellCol == "E" & types == "m" ~ dilutions[5,2],
+                    WellCol == "F" & types == "m" ~ dilutions[6,2],
+                    WellCol == "G" & types == "m" ~ dilutions[7,2],
+                    WellCol == "H" & types == "m" ~ dilutions[8,2]
+                ))
+            values[["assay_df"]] <- assay_df
+        }        
         # TODO: extract date
         return(assay_df)
     })
