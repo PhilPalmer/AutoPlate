@@ -103,6 +103,7 @@ function(input, output, sessions) {
     
     # Convert the luminescence rawdata -> 96 well plate format for the current plate tab
     luminescence_df <- reactive({
+        req(input$luminescence_files)
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
         luminescence_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
