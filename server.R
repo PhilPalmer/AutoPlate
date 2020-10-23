@@ -10,6 +10,27 @@ read_plus <- function(name,file) {
     read.csv(file) %>% 
         dplyr::mutate(filename = name)
 }
+update_dilutions <- function(assay_df,dilutions) {
+    assay_df %>% 
+        dplyr::mutate(dilution = case_when(
+            WellCol == "A" & types == "x" ~ dilutions[1,1],
+            WellCol == "B" & types == "x" ~ dilutions[2,1],
+            WellCol == "C" & types == "x" ~ dilutions[3,1],
+            WellCol == "D" & types == "x" ~ dilutions[4,1],
+            WellCol == "E" & types == "x" ~ dilutions[5,1],
+            WellCol == "F" & types == "x" ~ dilutions[6,1],
+            WellCol == "G" & types == "x" ~ dilutions[7,1],
+            WellCol == "H" & types == "x" ~ dilutions[8,1],
+            WellCol == "A" & types == "m" ~ dilutions[1,2],
+            WellCol == "B" & types == "m" ~ dilutions[2,2],
+            WellCol == "C" & types == "m" ~ dilutions[3,2],
+            WellCol == "D" & types == "m" ~ dilutions[4,2],
+            WellCol == "E" & types == "m" ~ dilutions[5,2],
+            WellCol == "F" & types == "m" ~ dilutions[6,2],
+            WellCol == "G" & types == "m" ~ dilutions[7,2],
+            WellCol == "H" & types == "m" ~ dilutions[8,2]
+        ))
+}
 
 function(input, output, sessions) {
     
@@ -45,8 +66,8 @@ function(input, output, sessions) {
                 dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
                 tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
             assay_df$types <- NA
-            assay_df$dilution <- NA
             assay_df$subject <- NA
+            assay_df$dilution <- NA
             assay_df <- assay_df %>% 
                 # Populate main assay df with types using the default plate layout
                 dplyr::mutate(types = case_when(
@@ -55,25 +76,6 @@ function(input, output, sessions) {
                     WellRow %in% seq(2,11) ~ "x",
                     WellRow == 12 ~ "m",
                 )) %>% 
-                # Populate main assay df with concentration/dilution info
-                dplyr::mutate(dilution = case_when(
-                    WellCol == "A" & types == "x" ~ dilutions[1,1],
-                    WellCol == "B" & types == "x" ~ dilutions[2,1],
-                    WellCol == "C" & types == "x" ~ dilutions[3,1],
-                    WellCol == "D" & types == "x" ~ dilutions[4,1],
-                    WellCol == "E" & types == "x" ~ dilutions[5,1],
-                    WellCol == "F" & types == "x" ~ dilutions[6,1],
-                    WellCol == "G" & types == "x" ~ dilutions[7,1],
-                    WellCol == "H" & types == "x" ~ dilutions[8,1],
-                    WellCol == "A" & types == "m" ~ dilutions[1,2],
-                    WellCol == "B" & types == "m" ~ dilutions[2,2],
-                    WellCol == "C" & types == "m" ~ dilutions[3,2],
-                    WellCol == "D" & types == "m" ~ dilutions[4,2],
-                    WellCol == "E" & types == "m" ~ dilutions[5,2],
-                    WellCol == "F" & types == "m" ~ dilutions[6,2],
-                    WellCol == "G" & types == "m" ~ dilutions[7,2],
-                    WellCol == "H" & types == "m" ~ dilutions[8,2]
-                )) %>%
                 # Populate main assay df with default subject info
                 dplyr::mutate(subject = case_when(
                     WellRow %in% c(2,3) ~ "Mouse 1",
@@ -83,6 +85,8 @@ function(input, output, sessions) {
                     WellRow %in% c(10,11) ~ "Mouse 5",
                     WellRow == 12 ~ "Antibody"
                 ))
+            # Populate main assay df with concentration/dilution info
+            assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
         }
         # Update main assay dataframe with types
@@ -101,26 +105,7 @@ function(input, output, sessions) {
         if (!is.null(input$dilutions)) {
             assay_df <- values[["assay_df"]]
             dilutions <- hot_to_r(input$dilutions)
-            # TODO: add below to function to remove code duplication
-            assay_df <- assay_df %>% 
-                dplyr::mutate(dilution = case_when(
-                    WellCol == "A" & types == "x" ~ dilutions[1,1],
-                    WellCol == "B" & types == "x" ~ dilutions[2,1],
-                    WellCol == "C" & types == "x" ~ dilutions[3,1],
-                    WellCol == "D" & types == "x" ~ dilutions[4,1],
-                    WellCol == "E" & types == "x" ~ dilutions[5,1],
-                    WellCol == "F" & types == "x" ~ dilutions[6,1],
-                    WellCol == "G" & types == "x" ~ dilutions[7,1],
-                    WellCol == "H" & types == "x" ~ dilutions[8,1],
-                    WellCol == "A" & types == "m" ~ dilutions[1,2],
-                    WellCol == "B" & types == "m" ~ dilutions[2,2],
-                    WellCol == "C" & types == "m" ~ dilutions[3,2],
-                    WellCol == "D" & types == "m" ~ dilutions[4,2],
-                    WellCol == "E" & types == "m" ~ dilutions[5,2],
-                    WellCol == "F" & types == "m" ~ dilutions[6,2],
-                    WellCol == "G" & types == "m" ~ dilutions[7,2],
-                    WellCol == "H" & types == "m" ~ dilutions[8,2]
-                ))
+            assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
         }        
         # TODO: extract date
