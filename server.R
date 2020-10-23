@@ -20,7 +20,7 @@ function(input, output, sessions) {
                           stringsAsFactors = FALSE, 
                           check.names      = FALSE)
     dilution_values <- reactiveValues()
-    metadata_values <- reactiveValues()
+    values <- reactiveValues()
     
     # Create a tab for each uploaded plate
     output$plate_tabs = renderUI({
@@ -38,39 +38,44 @@ function(input, output, sessions) {
         req(input$luminescence_files, input$plate_tabs)
         luminescence_files <- input$luminescence_files
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
-        assay_df <-
-            apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
-            dplyr::bind_rows() %>%
-            dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
-            tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
-        assay_df$types <- NA
-        assay_df$subject <- NA
-        assay_df <- assay_df %>% 
-            # Populate main assay df with types using the default plate layout
-            dplyr::mutate(types = case_when(
-                WellRow == 1 & WellCol %in% c("A","B","C","D","E") ~ "v",
-                WellRow == 1 & WellCol %in% c("F","G","H") ~ "c",
-                WellRow %in% seq(2,11) ~ "x",
-                WellRow == 12 ~ "m",
-            )) %>% 
-            # Populate main assay df with default subject info
-            dplyr::mutate(subject = case_when(
-                WellRow %in% c(2,3) ~ "Mouse 1",
-                WellRow %in% c(4,5) ~ "Mouse 2",
-                WellRow %in% c(6,7) ~ "Mouse 3",
-                WellRow %in% c(8,9) ~ "Mouse 4",
-                WellRow %in% c(10,11) ~ "Mouse 5",
-                WellRow == 12 ~ "Antibody"
-            ))
+        if (is.null(input$metadata)){
+            assay_df <-
+                apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
+                dplyr::bind_rows() %>%
+                dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
+                tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
+            assay_df$types <- NA
+            assay_df$subject <- NA
+            assay_df <- assay_df %>% 
+                # Populate main assay df with types using the default plate layout
+                dplyr::mutate(types = case_when(
+                    WellRow == 1 & WellCol %in% c("A","B","C","D","E") ~ "v",
+                    WellRow == 1 & WellCol %in% c("F","G","H") ~ "c",
+                    WellRow %in% seq(2,11) ~ "x",
+                    WellRow == 12 ~ "m",
+                )) %>% 
+                # Populate main assay df with default subject info
+                dplyr::mutate(subject = case_when(
+                    WellRow %in% c(2,3) ~ "Mouse 1",
+                    WellRow %in% c(4,5) ~ "Mouse 2",
+                    WellRow %in% c(6,7) ~ "Mouse 3",
+                    WellRow %in% c(8,9) ~ "Mouse 4",
+                    WellRow %in% c(10,11) ~ "Mouse 5",
+                    WellRow == 12 ~ "Antibody"
+                ))
+            values[["assay_df"]] <- assay_df
+        }
         # Update main assay dataframe with types
         # TODO: make changes persistent when switching plates
         if (!is.null(input$metadata)) {
+            assay_df <- values[["assay_df"]]
             updated_luminescence_df <- hot_to_r(input$metadata)
             updated_subjects <- updated_luminescence_df[1,]
             for (i in seq(1,length(updated_subjects))) {
                 assay_df <- assay_df %>% 
                     dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (WellRow == i), updated_subjects[i], subject))
             }
+            values[["assay_df"]] <- assay_df
         }
         # TODO: extract date
         return(assay_df)
@@ -103,7 +108,7 @@ function(input, output, sessions) {
     # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
     output$metadata <- renderRHandsontable({
-            rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
+        rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
     })
     
     # Create dropdown for bleed
