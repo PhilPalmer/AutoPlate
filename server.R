@@ -85,14 +85,14 @@ function(input, output, sessions) {
     luminescence_df <- reactive({
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
-        luminescence_df <- assay_df[assay_df$plate_number == plate_number, ] %>%
+        luminescence_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
             dplyr::select(WellCol, WellRow, types) %>%
             tidyr::spread(key = WellRow, value = types) %>%
             dplyr::rename(Well = WellCol)
         # Re-order cols
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
         # Get the subjects
-        subjects <- assay_df[assay_df$plate_number == plate_number, ] %>%
+        subjects <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
             dplyr::filter(WellCol == "A") %>% 
             dplyr::select(subject)
         subject <- c("Subject", subjects$subject)
