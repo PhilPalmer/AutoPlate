@@ -115,7 +115,7 @@ function(input, output, sessions) {
     output$bleed_table <- renderRHandsontable({
         req(input$bleed)
         assay_df <- assay_df()
-        feature_levels <- levels(as.factor(assay_df[[input$bleed]]))
+        feature_levels <- levels(as.factor(unlist(assay_df[[input$bleed]])))
         bleed_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
         names(bleed_df) <- input$bleed
         bleed_df$bleed <- as.character(NA)
