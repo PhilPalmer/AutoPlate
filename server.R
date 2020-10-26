@@ -31,6 +31,15 @@ update_dilutions <- function(assay_df,dilutions) {
             WellCol == "H" & types == "m" ~ dilutions[8,2]
         ))
 }
+update_feature <- function(new_feature,input,values) {
+    new_feature_table <- paste0(new_feature, "_table")
+    req(new_feature_table)
+    existing_feature <- input[[new_feature]]
+    assay_df <- values[["assay_df"]]
+    mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
+    assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]),2]
+    values[["assay_df"]] <- assay_df
+}
 
 function(input, output, sessions) {
     
@@ -167,14 +176,7 @@ function(input, output, sessions) {
     
     # Update the main assay df with user input on the other features
     observeEvent(input$go, {
-        new_feature <- "bleed"
-        new_feature_table <- paste0(new_feature, "_table")
-        req(new_feature_table)
-        existing_feature <- input[[new_feature]]
-        assay_df <- values[["assay_df"]]
-        mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
-        assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]),2]
-        values[["assay_df"]] <- assay_df
+        update_feature("bleed",input,values)
     })
 
     # Download/export data to CSV 
