@@ -74,7 +74,11 @@ dashboardPage(
                                          uiOutput("primary"),
                                          rHandsontableOutput("primary_table")
                                         ),
-                                tabPanel("Study")
+                                tabPanel("Study",
+                                         actionButton("go_study", "Submit feature", icon("check-circle")),
+                                         uiOutput("study"),
+                                         rHandsontableOutput("study_table")
+                                        )
                             ),
                             h4("Export to CSV once data entry complete"),
                             downloadButton("downloadData", "Download")

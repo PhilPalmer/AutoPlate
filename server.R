@@ -165,7 +165,7 @@ function(input, output, sessions) {
         rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
     })
     
-    # Create dropdown for features: bleed, inoculate & primary
+    # Create dropdown for features: bleed, inoculate, primary & study
     output$bleed <- renderUI({
         req(input$metadata)
         assay_df <- isolate(values[["assay_df"]])
@@ -181,8 +181,13 @@ function(input, output, sessions) {
         assay_df <- isolate(values[["assay_df"]])
         selectInput("primary", "Select existing feature", names(assay_df))
     })
+    output$study <- renderUI({
+        req(input$metadata)
+        assay_df <- isolate(values[["assay_df"]])
+        selectInput("study", "Select existing feature", names(assay_df))
+    })
     
-    # Create table for features: bleed, inoculate & primary
+    # Create table for features: bleed, inoculate, primary & study
     output$bleed_table <- renderRHandsontable({
         create_feature_table("bleed", input, values)
     })
@@ -192,8 +197,11 @@ function(input, output, sessions) {
     output$primary_table <- renderRHandsontable({
         create_feature_table("primary", input, values)
     })
+    output$study_table <- renderRHandsontable({
+        create_feature_table("study", input, values)
+    })
     
-    # Update the main assay df with user input for features: bleed, inoculate & primary
+    # Update the main assay df with user input for features: bleed, inoculate, primary & study
     observeEvent(input$go_bleed, {
         update_feature("bleed", input, values)
     })
@@ -202,6 +210,9 @@ function(input, output, sessions) {
     })
     observeEvent(input$go_primary, {
         update_feature("primary", input, values)
+    })
+    observeEvent(input$go_study, {
+        update_feature("study", input, values)
     })
 
     # Download/export data to CSV 
