@@ -31,6 +31,16 @@ update_dilutions <- function(assay_df,dilutions) {
             WellCol == "H" & types == "m" ~ dilutions[8,2]
         ))
 }
+create_feature_table <- function(new_feature,input,values) {
+    new_feature <- "bleed"
+    req(input[[new_feature]])
+    assay_df <- isolate(values[["assay_df"]])
+    feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
+    new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
+    names(new_feature_df) <- input[[new_feature]]
+    new_feature_df[[new_feature]] <- as.character(NA)
+    rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
+}
 update_feature <- function(new_feature,input,values) {
     new_feature_table <- paste0(new_feature, "_table")
     req(new_feature_table)
@@ -165,14 +175,7 @@ function(input, output, sessions) {
     
     # Create bleed table
     output$bleed_table <- renderRHandsontable({
-        new_feature <- "bleed"
-        req(input[[new_feature]])
-        assay_df <- isolate(values[["assay_df"]])
-        feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
-        new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
-        names(new_feature_df) <- input[[new_feature]]
-        new_feature_df[[new_feature]] <- as.character(NA)
-        rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
+        create_feature_table("bleed",input,values)
     })
     
     # Update the main assay df with user input on the other features
