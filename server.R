@@ -68,6 +68,10 @@ function(input, output, sessions) {
             assay_df$types <- NA
             assay_df$subject <- NA
             assay_df$dilution <- NA
+            assay_df$bleed <- NA
+            assay_df$inoculate <- NA
+            assay_df$primary <- NA
+            assay_df$study <- NA
             assay_df <- assay_df %>% 
                 # Populate main assay df with types using the default plate layout
                 dplyr::mutate(types = case_when(
