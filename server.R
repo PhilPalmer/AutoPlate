@@ -177,32 +177,16 @@ function(input, output, sessions) {
     output$study     <- renderUI(create_feature_dropdown("study",input,values))
     
     # Create table for features: bleed, inoculate, primary & study
-    output$bleed_table <- renderRHandsontable({
-        create_feature_table("bleed", input, values)
-    })
-    output$inoculate_table <- renderRHandsontable({
-        create_feature_table("inoculate", input, values)
-    })
-    output$primary_table <- renderRHandsontable({
-        create_feature_table("primary", input, values)
-    })
-    output$study_table <- renderRHandsontable({
-        create_feature_table("study", input, values)
-    })
+    output$bleed_table     <- renderRHandsontable(create_feature_table("bleed",input,values))
+    output$inoculate_table <- renderRHandsontable(create_feature_table("inoculate",input,values))
+    output$primary_table   <- renderRHandsontable(create_feature_table("primary",input,values))
+    output$study_table     <- renderRHandsontable(create_feature_table("study",input,values))
     
     # Update the main assay df with user input for features: bleed, inoculate, primary & study
-    observeEvent(input$go_bleed, {
-        update_feature("bleed", input, values)
-    })
-    observeEvent(input$go_inoculate, {
-        update_feature("inoculate", input, values)
-    })
-    observeEvent(input$go_primary, {
-        update_feature("primary", input, values)
-    })
-    observeEvent(input$go_study, {
-        update_feature("study", input, values)
-    })
+    observeEvent(input$go_bleed,update_feature("bleed",input,values))
+    observeEvent(input$go_inoculate,update_feature("inoculate",input,values))
+    observeEvent(input$go_primary,update_feature("primary",input,values))
+    observeEvent(input$go_study,update_feature("study",input,values))
 
     # Download/export data to CSV 
     output$downloadData <- downloadHandler(
