@@ -117,7 +117,6 @@ function(input, output, sessions) {
             values[["assay_df"]] <- assay_df
         }
         # Update main assay dataframe with types
-        # TODO: make changes persistent when switching plates
         if (!is.null(input$metadata)) {
             assay_df <- values[["assay_df"]]
             updated_luminescence_df <- hot_to_r(input$metadata)
