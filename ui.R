@@ -60,7 +60,7 @@ dashboardPage(
                                 # The id lets us use input$tabset_features on the server to find the current tab
                                 id = "tabset_features",
                                 tabPanel("Bleed",
-                                         actionButton("go", "Submit feature"),
+                                         actionButton("go", "Submit feature", icon("check-circle")),
                                          uiOutput("bleed"),
                                          rHandsontableOutput("bleed_table")
                                          ),
