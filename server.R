@@ -31,6 +31,11 @@ update_dilutions <- function(assay_df,dilutions) {
             WellCol == "H" & types == "m" ~ dilutions[8,2]
         ))
 }
+create_feature_dropdown <- function(new_feature,input,values) {
+    req(input$metadata)
+    assay_df <- isolate(values[["assay_df"]])
+    selectInput(new_feature, "Select existing feature", names(assay_df))
+}
 create_feature_table <- function(new_feature,input,values) {
     req(input[[new_feature]])
     assay_df <- isolate(values[["assay_df"]])
@@ -166,26 +171,10 @@ function(input, output, sessions) {
     })
     
     # Create dropdown for features: bleed, inoculate, primary & study
-    output$bleed <- renderUI({
-        req(input$metadata)
-        assay_df <- isolate(values[["assay_df"]])
-        selectInput("bleed", "Select existing feature", names(assay_df))
-    })
-    output$inoculate <- renderUI({
-        req(input$metadata)
-        assay_df <- isolate(values[["assay_df"]])
-        selectInput("inoculate", "Select existing feature", names(assay_df))
-    })
-    output$primary <- renderUI({
-        req(input$metadata)
-        assay_df <- isolate(values[["assay_df"]])
-        selectInput("primary", "Select existing feature", names(assay_df))
-    })
-    output$study <- renderUI({
-        req(input$metadata)
-        assay_df <- isolate(values[["assay_df"]])
-        selectInput("study", "Select existing feature", names(assay_df))
-    })
+    output$bleed     <- renderUI(create_feature_dropdown("bleed",input,values))
+    output$inoculate <- renderUI(create_feature_dropdown("inoculate",input,values))
+    output$primary   <- renderUI(create_feature_dropdown("primary",input,values))
+    output$study     <- renderUI(create_feature_dropdown("study",input,values))
     
     # Create table for features: bleed, inoculate, primary & study
     output$bleed_table <- renderRHandsontable({
