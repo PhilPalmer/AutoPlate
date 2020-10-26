@@ -165,13 +165,14 @@ function(input, output, sessions) {
     
     # Create bleed table
     output$bleed_table <- renderRHandsontable({
-        req(input$bleed)
+        new_feature <- "bleed"
+        req(input[[new_feature]])
         assay_df <- isolate(values[["assay_df"]])
-        feature_levels <- levels(as.factor(unlist(assay_df[[input$bleed]])))
-        bleed_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
-        names(bleed_df) <- input$bleed
-        bleed_df$bleed <- as.character(NA)
-        rhandsontable(bleed_df, stretchH = "all", rowHeaders = NULL)
+        feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
+        new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
+        names(new_feature_df) <- input[[new_feature]]
+        new_feature_df[[new_feature]] <- as.character(NA)
+        rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
     })
     
     # Update the main assay df with user input on the other features
