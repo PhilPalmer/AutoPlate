@@ -60,12 +60,20 @@ dashboardPage(
                                 # The id lets us use input$tabset_features on the server to find the current tab
                                 id = "tabset_features",
                                 tabPanel("Bleed",
-                                         actionButton("go", "Submit feature", icon("check-circle")),
+                                         actionButton("go_bleed", "Submit feature", icon("check-circle")),
                                          uiOutput("bleed"),
                                          rHandsontableOutput("bleed_table")
-                                         ),
-                                tabPanel("Inoculate"),
-                                tabPanel("Primary"),
+                                        ),
+                                tabPanel("Inoculate",
+                                         actionButton("go_inoculate", "Submit feature", icon("check-circle")),
+                                         uiOutput("inoculate"),
+                                         rHandsontableOutput("inoculate_table")
+                                        ),
+                                tabPanel("Primary",
+                                         actionButton("go_primary", "Submit feature", icon("check-circle")),
+                                         uiOutput("primary"),
+                                         rHandsontableOutput("primary_table")
+                                        ),
                                 tabPanel("Study")
                             ),
                             h4("Export to CSV once data entry complete"),
