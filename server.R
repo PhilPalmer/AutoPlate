@@ -164,6 +164,17 @@ function(input, output, sessions) {
         bleed_df$bleed <- as.character(NA)
         rhandsontable(bleed_df, stretchH = "all", rowHeaders = NULL)
     })
+    
+    # Update the main assay df with user input on the other features
+    observeEvent(input$go, {
+        req(input$bleed_table)
+        new_feature <- "bleed"
+        existing_feature <- input$bleed
+        assay_df <- values[["assay_df"]]
+        mappings_table <- hot_to_r(isolate(input$bleed_table))
+        assay_df$bleed <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]),2]
+        values[["assay_df"]] <- assay_df
+    })
 
     # Download/export data to CSV 
     output$downloadData <- downloadHandler(
@@ -172,7 +183,7 @@ function(input, output, sessions) {
             paste("pmn_platelist", ".csv", sep = "")
         },
         content = function(file) {
-            write.table(isolate(apply(assay_df(),2,as.character)),  
+            write.table(apply(assay_df(),2,as.character),  
                 file      = file,
                 append    = FALSE, 
                 quote     = FALSE, 
