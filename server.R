@@ -32,7 +32,6 @@ update_dilutions <- function(assay_df,dilutions) {
         ))
 }
 create_feature_table <- function(new_feature,input,values) {
-    new_feature <- "bleed"
     req(input[[new_feature]])
     assay_df <- isolate(values[["assay_df"]])
     feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
