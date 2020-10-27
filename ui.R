@@ -2,7 +2,7 @@ library(shinydashboard)
 library(rhandsontable)
 
 dashboardPage(
-    dashboardHeader(title = "Assay Analyser"),
+    dashboardHeader(title = "AutoPlate"),
     dashboardSidebar(
         sidebarMenu(
             menuItem("Home", tabName = "home", icon = icon("home")),
