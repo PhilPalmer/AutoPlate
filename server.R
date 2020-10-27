@@ -116,14 +116,24 @@ function(input, output, sessions) {
             assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
         }
-        # Update main assay dataframe with types
         if (!is.null(input$metadata)) {
             assay_df <- values[["assay_df"]]
             updated_luminescence_df <- hot_to_r(input$metadata)
+            # Update main assay dataframe with subject
             updated_subjects <- updated_luminescence_df[1,]
             for (i in seq(1,length(updated_subjects))) {
                 assay_df <- assay_df %>% 
                     dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
+            }
+            # Update main assay dataframe with types
+            updated_types <- tail(updated_luminescence_df,-1)
+            for (col in seq(1,length(updated_types))) {
+                full_col = updated_types[,col]
+                for (i in seq(1,length(full_col))) {
+                    row = row.names(updated_types)[i]
+                    assay_df <- assay_df %>% 
+                        dplyr::mutate(types = ifelse( (plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row,col], types))
+                }
             }
             values[["assay_df"]] <- assay_df
         }
