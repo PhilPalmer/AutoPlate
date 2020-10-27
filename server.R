@@ -118,15 +118,15 @@ function(input, output, sessions) {
         }
         if (!is.null(input$metadata)) {
             assay_df <- values[["assay_df"]]
-            updated_luminescence_df <- hot_to_r(input$metadata)
+            updated_plate_df <- hot_to_r(input$metadata)
             # Update main assay dataframe with subject
-            updated_subjects <- updated_luminescence_df[1,]
+            updated_subjects <- updated_plate_df[1,]
             for (i in seq(1,length(updated_subjects))) {
                 assay_df <- assay_df %>% 
                     dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
             }
             # Update main assay dataframe with types
-            updated_types <- tail(updated_luminescence_df,-1)
+            updated_types <- tail(updated_plate_df,-1)
             for (col in seq(1,length(updated_types))) {
                 full_col = updated_types[,col]
                 for (i in seq(1,length(full_col))) {
@@ -148,35 +148,35 @@ function(input, output, sessions) {
         return(assay_df)
     })
     
-    # Convert the luminescence rawdata -> 96 well plate format for the current plate tab
-    luminescence_df <- reactive({
+    # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
+    plate_df <- reactive({
         req(input$luminescence_files)
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
-        luminescence_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
+        plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
             dplyr::select(wrow, wcol, types) %>%
             tidyr::spread(key = wcol, value = types) %>%
             dplyr::rename(Well = wrow)
         # Re-order cols
-        luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
+        plate_df <- plate_df[c("Well",sort(as.numeric(names(plate_df))))]
         # Get the subjects
         subjects <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
             dplyr::filter(wrow == "A") %>% 
             dplyr::select(subject)
         subject <- c("Subject", subjects$subject)
         # Reformat the row & col names + add a subject row
-        names(subject) <- names(luminescence_df)
-        luminescence_df <- rbind(subject, luminescence_df)
-        row.names(luminescence_df) <- luminescence_df$Well
-        luminescence_df[1] <- NULL
-        return(luminescence_df)
+        names(subject) <- names(plate_df)
+        plate_df <- rbind(subject, plate_df)
+        row.names(plate_df) <- plate_df$Well
+        plate_df[1] <- NULL
+        return(plate_df)
     })
     
     # Make tables
     # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
     output$metadata <- renderRHandsontable({
-        rhandsontable(luminescence_df(), stretchH = "all", useTypes = TRUE)
+        rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
     })
     
     # Create dropdown for features: bleed, inoculate, primary & study
