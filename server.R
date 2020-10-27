@@ -32,7 +32,7 @@ update_dilutions <- function(assay_df,dilutions) {
         ))
 }
 create_feature_dropdown <- function(new_feature,input,values) {
-    req(input$metadata)
+    req(input$plate_data)
     assay_df <- isolate(values[["assay_df"]])
     selectInput(new_feature, "Select existing feature", names(assay_df))
 }
@@ -82,7 +82,7 @@ function(input, output, sessions) {
         req(input$luminescence_files, input$plate_tabs)
         luminescence_files <- input$luminescence_files
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
-        if (is.null(input$metadata)){
+        if (is.null(input$plate_data)){
             assay_df <-
                 apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
                 dplyr::bind_rows() %>%
@@ -116,9 +116,9 @@ function(input, output, sessions) {
             assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
         }
-        if (!is.null(input$metadata)) {
+        if (!is.null(input$plate_data)) {
             assay_df <- values[["assay_df"]]
-            updated_plate_df <- hot_to_r(input$metadata)
+            updated_plate_df <- hot_to_r(input$plate_data)
             # Update main assay dataframe with subject
             updated_subjects <- updated_plate_df[1,]
             for (i in seq(1,length(updated_subjects))) {
@@ -173,9 +173,9 @@ function(input, output, sessions) {
     })
     
     # Make tables
-    # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & metadata tables
+    # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & plate_data tables
     make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
-    output$metadata <- renderRHandsontable({
+    output$plate_data <- renderRHandsontable({
         rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
     })
     

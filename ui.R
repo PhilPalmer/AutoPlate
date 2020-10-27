@@ -42,13 +42,13 @@ dashboardPage(
                             rHandsontableOutput("dilutions")
                         ),
                         box(
-                            title = "Plate metadata*",
+                            title = "96-Well Plate Data*",
                             width = 12,
                             icon("question-circle", lib = "font-awesome"),
                             # TODO: Hide message below once user has uploaded their luminescence files
-                            "Before entering plate metadata you must upload your luminescence files above.",
+                            "Before entering the plate data you must upload your luminescence files above.",
                             uiOutput('plate_tabs'),
-                            rHandsontableOutput("metadata")
+                            rHandsontableOutput("plate_data")
                         ),
                         box(
                             title = "Other features*",
