@@ -13,22 +13,22 @@ read_plus <- function(name,file) {
 update_dilutions <- function(assay_df,dilutions) {
     assay_df %>% 
         dplyr::mutate(dilution = case_when(
-            WellCol == "A" & types == "x" ~ dilutions[1,1],
-            WellCol == "B" & types == "x" ~ dilutions[2,1],
-            WellCol == "C" & types == "x" ~ dilutions[3,1],
-            WellCol == "D" & types == "x" ~ dilutions[4,1],
-            WellCol == "E" & types == "x" ~ dilutions[5,1],
-            WellCol == "F" & types == "x" ~ dilutions[6,1],
-            WellCol == "G" & types == "x" ~ dilutions[7,1],
-            WellCol == "H" & types == "x" ~ dilutions[8,1],
-            WellCol == "A" & types == "m" ~ dilutions[1,2],
-            WellCol == "B" & types == "m" ~ dilutions[2,2],
-            WellCol == "C" & types == "m" ~ dilutions[3,2],
-            WellCol == "D" & types == "m" ~ dilutions[4,2],
-            WellCol == "E" & types == "m" ~ dilutions[5,2],
-            WellCol == "F" & types == "m" ~ dilutions[6,2],
-            WellCol == "G" & types == "m" ~ dilutions[7,2],
-            WellCol == "H" & types == "m" ~ dilutions[8,2]
+            wrow == "A" & types == "x" ~ dilutions[1,1],
+            wrow == "B" & types == "x" ~ dilutions[2,1],
+            wrow == "C" & types == "x" ~ dilutions[3,1],
+            wrow == "D" & types == "x" ~ dilutions[4,1],
+            wrow == "E" & types == "x" ~ dilutions[5,1],
+            wrow == "F" & types == "x" ~ dilutions[6,1],
+            wrow == "G" & types == "x" ~ dilutions[7,1],
+            wrow == "H" & types == "x" ~ dilutions[8,1],
+            wrow == "A" & types == "m" ~ dilutions[1,2],
+            wrow == "B" & types == "m" ~ dilutions[2,2],
+            wrow == "C" & types == "m" ~ dilutions[3,2],
+            wrow == "D" & types == "m" ~ dilutions[4,2],
+            wrow == "E" & types == "m" ~ dilutions[5,2],
+            wrow == "F" & types == "m" ~ dilutions[6,2],
+            wrow == "G" & types == "m" ~ dilutions[7,2],
+            wrow == "H" & types == "m" ~ dilutions[8,2]
         ))
 }
 create_feature_dropdown <- function(new_feature,input,values) {
@@ -87,7 +87,7 @@ function(input, output, sessions) {
                 apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
                 dplyr::bind_rows() %>%
                 dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
-                tidyr::separate(col = WellPosition, into = c("WellCol", "WellRow"), sep = ":")
+                tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
             assay_df$types <- NA
             assay_df$subject <- NA
             assay_df$dilution <- NA
@@ -98,19 +98,19 @@ function(input, output, sessions) {
             assay_df <- assay_df %>% 
                 # Populate main assay df with types using the default plate layout
                 dplyr::mutate(types = case_when(
-                    WellRow == 1 & WellCol %in% c("A","B","C","D","E") ~ "v",
-                    WellRow == 1 & WellCol %in% c("F","G","H") ~ "c",
-                    WellRow %in% seq(2,11) ~ "x",
-                    WellRow == 12 ~ "m",
+                    wcol == 1 & wrow %in% c("A","B","C","D","E") ~ "v",
+                    wcol == 1 & wrow %in% c("F","G","H") ~ "c",
+                    wcol %in% seq(2,11) ~ "x",
+                    wcol == 12 ~ "m",
                 )) %>% 
                 # Populate main assay df with default subject info
                 dplyr::mutate(subject = case_when(
-                    WellRow %in% c(2,3) ~ "Mouse 1",
-                    WellRow %in% c(4,5) ~ "Mouse 2",
-                    WellRow %in% c(6,7) ~ "Mouse 3",
-                    WellRow %in% c(8,9) ~ "Mouse 4",
-                    WellRow %in% c(10,11) ~ "Mouse 5",
-                    WellRow == 12 ~ "Antibody"
+                    wcol %in% c(2,3) ~ "Mouse 1",
+                    wcol %in% c(4,5) ~ "Mouse 2",
+                    wcol %in% c(6,7) ~ "Mouse 3",
+                    wcol %in% c(8,9) ~ "Mouse 4",
+                    wcol %in% c(10,11) ~ "Mouse 5",
+                    wcol == 12 ~ "Antibody"
                 ))
             # Populate main assay df with concentration/dilution info
             assay_df <- update_dilutions(assay_df,dilutions)
@@ -123,7 +123,7 @@ function(input, output, sessions) {
             updated_subjects <- updated_luminescence_df[1,]
             for (i in seq(1,length(updated_subjects))) {
                 assay_df <- assay_df %>% 
-                    dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (WellRow == i), updated_subjects[i], subject))
+                    dplyr::mutate(subject = ifelse( (plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
             }
             values[["assay_df"]] <- assay_df
         }
@@ -144,14 +144,14 @@ function(input, output, sessions) {
         plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
         assay_df <- assay_df()
         luminescence_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-            dplyr::select(WellCol, WellRow, types) %>%
-            tidyr::spread(key = WellRow, value = types) %>%
-            dplyr::rename(Well = WellCol)
+            dplyr::select(wrow, wcol, types) %>%
+            tidyr::spread(key = wcol, value = types) %>%
+            dplyr::rename(Well = wrow)
         # Re-order cols
         luminescence_df <- luminescence_df[c("Well",sort(as.numeric(names(luminescence_df))))]
         # Get the subjects
         subjects <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-            dplyr::filter(WellCol == "A") %>% 
+            dplyr::filter(wrow == "A") %>% 
             dplyr::select(subject)
         subject <- c("Subject", subjects$subject)
         # Reformat the row & col names + add a subject row
