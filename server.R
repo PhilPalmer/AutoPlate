@@ -56,6 +56,10 @@ update_feature <- function(new_feature,input,values) {
 }
 
 function(input, output, sessions) {
+
+    ##########
+    # 1) Input
+    ##########
     
     # Define variables
     dilutions_file <- "data/dilutions.csv"
@@ -213,4 +217,17 @@ function(input, output, sessions) {
                 col.names = T)
         }
     )
+
+    #######
+    # 2) QC
+    #######
+
+    output$types <- renderPlot({
+        plate_number <- 1
+        assay_df <- isolate(values[["assay_df"]])
+        plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ])
+        type_vals<-matrix(plate_df$types,byrow=T,ncol=12,nrow=8)
+        plot(type_vals, col=rainbow, fmt.cell="%.5s")
+    })
+
 }
