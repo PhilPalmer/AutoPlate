@@ -63,7 +63,7 @@ update_feature <- function(new_feature,input,values) {
 #######
 plot_heatmap <- function(values,plate_number,feature,col,fmt.cell) {
     assay_df <- isolate(values[["assay_df"]])
-    plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ])
+    plate_df <- assay_df[assay_df$plate_number == plate_number, ]
     vals <- matrix(plate_df[[feature]],byrow=T,ncol=12,nrow=8)
     plot(vals, col=col, fmt.cell=fmt.cell, main=feature)
 }
