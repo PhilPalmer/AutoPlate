@@ -87,8 +87,29 @@ dashboardPage(
             ),
             tabItem(tabName = "qc",
                     fluidRow(
-                        box(
-                            title = "2) QC"
+                        tabBox(
+                                title = "",
+                                width = 12,
+                                # The id lets us use input$tabset_qc on the server to find the current tab
+                                id = "tabset_qc",
+                                tabPanel("Types",
+                                        ),
+                                tabPanel("Subject",
+                                        ),
+                                tabPanel("Dilution",
+                                        ),
+                                tabPanel("Primary",
+                                        ),
+                                tabPanel("RLU",
+                                ),
+                                tabPanel("Neutralisation",
+                                        ),
+                                tabPanel("Inoculate",
+                                ),
+                                tabPanel("Study",
+                                ),
+                                tabPanel("Bleed",
+                                )
                         )
                     )
             ),
