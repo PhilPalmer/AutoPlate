@@ -4,6 +4,9 @@ library(rhandsontable)
 library(tidyr)
 library(dplyr)
 
+##########
+# 1) Input
+##########
 source("helpers/make_table.R")
 # Define helper func to read CSVs + append name
 read_plus <- function(name,file) {
@@ -53,6 +56,16 @@ update_feature <- function(new_feature,input,values) {
     mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
     assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]),2]
     values[["assay_df"]] <- assay_df
+}
+
+#######
+# 2) QC
+#######
+plot_heatmap <- function(values,plate_number,feature,col,fmt.cell) {
+    assay_df <- isolate(values[["assay_df"]])
+    plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ])
+    vals <- matrix(plate_df[[feature]],byrow=T,ncol=12,nrow=8)
+    plot(vals, col=col, fmt.cell=fmt.cell, main=feature)
 }
 
 function(input, output, sessions) {
@@ -221,13 +234,6 @@ function(input, output, sessions) {
     #######
     # 2) QC
     #######
-
-    output$types <- renderPlot({
-        plate_number <- 1
-        assay_df <- isolate(values[["assay_df"]])
-        plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ])
-        type_vals<-matrix(plate_df$types,byrow=T,ncol=12,nrow=8)
-        plot(type_vals, col=rainbow, fmt.cell="%.5s")
-    })
+    output$types <- renderPlot(plot_heatmap(values,1,"types",rainbow,"%.5s"))
 
 }
