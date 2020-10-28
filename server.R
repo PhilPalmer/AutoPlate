@@ -61,11 +61,12 @@ update_feature <- function(new_feature,input,values) {
 #######
 # 2) QC
 #######
-plot_heatmap <- function(values,plate_number,feature,col,fmt.cell) {
+max_plots <- 20
+plot_heatmap <- function(plate_number,values,feature,col,fmt.cell) {
     assay_df <- isolate(values[["assay_df"]])
     plate_df <- assay_df[assay_df$plate_number == plate_number, ]
     vals <- matrix(plate_df[[feature]],byrow=T,ncol=12,nrow=8)
-    plot(vals, col=col, fmt.cell=fmt.cell, main=feature)
+    plot(vals, col=col, fmt.cell=fmt.cell, main=paste("Plate",plate_number,feature))
 }
 
 function(input, output, sessions) {
@@ -234,6 +235,29 @@ function(input, output, sessions) {
     #######
     # 2) QC
     #######
-    output$types <- renderPlot(plot_heatmap(values,1,"types",rainbow,"%.5s"))
+    # Insert the right number of plot output objects into the web page
+    output$types <- renderUI({
+        assay_df <- isolate(values[["assay_df"]])
+        plates <- unique(assay_df$plate_number)
+        plot_output_list <- lapply(plates, function(i) {
+            plotname <- paste("plot", i, sep="")
+            plotOutput(plotname)
+        })
+        # Convert the list to a tagList - so the list of items display properly
+        do.call(tagList, plot_output_list)
+    })
+    # Call renderPlot for each one. Plots are only generated whe visible on the web page
+    for (i in 1:max_plots) {
+        # Need local so that each item gets its own number. Without it, the value
+        # of i in the renderPlot() will be the same across all instances, because
+        # of when the expression is evaluated.
+        local({
+            my_i <- i
+            plotname <- paste("plot", my_i, sep="")
+            output[[plotname]] <- renderPlot({
+                plot_heatmap(my_i,values,"types",rainbow,"%.5s")
+            })
+        })
+    }
 
 }

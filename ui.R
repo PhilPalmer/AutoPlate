@@ -93,7 +93,7 @@ dashboardPage(
                                 # The id lets us use input$tabset_qc on the server to find the current tab
                                 id = "tabset_qc",
                                 tabPanel("Types",
-                                        plotOutput("types")
+                                        uiOutput("types")
                                         ),
                                 tabPanel("Subject",
                                         ),
