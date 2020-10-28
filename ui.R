@@ -93,7 +93,6 @@ dashboardPage(
                                 # The id lets us use input$tabset_qc on the server to find the current tab
                                 id = "tabset_qc",
                                 tabPanel("Types",
-                                        uiOutput("types")
                                         ),
                                 tabPanel("Subject",
                                         ),
@@ -111,7 +110,8 @@ dashboardPage(
                                 ),
                                 tabPanel("Bleed",
                                 )
-                        )
+                        ),
+                        uiOutput("heatmaps")
                     )
             ),
             tabItem(tabName = "results",
