@@ -171,10 +171,10 @@ function(input, output, sessions) {
             # Update main assay dataframe with types
             updated_types <- tail(updated_plate_df,-1)
             for (col in seq(1,length(updated_types))) {
-                full_col = updated_types[,col]
+                full_col <- updated_types[,col]
                 for (i in seq(1,length(full_col))) {
-                    row = row.names(updated_types)[i]
-                    updated_type = updated_types[row,col]
+                    row <- row.names(updated_types)[i]
+                    updated_type <- updated_types[row,col]
                     current_type <- filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
                     if (current_type != updated_type) {
                         print(paste0("For plate ",plate_n,", well ",row,col,", updating type ",current_type," -> ", updated_type))
@@ -274,7 +274,7 @@ function(input, output, sessions) {
     observe({
       lapply(heatmap_input()$plates, function(i){
         output[[paste("plot", i, sep="") ]] <- renderPlot({
-            plot_heatmap(i,values,heatmap_input()$feature,rainbow,"%.5s")
+            plot_heatmap(i,values,heatmap_input()$feature,rainbow,"%.10s")
         })
       })
     })
