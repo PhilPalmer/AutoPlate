@@ -124,8 +124,8 @@ function(input, output, sessions) {
             assay_df$inoculate <- NA
             assay_df$primary <- NA
             assay_df$study <- NA
-            # Rename RLU column
-            assay_df <- rename(assay_df, rlu = RLU)
+            # Rename columns
+            assay_df <- rename(assay_df,rlu=RLU,machine_id=ID,rlu.rq=RLU.RQ.,timestamp=Timestamp.ms.,sequence_id=SequenceID,scan_position=ScanPosition,tag=Tag)
             # Populate main assay df with types using the default plate layout
             assay_df <- assay_df %>% 
                 dplyr::mutate(types = case_when(
