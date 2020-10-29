@@ -13,6 +13,12 @@ read_plus <- function(name,file) {
     read.csv(file) %>% 
         dplyr::mutate(filename = name)
 }
+init_subject <- function(assay_df,wcol1,wcol2,subject) {
+    assay_df$subject <- ifelse(
+        assay_df$wcol == wcol1 | assay_df$wcol == wcol2, paste("Mouse",(as.numeric(assay_df$plate_number)-1)*5+subject), assay_df$subject
+    )
+    return(assay_df)
+}
 update_dilutions <- function(assay_df,dilutions) {
     assay_df %>% 
         dplyr::mutate(dilution = case_when(
@@ -114,23 +120,21 @@ function(input, output, sessions) {
             assay_df$study <- NA
             # Rename RLU column
             assay_df <- rename(assay_df, rlu = RLU)
+            # Populate main assay df with types using the default plate layout
             assay_df <- assay_df %>% 
-                # Populate main assay df with types using the default plate layout
                 dplyr::mutate(types = case_when(
                     wcol == 1 & wrow %in% c("A","B","C","D","E") ~ "v",
                     wcol == 1 & wrow %in% c("F","G","H") ~ "c",
                     wcol %in% seq(2,11) ~ "x",
                     wcol == 12 ~ "m",
-                )) %>% 
-                # Populate main assay df with default subject info
-                dplyr::mutate(subject = case_when(
-                    wcol %in% c(2,3) ~ "Mouse 1",
-                    wcol %in% c(4,5) ~ "Mouse 2",
-                    wcol %in% c(6,7) ~ "Mouse 3",
-                    wcol %in% c(8,9) ~ "Mouse 4",
-                    wcol %in% c(10,11) ~ "Mouse 5",
-                    wcol == 12 ~ "Antibody"
                 ))
+            # Populate main assay df with default subject info
+            assay_df <- init_subject(assay_df=assay_df, wcol1=2, wcol2=3, subject=1)
+            assay_df <- init_subject(assay_df=assay_df, wcol1=4, wcol2=5, subject=2)
+            assay_df <- init_subject(assay_df=assay_df, wcol1=6, wcol2=7, subject=3)
+            assay_df <- init_subject(assay_df=assay_df, wcol1=8, wcol2=9, subject=4)
+            assay_df <- init_subject(assay_df=assay_df, wcol1=10, wcol2=11, subject=5)
+            assay_df$subject <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$subject)
             # Populate main assay df with concentration/dilution info
             assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
