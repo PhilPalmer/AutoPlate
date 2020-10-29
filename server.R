@@ -104,7 +104,12 @@ function(input, output, sessions) {
     assay_df <- reactive({
         req(input$luminescence_files, input$plate_tabs)
         luminescence_files <- input$luminescence_files
+        # Record the previous plate number so that it can be used to check when to update the main assay dataframe
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
+        if (is.null(values[["plate_n"]])) {
+            values[["plate_n"]] <- list("current"=plate_n,"previous"=plate_n)
+        }
+        values[["plate_n"]] <- list("current"=plate_n,"previous"=values[["plate_n"]]$current)
         if (is.null(input$plate_data)){
             assay_df <-
                 apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
@@ -139,7 +144,21 @@ function(input, output, sessions) {
             assay_df <- update_dilutions(assay_df,dilutions)
             values[["assay_df"]] <- assay_df
         }
-        if (!is.null(input$plate_data)) {
+        # Update main assay dataframe with new dilutions
+        if (!is.null(input$dilutions)) {
+            assay_df <- values[["assay_df"]]
+            dilutions <- hot_to_r(input$dilutions)
+            assay_df <- update_dilutions(assay_df,dilutions)
+            values[["assay_df"]] <- assay_df
+        }        
+        # TODO: extract date
+        return(assay_df)
+    })
+
+    # Update the subject and types of the main assay dataframe based on user input
+    observeEvent(input$plate_data, {
+        plate_n <- values[["plate_n"]]$current
+        if (plate_n == values[["plate_n"]]$previous) {
             assay_df <- values[["assay_df"]]
             updated_plate_df <- hot_to_r(input$plate_data)
             # Update main assay dataframe with subject
@@ -160,21 +179,12 @@ function(input, output, sessions) {
             }
             values[["assay_df"]] <- assay_df
         }
-        # Update main assay dataframe with new dilutions
-        if (!is.null(input$dilutions)) {
-            assay_df <- values[["assay_df"]]
-            dilutions <- hot_to_r(input$dilutions)
-            assay_df <- update_dilutions(assay_df,dilutions)
-            values[["assay_df"]] <- assay_df
-        }        
-        # TODO: extract date
-        return(assay_df)
     })
     
     # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
     plate_df <- reactive({
         req(input$luminescence_files)
-        plate_number <- sub("^\\S+\\s+", '', input$plate_tabs)
+        plate_number <- values[["plate_n"]]$current
         assay_df <- assay_df()
         plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
             dplyr::select(wrow, wcol, types) %>%
