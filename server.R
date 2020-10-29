@@ -3,6 +3,7 @@ library(shinydashboard)
 library(rhandsontable)
 library(tidyr)
 library(dplyr)
+library(plot.matrix)
 
 ##########
 # 1) Input
