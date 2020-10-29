@@ -174,8 +174,13 @@ function(input, output, sessions) {
                 full_col = updated_types[,col]
                 for (i in seq(1,length(full_col))) {
                     row = row.names(updated_types)[i]
-                    assay_df <- assay_df %>% 
-                        dplyr::mutate(types = ifelse( (plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row,col], types))
+                    updated_type = updated_types[row,col]
+                    current_type <- filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
+                    if (current_type != updated_type) {
+                        print(paste0("For plate ",plate_n,", well ",row,col,", updating type ",current_type," -> ", updated_type))
+                        assay_df <- assay_df %>% 
+                            dplyr::mutate(types = ifelse( (plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row,col], types))
+                    }
                 }
             }
             values[["assay_df"]] <- assay_df
