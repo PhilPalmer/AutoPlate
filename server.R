@@ -175,7 +175,7 @@ function(input, output, sessions) {
                 for (i in seq(1,length(full_col))) {
                     row <- row.names(updated_types)[i]
                     updated_type <- updated_types[row,col]
-                    current_type <- filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
+                    current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
                     if (current_type != updated_type) {
                         print(paste0("For plate ",plate_n,", well ",row,col,", updating type ",current_type," -> ", updated_type))
                         assay_df <- assay_df %>% 
@@ -256,27 +256,38 @@ function(input, output, sessions) {
     #######
     # 2) QC
     #######
-    # Function to get the tab input (feature) and number of plates
-    heatmap_input <- reactive({
+    # Calculate average viral and cell luminescence
+    output$av_lum <- renderTable({
+        assay_df <- isolate(values[["assay_df"]])
+        plates <- unique(assay_df$plate_number)
+        av_cell_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu) })
+        av_viral_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu) })
+        av_lum_df <- do.call(rbind, Map(data.frame,plate_number=plates,average_cell_luminescence=av_cell_lum,average_viral_luminescence=av_viral_lum))
+        print(av_lum_df)
+        return(av_lum_df)
+    })
+    # Generate plots for each plate on change of the QC tabs
+    observeEvent(input$tabset_qc, {
         feature <- tolower(input$tabset_qc)
         assay_df <- isolate(values[["assay_df"]])
         plates <- unique(assay_df$plate_number)
-        return (list("feature"=feature,"plates"=plates))
-    })
-    # Create divs
-    output$heatmaps <- renderUI({
-      plot_output_list <- lapply(heatmap_input()$plates, function(i) {
-        plotname <- paste("plot", i, sep="")
-        plotOutput(plotname)
-      })   
-      do.call(tagList, plot_output_list)
-    })
-    observe({
-      lapply(heatmap_input()$plates, function(i){
-        output[[paste("plot", i, sep="") ]] <- renderPlot({
-            plot_heatmap(i,values,heatmap_input()$feature,rainbow,"%.10s")
+        values[["heatmap_input"]] <- list("feature"=feature,"plates"=plates)
+        lapply(values[["heatmap_input"]]$plates, function(i){
+            output[[paste("plot", i, sep="") ]] <- renderPlot({
+                plot_heatmap(i,values,values[["heatmap_input"]]$feature,rainbow,"%.10s")
+            })
         })
-      })
+    })
+    # Create divs to display heatmaps
+    output$heatmaps <- renderUI({
+        feature <- tolower(input$tabset_qc)
+        if (feature != "average luminescence values") {
+            plot_output_list <- lapply(values[["heatmap_input"]]$plates, function(i) {
+                plotname <- paste("plot", i, sep="")
+                plotOutput(plotname)
+            })   
+            do.call(tagList, plot_output_list)
+        }
     })
 
 }

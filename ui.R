@@ -92,6 +92,9 @@ dashboardPage(
                                 width = 12,
                                 # The id lets us use input$tabset_qc on the server to find the current tab
                                 id = "tabset_qc",
+                                tabPanel("Average luminescence values",
+                                        tableOutput('av_lum')
+                                        ),
                                 tabPanel("Types",
                                         ),
                                 tabPanel("Subject",
