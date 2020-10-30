@@ -68,12 +68,20 @@ update_feature <- function(new_feature,input,values) {
 #######
 # 2) QC
 #######
-plot_heatmap <- function(plate_number,values,feature,col,fmt.cell) {
+plot_heatmap <- function(plate_number,values,feature,title) {
     assay_df <- isolate(values[["assay_df"]])
     plate_df <- assay_df[assay_df$plate_number == plate_number, ]
     feature_list <- unlist(plate_df[[feature]], use.names=FALSE)
     vals <- matrix(feature_list,byrow=T,ncol=12,nrow=8)
-    plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,feature))
+    # Set params for plot based on the feature
+    features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed")
+    fmt.cells = c("%.5s","%.8s","%.5s","%.6s","%.0f","%.0f","%.15s","%.8s","%.8s")
+    features <- do.call(rbind, Map(data.frame,features=features,fmt.cells=fmt.cells))
+    fmt.cell <- as.character(features[feature,]$fmt.cells)
+    col <- if(feature %in% c("dilution","rlu","neutralisation")) viridis else rainbow
+    side <- if(feature %in% c("subject","inoculate","study","bleed")) 3 else 4
+    # Generate heatmap plot
+    plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,title),key=list(side=side))
 }
 
 function(input, output, sessions) {
@@ -125,7 +133,7 @@ function(input, output, sessions) {
             assay_df$inoculate <- ""
             assay_df$primary <- ""
             assay_df$study <- ""
-            assay_df$neutralisation <- ""
+            assay_df$neutralisation <- as.numeric("")
             # Rename columns
             assay_df <- rename(assay_df,rlu=RLU,machine_id=ID,rlu.rq=RLU.RQ.,timestamp=Timestamp.ms.,sequence_id=SequenceID,scan_position=ScanPosition,tag=Tag)
             # Populate main assay df with types using the default plate layout
@@ -288,7 +296,7 @@ function(input, output, sessions) {
         values[["heatmap_input"]] <- list("feature"=feature,"plates"=plates)
         lapply(values[["heatmap_input"]]$plates, function(i){
             output[[paste("plot", i, sep="") ]] <- renderPlot({
-                plot_heatmap(i,values,values[["heatmap_input"]]$feature,rainbow,"%.15s")
+                plot_heatmap(i,values,values[["heatmap_input"]]$feature,input$tabset_qc)
             })
         })
     })
