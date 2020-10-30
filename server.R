@@ -118,13 +118,13 @@ function(input, output, sessions) {
                 dplyr::bind_rows() %>%
                 dplyr::mutate(plate_number = gsub(pattern=".*n([0-9]+).csv","\\1",filename)) %>%
                 tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
-            assay_df$types <- NA
-            assay_df$subject <- NA
-            assay_df$dilution <- NA
-            assay_df$bleed <- NA
-            assay_df$inoculate <- NA
-            assay_df$primary <- NA
-            assay_df$study <- NA
+            assay_df$types <- ""
+            assay_df$subject <- ""
+            assay_df$dilution <- ""
+            assay_df$bleed <- ""
+            assay_df$inoculate <- ""
+            assay_df$primary <- ""
+            assay_df$study <- ""
             # Rename columns
             assay_df <- rename(assay_df,rlu=RLU,machine_id=ID,rlu.rq=RLU.RQ.,timestamp=Timestamp.ms.,sequence_id=SequenceID,scan_position=ScanPosition,tag=Tag)
             # Populate main assay df with types using the default plate layout
@@ -274,7 +274,7 @@ function(input, output, sessions) {
         values[["heatmap_input"]] <- list("feature"=feature,"plates"=plates)
         lapply(values[["heatmap_input"]]$plates, function(i){
             output[[paste("plot", i, sep="") ]] <- renderPlot({
-                plot_heatmap(i,values,values[["heatmap_input"]]$feature,rainbow,"%.10s")
+                plot_heatmap(i,values,values[["heatmap_input"]]$feature,rainbow,"%.15s")
             })
         })
     })
