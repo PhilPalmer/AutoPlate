@@ -125,6 +125,7 @@ function(input, output, sessions) {
             assay_df$inoculate <- ""
             assay_df$primary <- ""
             assay_df$study <- ""
+            assay_df$neutralisation <- ""
             # Rename columns
             assay_df <- rename(assay_df,rlu=RLU,machine_id=ID,rlu.rq=RLU.RQ.,timestamp=Timestamp.ms.,sequence_id=SequenceID,scan_position=ScanPosition,tag=Tag)
             # Populate main assay df with types using the default plate layout
@@ -144,6 +145,18 @@ function(input, output, sessions) {
             assay_df$subject <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$subject)
             # Populate main assay df with concentration/dilution info
             assay_df <- update_dilutions(assay_df,dilutions)
+            # Calculate normalised luminescence values
+            plates <- unique(assay_df$plate_number)
+            for (plate_n in plates) {
+                plate_df <- assay_df[assay_df$plate_number == plate_n, ]
+                # max & min levels of cell infection
+                neu0 <- mean(plate_df[plate_df$types=="v",]$rlu)
+                neu100 <- mean(plate_df[plate_df$types=="c",]$rlu)
+                # express rlu as neutralisation percentage between neu0 and new100
+                plate_df$neutralisation <- 100*((plate_df$rlu-neu0)/(neu100-neu0))
+                # update main assay dataframe with neutralisations
+                assay_df[rownames(plate_df), ] = plate_df
+            }
             values[["assay_df"]] <- assay_df
         }
         # Update main assay dataframe with new dilutions
@@ -260,6 +273,7 @@ function(input, output, sessions) {
     # Calculate average viral and cell luminescence
     output$av_lum <- renderTable({
         assay_df <- isolate(values[["assay_df"]])
+        # TODO: add plates to reactive values so that it can be accessed globally
         plates <- unique(assay_df$plate_number)
         av_cell_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu) })
         av_viral_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu) })
