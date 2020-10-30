@@ -71,7 +71,8 @@ update_feature <- function(new_feature,input,values) {
 plot_heatmap <- function(plate_number,values,feature,col,fmt.cell) {
     assay_df <- isolate(values[["assay_df"]])
     plate_df <- assay_df[assay_df$plate_number == plate_number, ]
-    vals <- matrix(plate_df[[feature]],byrow=T,ncol=12,nrow=8)
+    feature_list <- unlist(plate_df[[feature]], use.names=FALSE)
+    vals <- matrix(feature_list,byrow=T,ncol=12,nrow=8)
     plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,feature))
 }
 
@@ -263,7 +264,6 @@ function(input, output, sessions) {
         av_cell_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu) })
         av_viral_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu) })
         av_lum_df <- do.call(rbind, Map(data.frame,plate_number=plates,average_cell_luminescence=av_cell_lum,average_viral_luminescence=av_viral_lum))
-        print(av_lum_df)
         return(av_lum_df)
     })
     # Generate plots for each plate on change of the QC tabs
