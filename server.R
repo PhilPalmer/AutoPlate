@@ -4,6 +4,7 @@ library(rhandsontable)
 library(tidyr)
 library(dplyr)
 library(plot.matrix)
+library(viridis)
 
 ##########
 # 1) Input
