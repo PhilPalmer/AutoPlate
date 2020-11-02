@@ -101,9 +101,15 @@ dashboardPage(
                                 tabPanel("Neutralisation"),
                                 tabPanel("Inoculate"),
                                 tabPanel("Study"),
-                                tabPanel("Bleed")
+                                tabPanel("Bleed"),
+                                tabPanel("Exclude")
                         ),
-                        uiOutput("heatmaps")
+                        box(
+                            width = 12,
+                            textInput("exclude_plates", "Whole plates to exclude from analysis (comma seperated)", ""),
+                            textInput("exclude_wells", "Wells to exclude from analysis", ""),
+                            uiOutput("heatmaps")
+                        )
                     )
             ),
             tabItem(tabName = "results",

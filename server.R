@@ -75,12 +75,12 @@ plot_heatmap <- function(plate_number,values,feature,title) {
     feature_list <- unlist(plate_df[[feature]], use.names=FALSE)
     vals <- matrix(feature_list,byrow=T,ncol=12,nrow=8)
     # Set params for plot based on the feature
-    features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed")
-    fmt.cells = c("%.5s","%.8s","%.5s","%.6s","%.0f","%.0f","%.15s","%.8s","%.8s")
+    features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed","exclude")
+    fmt.cells = c("%.5s","%.8s","%.5s","%.6s","%.0f","%.0f","%.15s","%.8s","%.8s","%.8s")
     features <- do.call(rbind, Map(data.frame,features=features,fmt.cells=fmt.cells))
     fmt.cell <- as.character(features[feature,]$fmt.cells)
     col <- if(feature %in% c("dilution","rlu","neutralisation")) viridis else rainbow
-    side <- if(feature %in% c("subject","inoculate","study","bleed")) 3 else 4
+    side <- if(feature %in% c("subject","inoculate","study","bleed", "exclude")) 3 else 4
     # Generate heatmap plot
     plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,title),key=list(side=side))
 }
@@ -135,6 +135,7 @@ function(input, output, sessions) {
             assay_df$primary <- ""
             assay_df$study <- ""
             assay_df$neutralisation <- as.numeric("")
+            assay_df$exclude <- FALSE
             # Rename columns
             assay_df <- rename(assay_df,rlu=RLU,machine_id=ID,rlu.rq=RLU.RQ.,timestamp=Timestamp.ms.,sequence_id=SequenceID,scan_position=ScanPosition,tag=Tag)
             # Populate main assay df with types using the default plate layout
@@ -279,6 +280,16 @@ function(input, output, sessions) {
     #######
     # 2) QC
     #######
+    # Update main assay dataframe with excluded plates
+    observeEvent(input$exclude_plates, {
+        req(input$luminescence_files)
+        plates_to_exclude <- as.numeric(unlist(strsplit(input$exclude_plates,",")))
+        assay_df <- values[["assay_df"]]
+        assay_df$exclude <- FALSE
+        assay_df <- assay_df %>% 
+            dplyr::mutate(exclude = ifelse( (plate_number %in% plates_to_exclude), TRUE, exclude))
+        values[["assay_df"]] <- assay_df
+    })
     # Calculate average viral and cell luminescence
     output$av_lum <- renderTable({
         assay_df <- isolate(values[["assay_df"]])
