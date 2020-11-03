@@ -96,7 +96,14 @@ exclude_wells <- function(assay_df,x) {
                 assay_df <- assay_df %>% 
                     dplyr::mutate(exclude = ifelse( (plate_number == plate), TRUE, exclude))
             }
-            # TODO: exclude an individual well
+            # Exclude an individual well
+            if (length(exclusion) == 1 & nchar(exclusion[1]) > 1) {
+                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", exclusion[1]) )
+                row <- strsplit(exclusion[1],split="[0-9]+")[[1]]
+                col <- strsplit(exclusion[1],split="[A-Z]+")[[1]][2]
+                assay_df <- assay_df %>% 
+                    dplyr::mutate(exclude = ifelse( (plate_number == plate) & (wcol %in% col) & (wrow %in% row), TRUE, exclude))
+            }
             # Exclude a range of wells
             if (length(exclusion) > 1) {
                 # get plate to exclude
