@@ -85,6 +85,40 @@ plot_heatmap <- function(plate_number,values,feature,title) {
     # Generate heatmap plot
     plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,title),key=list(side=side))
 }
+exclude_wells <- function(assay_df,x) {
+    wells_to_exclude <- lapply(strsplit(x,","), function(x) strsplit(x, ":"))[[1]]
+    for (i in seq(1,length(wells_to_exclude))) {
+        tryCatch({
+            # Exclude a whole plate
+            if (length(wells_to_exclude[[i]]) == 1) {
+                plate <- wells_to_exclude[[i]][1]
+                assay_df <- assay_df %>% 
+                    dplyr::mutate(exclude = ifelse( (plate_number == plate), TRUE, exclude))
+            }
+            # TODO: exclude an individual well
+            # Exclude a range of wells
+            if (length(wells_to_exclude[[i]]) > 1) {
+                # get plate to exclude
+                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", wells_to_exclude[[i]][1]) )
+                wells_to_exclude[[i]][1] <- strsplit(wells_to_exclude[[i]][1],split="^[0-9]+")[[1]][2]
+                # get start and end rows and columns
+                row_start <- strsplit(wells_to_exclude[[i]][1],split="[0-9]+")[[1]]
+                row_end <- strsplit(wells_to_exclude[[i]][2],split="[0-9]+")[[1]]
+                col_start <- strsplit(wells_to_exclude[[i]][1],split="[A-Z]+")[[1]][2]
+                col_end <- strsplit(wells_to_exclude[[i]][2],split="[A-Z]+")[[1]][2]
+                # get vector of rows & columns to exclude
+                cols_to_exclude <- seq(col_start,col_end)
+                rows_to_exclude <- seq(match(row_start, LETTERS), match(row_end, LETTERS))
+                rows_to_exclude <- sapply(rows_to_exclude, function(i) LETTERS[i])
+                # update excluded plates in main assay dataframe
+                assay_df <- assay_df %>% 
+                    dplyr::mutate(exclude = ifelse( (plate_number == plate) & (wcol %in% cols_to_exclude) & (wrow %in% rows_to_exclude), TRUE, exclude))
+            }
+        },
+        error=function(error_message) { print (error_message) } )
+    }
+    return(assay_df)
+}
 
 function(input, output, sessions) {
 
@@ -282,13 +316,11 @@ function(input, output, sessions) {
     # 2) QC
     #######
     # Update main assay dataframe with excluded plates
-    observeEvent(input$exclude_plates, {
+    observeEvent(input$exclude_wells, {
         req(input$luminescence_files)
-        plates_to_exclude <- as.numeric(unlist(strsplit(input$exclude_plates,",")))
         assay_df <- values[["assay_df"]]
         assay_df$exclude <- FALSE
-        assay_df <- assay_df %>% 
-            dplyr::mutate(exclude = ifelse( (plate_number %in% plates_to_exclude), TRUE, exclude))
+        assay_df <- exclude_wells(assay_df,input$exclude_wells)
         values[["assay_df"]] <- assay_df
     })
     # Calculate average viral and cell luminescence

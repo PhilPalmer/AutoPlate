@@ -106,8 +106,7 @@ dashboardPage(
                         ),
                         box(
                             width = 12,
-                            textInput("exclude_plates", "Whole plates to exclude from analysis (comma seperated)", ""),
-                            textInput("exclude_wells", "Wells to exclude from analysis", ""),
+                            textInput("exclude_wells", "Wells to exclude from analysis (comma seperated eg `1A1:B12,2,3`)", ""),
                             uiOutput("heatmaps")
                         )
                     )
