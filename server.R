@@ -88,24 +88,25 @@ plot_heatmap <- function(plate_number,values,feature,title) {
 exclude_wells <- function(assay_df,x) {
     wells_to_exclude <- lapply(strsplit(x,","), function(x) strsplit(x, ":"))[[1]]
     for (i in seq(1,length(wells_to_exclude))) {
+        exclusion <- wells_to_exclude[[i]]
         tryCatch({
             # Exclude a whole plate
-            if (length(wells_to_exclude[[i]]) == 1) {
-                plate <- wells_to_exclude[[i]][1]
+            if (length(exclusion) == 1 & nchar(exclusion[1]) <= 1) {
+                plate <- exclusion[1]
                 assay_df <- assay_df %>% 
                     dplyr::mutate(exclude = ifelse( (plate_number == plate), TRUE, exclude))
             }
             # TODO: exclude an individual well
             # Exclude a range of wells
-            if (length(wells_to_exclude[[i]]) > 1) {
+            if (length(exclusion) > 1) {
                 # get plate to exclude
-                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", wells_to_exclude[[i]][1]) )
-                wells_to_exclude[[i]][1] <- strsplit(wells_to_exclude[[i]][1],split="^[0-9]+")[[1]][2]
+                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", exclusion[1]) )
+                exclusion[1] <- strsplit(exclusion[1],split="^[0-9]+")[[1]][2]
                 # get start and end rows and columns
-                row_start <- strsplit(wells_to_exclude[[i]][1],split="[0-9]+")[[1]]
-                row_end <- strsplit(wells_to_exclude[[i]][2],split="[0-9]+")[[1]]
-                col_start <- strsplit(wells_to_exclude[[i]][1],split="[A-Z]+")[[1]][2]
-                col_end <- strsplit(wells_to_exclude[[i]][2],split="[A-Z]+")[[1]][2]
+                row_start <- strsplit(exclusion[1],split="[0-9]+")[[1]]
+                row_end <- strsplit(exclusion[2],split="[0-9]+")[[1]]
+                col_start <- strsplit(exclusion[1],split="[A-Z]+")[[1]][2]
+                col_end <- strsplit(exclusion[2],split="[A-Z]+")[[1]][2]
                 # get vector of rows & columns to exclude
                 cols_to_exclude <- seq(col_start,col_end)
                 rows_to_exclude <- seq(match(row_start, LETTERS), match(row_end, LETTERS))
