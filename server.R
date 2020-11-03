@@ -5,6 +5,7 @@ library(tidyr)
 library(dplyr)
 library(plot.matrix)
 library(viridis)
+library(ggplot2)
 
 ##########
 # 1) Input
@@ -372,6 +373,22 @@ function(input, output, sessions) {
             })   
             do.call(tagList, plot_output_list)
         }
+    })
+
+    ############
+    # 3) Results
+    ############
+    output$data_exploration <- renderPlot({
+        req(input$luminescence_files)
+        assay_df <- values[["assay_df"]]
+        assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
+        ggplot(assay_df, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+            geom_point() +
+            geom_smooth(se=F, span=1) +
+            facet_wrap(.~primary) +
+            ylim(c(-100, 110)) +
+            scale_x_continuous(trans="log10") +
+            theme_classic()
     })
 
 }
