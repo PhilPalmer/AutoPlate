@@ -85,8 +85,9 @@ plot_heatmap <- function(plate_number,values,feature,title) {
     # Generate heatmap plot
     plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,title),key=list(side=side))
 }
-exclude_wells <- function(assay_df,x) {
-    wells_to_exclude <- lapply(strsplit(x,","), function(x) strsplit(x, ":"))[[1]]
+exclude_wells <- function(assay_df,exclusion_string) {
+    exclusion_string <- gsub(" ", "", exclusion_string)
+    wells_to_exclude <- lapply(strsplit(exclusion_string,","), function(x) strsplit(x, ":"))[[1]]
     for (i in seq(1,length(wells_to_exclude))) {
         exclusion <- wells_to_exclude[[i]]
         tryCatch({
