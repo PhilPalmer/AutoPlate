@@ -106,7 +106,17 @@ dashboardPage(
                         ),
                         box(
                             width = 12,
-                            textInput("exclude_wells", "Wells to exclude from analysis (comma seperated eg `1,2A1,3A1:B12`)", ""),
+                            textInput("exclude_wells",
+                                label = tags$div(
+                                    h4("Wells to exclude from analysis (specify any combination of the following, comma-seperated)"),
+                                    tags$ul(
+                                        tags$li("whole plates - by number, eg: 1,2,3"),
+                                        tags$li("individual wells - by their plate number, row and column, eg: 1A1,1D6,3H12"), 
+                                        tags$li("range of wells - by their plate numbers, rows and columns, eg: 1A1:A12,2B6:H12")
+                                    )
+                                ),
+                                placeholder = "1,2A1,3A1:B12"
+                            ),
                             uiOutput("heatmaps")
                         )
                     )
