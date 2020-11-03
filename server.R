@@ -77,7 +77,7 @@ plot_heatmap <- function(plate_number,values,feature,title) {
     row.names(vals) <- LETTERS[1:8]
     # Set params for plot based on the feature
     features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed","exclude")
-    fmt.cells = c("%.5s","%.8s","%.5s","%.6s","%.0f","%.0f","%.15s","%.8s","%.8s","%.8s")
+    fmt.cells = c("%.5s","%.8s","%.5s","%.15s","%.0f","%.0f","%.15s","%.8s","%.8s","%.8s")
     features <- do.call(rbind, Map(data.frame,features=features,fmt.cells=fmt.cells))
     fmt.cell <- as.character(features[feature,]$fmt.cells)
     col <- if(feature %in% c("dilution","rlu","neutralisation")) viridis else rainbow
