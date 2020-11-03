@@ -106,6 +106,7 @@ dashboardPage(
                         ),
                         box(
                             width = 12,
+                            icon("question-circle", lib = "font-awesome"),
                             textInput("exclude_wells",
                                 label = tags$div(
                                     h4("Wells to exclude from analysis (specify any combination of the following, comma-seperated)"),
