@@ -74,6 +74,7 @@ plot_heatmap <- function(plate_number,values,feature,title) {
     plate_df <- assay_df[assay_df$plate_number == plate_number, ]
     feature_list <- unlist(plate_df[[feature]], use.names=FALSE)
     vals <- matrix(feature_list,byrow=T,ncol=12,nrow=8)
+    row.names(vals) <- LETTERS[1:8]
     # Set params for plot based on the feature
     features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed","exclude")
     fmt.cells = c("%.5s","%.8s","%.5s","%.6s","%.0f","%.0f","%.15s","%.8s","%.8s","%.8s")
