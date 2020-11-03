@@ -79,9 +79,7 @@ dashboardPage(
                                          uiOutput("study"),
                                          rHandsontableOutput("study_table")
                                         )
-                            ),
-                            h4("Export to CSV once data entry complete"),
-                            downloadButton("downloadData", "Download")
+                            )
                         )
                     )
             ),
@@ -118,6 +116,9 @@ dashboardPage(
                                 ),
                                 placeholder = "1,2A1,3A1:B12"
                             ),
+                            icon("question-circle", lib = "font-awesome"),
+                            h4("Export to CSV"),
+                            downloadButton("downloadData", "Download"),
                             uiOutput("heatmaps")
                         )
                     )
