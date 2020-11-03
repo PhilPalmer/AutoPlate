@@ -158,14 +158,21 @@ function(input, output, sessions) {
     # Create main dataframe for assay data
     assay_df <- reactive({
         req(input$luminescence_files, input$plate_tabs)
+        # Define variables
         luminescence_files <- input$luminescence_files
+        header <- colnames(read.csv(luminescence_files$datapath[1], nrows=1, header=TRUE))
+        cols <- c("types","subject","dilution","bleed","inoculate","primary","study")
         # Record the previous plate number so that it can be used to check when to update the main assay dataframe
         plate_n <- sub("^\\S+\\s+", '', input$plate_tabs)
         if (is.null(values[["plate_n"]])) {
             values[["plate_n"]] <- list("current"=plate_n,"previous"=plate_n)
         }
         values[["plate_n"]] <- list("current"=plate_n,"previous"=values[["plate_n"]]$current)
-        if (is.null(input$plate_data)){
+        if (is.null(input$plate_data) & all(cols %in% header)) {
+            assay_df <- read.csv(luminescence_files$datapath[1], header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+            values[["assay_df"]] <- assay_df
+        }
+        if (is.null(input$plate_data) & !all(cols %in% header)){
             assay_df <-
                 apply(luminescence_files, 1, function(df) read_plus(df['name'],df['datapath'])) %>% 
                 dplyr::bind_rows() %>%
