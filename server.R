@@ -143,15 +143,16 @@ function(input, output, sessions) {
                           check.names      = FALSE)
     dilution_values <- reactiveValues()
     values <- reactiveValues()
-    
+
     # Create a tab for each uploaded plate
     output$plate_tabs = renderUI({
         if (is.null(input$luminescence_files)) {
-            n_luminescence_files = 1
+            plates <- 1
         } else {
-            n_luminescence_files = length(input$luminescence_files$name)
+            assay_df <- values[["assay_df"]]
+            plates <- unique(isolate(assay_df$plate_number))
         }
-        plate_tabs = lapply(paste('Plate', 1: n_luminescence_files), tabPanel)
+        plate_tabs = lapply(paste('Plate', plates), tabPanel)
         do.call(tabsetPanel, c(plate_tabs,id = "plate_tabs"))
     })
     
