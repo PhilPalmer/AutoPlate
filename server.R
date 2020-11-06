@@ -131,6 +131,14 @@ exclude_wells <- function(assay_df,exclusion_string) {
     return(assay_df)
 }
 
+############
+# 3) Results
+############
+gg_color_hue <- function(n) {
+  hues = seq(15, 375, length = n + 1)
+  hcl(h = hues, l = 65, c = 100)[1:n]
+}
+
 function(input, output, sessions) {
 
     ##########
@@ -394,9 +402,33 @@ function(input, output, sessions) {
     output$drc <- renderPlot({
         req(input$luminescence_files)
         assay_df <- values[["assay_df"]]
-        assay_df <- dplyr::filter(assay_df, exclude == FALSE) # TODO: filter for each primary
-        model <- drc::drm(neutralisation~dilution, curveid=unlist(subject), fct=LL2.4(), data=assay_df)
-        plot(model, type="all", col=TRUE)
+        assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
+        assay_df$subject <- unlist(assay_df$subject)
+        model <- drc::drm(neutralisation~dilution, curveid=subject, fct=LL2.4(), data=assay_df)
+        # plot(model, type="all", col=TRUE)
+
+        n <- 100
+        new_dilution <- exp(seq(log(min(assay_df$dilution)), log(max(assay_df$dilution)), length.out=n))
+        subjects<-unique(assay_df$subject)
+        new_assay_df <- expand.grid(new_dilution, subjects)
+        names(new_assay_df) <- c("dilution", "subject")
+        new_assay_df$inoculate <- assay_df$inoculate[match(new_assay_df$subject, assay_df$subject)]
+        new_assay_df$pred <- predict(model, new_assay_df=new_assay_df,)
+        inoculate_cols <- gg_color_hue(10)
+        # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
+        #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
+        #         'black')
+
+        ggplot(new_assay_df, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+            geom_line() +
+            # geom_point(assay_df=assay_df, aes(y=neutralisation)) +
+            facet_wrap(.~inoculate) +
+            scale_x_continuous(trans="log10") +
+            # scale_colour_manual(values=ccs) +
+            theme_classic() +
+            ylab("Neutralisation") +
+            xlab("Dilutionution") +
+            ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed)))
     })
 
 }
