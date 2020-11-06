@@ -130,10 +130,8 @@ dashboardPage(
                                 width = 12,
                                 # The id lets us use input$tabset_results on the server to find the current tab
                                 id = "tabset_results",
-                                tabPanel("Data Exploration",
-                                    plotOutput("data_exploration")
-                                ),
-                                tabPanel("Dose Response Curve"),
+                                tabPanel("Data Exploration", plotOutput("data_exploration")),
+                                tabPanel("Dose Response Curve", plotOutput("drc")),
                                 tabPanel("IC50 Boxplot"),
                                 tabPanel("Virus + Cell Boxplot"),
                                 tabPanel("Posotive Control")

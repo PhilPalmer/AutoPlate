@@ -6,6 +6,7 @@ library(dplyr)
 library(plot.matrix)
 library(viridis)
 library(ggplot2)
+library(drc)
 
 ##########
 # 1) Input
@@ -389,6 +390,13 @@ function(input, output, sessions) {
             ylim(c(-100, 110)) +
             scale_x_continuous(trans="log10") +
             theme_classic()
+    })
+    output$drc <- renderPlot({
+        req(input$luminescence_files)
+        assay_df <- values[["assay_df"]]
+        assay_df <- dplyr::filter(assay_df, exclude == FALSE) # TODO: filter for each primary
+        model <- drc::drm(neutralisation~dilution, curveid=unlist(subject), fct=LL2.4(), data=assay_df)
+        plot(model, type="all", col=TRUE)
     })
 
 }
