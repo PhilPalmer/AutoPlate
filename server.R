@@ -430,5 +430,23 @@ function(input, output, sessions) {
             xlab("Dilutionution") +
             ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed)))
     })
+    output$cv_boxplot <- renderPlot({
+        req(input$luminescence_files)
+        assay_df <- values[["assay_df"]]
+        assay_df <- dplyr::filter(assay_df, types %in% c("c", "v"), exclude == FALSE)  %>%
+            dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+            dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
+        assay_df$plate_number <- as.factor(assay_df$plate_number)
+
+        ggplot(assay_df, aes(x=types, y=rlu, colour=plate_number)) +
+            geom_boxplot() +
+            geom_point(position=position_dodge(0.75)) +
+            scale_y_continuous(trans="log10") +
+            ylab("Log10 raw value") +
+            xlab("Cell only or Virus only") +
+            theme_classic()
+    })
+
+
 
 }

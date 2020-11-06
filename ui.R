@@ -133,7 +133,7 @@ dashboardPage(
                                 tabPanel("Data Exploration", plotOutput("data_exploration")),
                                 tabPanel("Dose Response Curve", plotOutput("drc")),
                                 tabPanel("IC50 Boxplot"),
-                                tabPanel("Virus + Cell Boxplot"),
+                                tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot")),
                                 tabPanel("Posotive Control")
                         )
                     )
