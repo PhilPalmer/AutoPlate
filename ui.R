@@ -132,7 +132,7 @@ dashboardPage(
                                 id = "tabset_results",
                                 tabPanel("Data Exploration", plotOutput("data_exploration")),
                                 tabPanel("Dose Response Curve", plotOutput("drc")),
-                                tabPanel("IC50 Boxplot"),
+                                tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
                                 tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot")),
                                 tabPanel("Posotive Control")
                         )
