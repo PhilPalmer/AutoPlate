@@ -404,47 +404,46 @@ function(input, output, sessions) {
     })
     output$drc <- renderPlot({
         req(input$luminescence_files)
-        assay_df <- values[["assay_df"]]
-        assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
-        assay_df$subject <- unlist(assay_df$subject)
-        drm_string <- "neutralisation~dilution, curveid=subject, fct=LL2.4(), data=assay_df"
-        model <- eval(parse(text = paste("drc::drm(", drm_string, ")")))
+        data <- values[["assay_df"]]
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
+        data$subject <- unlist(data$subject)        
+        model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
         # plot(model, type="all", col=TRUE)
 
         n <- 100
-        new_dilution <- exp(seq(log(min(assay_df$dilution)), log(max(assay_df$dilution)), length.out=n))
-        subjects<-unique(assay_df$subject)
-        new_assay_df <- expand.grid(new_dilution, subjects)
-        names(new_assay_df) <- c("dilution", "subject")
-        new_assay_df$inoculate <- assay_df$inoculate[match(new_assay_df$subject, assay_df$subject)]
-        new_assay_df$pred <- predict(model, new_assay_df=new_assay_df,)
+        new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
+        subjects<-unique(data$subject)
+        new_data <- expand.grid(new_dilution, subjects)
+        names(new_data) <- c("dilution", "subject")
+        new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
+        new_data$pred <- predict(model, new_data=new_data,)
         inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
         # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
         #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
         #         'black')
 
-        ggplot(new_assay_df, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+        ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
             geom_line() +
-            # geom_point(assay_df=assay_df, aes(y=neutralisation)) +
+            # geom_point(data=data, aes(y=neutralisation)) +
             facet_wrap(.~inoculate) +
             scale_x_continuous(trans="log10") +
             # scale_colour_manual(values=ccs) +
             theme_classic() +
             ylab("Neutralisation") +
             xlab("Dilution") +
-            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
+            ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
     })
     output$ic50_boxplot <- renderPlot({
         req(input$luminescence_files)
-        assay_df <- values[["assay_df"]]
-        assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary?
-        assay_df$subject <- unlist(assay_df$subject)
-        model <- drc::drm(neutralisation~dilution, curveid=subject, fct=LL2.4(), data=assay_df)
+        data <- values[["assay_df"]]
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary?
+        data$subject <- unlist(data$subject)
+        model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
 
         ied <- as.data.frame(ED(model, 50, display=FALSE))
         ied$subject <- gsub("e:|:50", "", row.names(ied))
-        ied$inoculate <- assay_df$inoculate[match(ied$subject, assay_df$subject)]
-        ied$plate_number <- assay_df$plate_number[match(ied$subject, assay_df$subject)]
+        ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
+        ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
         #Average Neutralisation
         avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
         ied_order <- avied$inoculate[order(avied$av)]
@@ -457,7 +456,7 @@ function(input, output, sessions) {
             ylab(expression("Individual IC50 log"[10])) +
             xlab("Inoculate") +
             theme_classic() +
-            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary))) +
+            ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
             coord_flip()
     })
     output$cv_boxplot <- renderPlot({
