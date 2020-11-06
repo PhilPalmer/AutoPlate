@@ -441,17 +441,17 @@ function(input, output, sessions) {
         ied$subject <- gsub("e:|:50", "", row.names(ied))
         ied$inoculate <- assay_df$inoculate[match(ied$subject, assay_df$subject)]
         ied$plate_number <- assay_df$plate_number[match(ied$subject, assay_df$subject)]
-
         #Average Neutralisation
         avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
         ied_order <- avied$inoculate[order(avied$av)]
+
         ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
             geom_boxplot() +
             geom_point() +
             # scale_colour_manual(values=ccs) +
             scale_x_discrete(limits=ied_order) +
             ylab(expression("Individual IC50 log"[10])) +
-            xlab("Vaccine") +
+            xlab("Inoculate") +
             theme_classic() +
             ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed))) +
             coord_flip()
@@ -472,7 +472,5 @@ function(input, output, sessions) {
             xlab("Cell only or Virus only") +
             theme_classic()
     })
-
-
 
 }
