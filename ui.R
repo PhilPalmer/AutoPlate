@@ -125,17 +125,20 @@ dashboardPage(
             ),
             tabItem(tabName = "results",
                     fluidRow(
-                        textInput("drm_string", "DRM model", value="formula=neutralisation~dilution, curveid=subject, fct=LL2.4(), data=data", width="100%"),
-                        tabBox(
-                                title = "",
-                                width = 12,
-                                # The id lets us use input$tabset_results on the server to find the current tab
-                                id = "tabset_results",
-                                tabPanel("Data Exploration", plotOutput("data_exploration")),
-                                tabPanel("Dose Response Curve", plotOutput("drc")),
-                                tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
-                                tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))
-                                # tabPanel("Posotive Control")
+                        box(
+                            width = 12,
+                            textInput("drm_string", "DRM model", value="formula=neutralisation~dilution, curveid=subject, fct=LL2.4(), data=data", width="100%"),
+                            tabBox(
+                                    title = "",
+                                    width = 12,
+                                    # The id lets us use input$tabset_results on the server to find the current tab
+                                    id = "tabset_results",
+                                    tabPanel("Data Exploration", plotOutput("data_exploration")),
+                                    tabPanel("Dose Response Curve", plotOutput("drc")),
+                                    tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
+                                    tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))
+                                    # tabPanel("Posotive Control")
+                            )
                         )
                     )
             )
