@@ -397,7 +397,9 @@ function(input, output, sessions) {
             facet_wrap(.~primary) +
             ylim(c(-100, 110)) +
             scale_x_continuous(trans="log10") +
-            theme_classic()
+            theme_classic() +
+            ylab("Neutralisation") +
+            xlab("Dilution")
     })
     output$drc <- renderPlot({
         req(input$luminescence_files)
