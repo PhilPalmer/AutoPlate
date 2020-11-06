@@ -427,7 +427,7 @@ function(input, output, sessions) {
             # scale_colour_manual(values=ccs) +
             theme_classic() +
             ylab("Neutralisation") +
-            xlab("Dilutionution") +
+            xlab("Dilution") +
             ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed)))
     })
     output$ic50_boxplot <- renderPlot({
