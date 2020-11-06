@@ -414,7 +414,7 @@ function(input, output, sessions) {
         names(new_assay_df) <- c("dilution", "subject")
         new_assay_df$inoculate <- assay_df$inoculate[match(new_assay_df$subject, assay_df$subject)]
         new_assay_df$pred <- predict(model, new_assay_df=new_assay_df,)
-        inoculate_cols <- gg_color_hue(10)
+        inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
         # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
         #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
         #         'black')
