@@ -399,7 +399,8 @@ function(input, output, sessions) {
             scale_x_continuous(trans="log10") +
             theme_classic() +
             ylab("Neutralisation") +
-            xlab("Dilution")
+            xlab("Dilution") +
+            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
     })
     output$drc <- renderPlot({
         req(input$luminescence_files)
@@ -430,7 +431,7 @@ function(input, output, sessions) {
             theme_classic() +
             ylab("Neutralisation") +
             xlab("Dilution") +
-            ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed)))
+            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
     })
     output$ic50_boxplot <- renderPlot({
         req(input$luminescence_files)
@@ -455,7 +456,7 @@ function(input, output, sessions) {
             ylab(expression("Individual IC50 log"[10])) +
             xlab("Inoculate") +
             theme_classic() +
-            ggtitle(paste(unique(assay_df$study), "bleed", unique(assay_df$bleed))) +
+            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary))) +
             coord_flip()
     })
     output$cv_boxplot <- renderPlot({
@@ -472,7 +473,8 @@ function(input, output, sessions) {
             scale_y_continuous(trans="log10") +
             ylab("Log10 raw value") +
             xlab("Cell only or Virus only") +
-            theme_classic()
+            theme_classic() +
+            ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
     })
 
 }
