@@ -407,7 +407,8 @@ function(input, output, sessions) {
         assay_df <- values[["assay_df"]]
         assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
         assay_df$subject <- unlist(assay_df$subject)
-        model <- drc::drm(neutralisation~dilution, curveid=subject, fct=LL2.4(), data=assay_df)
+        drm_string <- "neutralisation~dilution, curveid=subject, fct=LL2.4(), data=assay_df"
+        model <- eval(parse(text = paste("drc::drm(", drm_string, ")")))
         # plot(model, type="all", col=TRUE)
 
         n <- 100
