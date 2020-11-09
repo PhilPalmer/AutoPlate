@@ -428,6 +428,9 @@ function(input, output, sessions) {
     observeEvent(input$go_primary,update_feature("primary",input,values))
     observeEvent(input$go_study,update_feature("study",input,values))
 
+    #######
+    # 2) QC
+    #######
     # Download/export data to CSV 
     output$downloadData <- downloadHandler(
         # TODO: generate more unique name for file based on experiment ID etc.
@@ -444,10 +447,6 @@ function(input, output, sessions) {
                 col.names = T)
         }
     )
-
-    #######
-    # 2) QC
-    #######
     # Update main assay dataframe with excluded plates
     observeEvent(input$exclude_wells, {
         req(input$luminescence_files)
@@ -461,9 +460,17 @@ function(input, output, sessions) {
         assay_df <- isolate(values[["assay_df"]])
         # TODO: add plates to reactive values so that it can be accessed globally
         plates <- unique(assay_df$plate_number)
-        av_cell_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu) })
-        av_viral_lum <- lapply(plates, function(plate_n) { mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu) })
-        av_lum_df <- do.call(rbind, Map(data.frame,plate_number=plates,average_cell_luminescence=av_cell_lum,average_viral_luminescence=av_viral_lum))
+        av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
+        av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
+        no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
+        no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
+        av_lum_df <- do.call(rbind, Map(data.frame,
+            plate_number=plates,
+            average_cell_luminescence=av_cell_lum,
+            average_viral_luminescence=av_viral_lum,
+            number_of_cell_wells=no_cell_wells,
+            number_of_virus_wells=no_viral_wells
+        ))
         return(av_lum_df)
     })
     # Generate plots for each plate on change of the QC tabs
