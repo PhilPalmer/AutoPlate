@@ -127,7 +127,7 @@ dashboardPage(
                     fluidRow(
                         box(
                             width = 12,
-                            textInput("drm_string", "DRM model", value="formula=neutralisation~dilution, curveid=subject, fct=LL2.4(), data=data", width="100%"),
+                            textInput("drm_string", "DRM model", value="formula=neutralisation~dilution, curveid=subject, fct=LL2.4(), data=data, pmodels=data.frame(1,1,1,subject), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,NA)", width="100%"),
                             tabBox(
                                     title = "",
                                     width = 12,
