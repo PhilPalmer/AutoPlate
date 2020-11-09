@@ -53,6 +53,7 @@ create_feature_table <- function(new_feature,input,values) {
     req(input[[new_feature]])
     assay_df <- isolate(values[["assay_df"]])
     feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
+    feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
     new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
     names(new_feature_df) <- input[[new_feature]]
     new_feature_df[[new_feature]] <- as.character(NA)
