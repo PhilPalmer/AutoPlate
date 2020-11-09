@@ -160,6 +160,37 @@ print_data_exploration_code <- function() {
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
     '
 }
+print_drc_code <- function(drm_string) {
+    paste0('
+    library(dplyr)
+    library(drc)
+    library(ggplot2)
+
+    platelist_file <- "pmn_platelist.csv"
+
+    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    data$subject <- unlist(data$subject)        
+    model <- drc::drm(',drm_string,')
+    n <- 100
+    new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
+    subjects<-unique(data$subject)
+    new_data <- expand.grid(new_dilution, subjects)
+    names(new_data) <- c("dilution", "subject")
+    new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
+    new_data$pred <- predict(model, new_data=new_data,)
+
+    ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+        geom_line() +
+        geom_point(data=data, aes(y=neutralisation)) +
+        facet_wrap(.~inoculate) +
+        scale_x_continuous(trans="log10") +
+        theme_classic() +
+        ylab("Neutralisation") +
+        xlab("Dilution") +
+        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    ')
+}
 
 function(input, output, sessions) {
 
@@ -457,6 +488,9 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    })
+    output$drc_code <- renderText({
+        print_drc_code(input$drm_string)
     })
     output$ic50_boxplot <- renderPlot({
         req(input$luminescence_files)

@@ -140,7 +140,14 @@ dashboardPage(
                                             tabPanel("View code", verbatimTextOutput("data_exploration_code"))
                                         )
                                     ),
-                                    tabPanel("Dose Response Curve", plotOutput("drc")),
+                                    tabPanel("Dose Response Curve",
+                                        tabBox(
+                                            width = 12,
+                                            id = "tabset_results_drc",
+                                            tabPanel("View Plot", plotOutput("drc")),
+                                            tabPanel("View code", verbatimTextOutput("drc_code"))
+                                        )
+                                    ),
                                     tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
                                     tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))
                                     # tabPanel("Posotive Control")
