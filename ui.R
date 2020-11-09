@@ -129,11 +129,17 @@ dashboardPage(
                             width = 12,
                             textInput("drm_string", "DRM model", value="formula=neutralisation~dilution, curveid=subject, fct=LL2.4(), data=data, pmodels=data.frame(1,1,1,subject), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,NA)", width="100%"),
                             tabBox(
-                                    title = "",
                                     width = 12,
                                     # The id lets us use input$tabset_results on the server to find the current tab
                                     id = "tabset_results",
-                                    tabPanel("Data Exploration", plotOutput("data_exploration")),
+                                    tabPanel("Data Exploration",
+                                        tabBox(
+                                            width = 12,
+                                            id = "tabset_results_data",
+                                            tabPanel("View Plot", plotOutput("data_exploration")),
+                                            tabPanel("View code", verbatimTextOutput("data_exploration_code"))
+                                        )
+                                    ),
                                     tabPanel("Dose Response Curve", plotOutput("drc")),
                                     tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
                                     tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))

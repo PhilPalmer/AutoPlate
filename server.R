@@ -402,6 +402,31 @@ function(input, output, sessions) {
             xlab("Dilution") +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
     })
+    output$data_exploration_code <- renderText({
+        assay_df <- isolate(values[["assay_df"]])
+        assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
+        ggtitle <- paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary))
+        paste0('
+        library(dplyr)
+        library(ggplot2)
+
+        platelist_file <- "pmn_platelist.csv"
+
+        data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+
+        ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+            geom_point() +
+            geom_smooth(se=F, span=1) +
+            facet_wrap(.~primary) +
+            ylim(c(-100, 110)) +
+            scale_x_continuous(trans="log10") +
+            theme_classic() +
+            ylab("Neutralisation") +
+            xlab("Dilution") +
+            ggtitle("',ggtitle,'")
+        ')
+    })
     output$drc <- renderPlot({
         req(input$luminescence_files)
         data <- values[["assay_df"]]
