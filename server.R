@@ -221,6 +221,29 @@ print_ic50_boxplot_code <- function(drm_string) {
         coord_flip()
     ')
 }
+print_cv_boxplot_code <- function() {
+    '
+    library(dplyr)
+    library(ggplot2)
+
+    platelist_file <- "pmn_platelist.csv"
+
+    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+    data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
+        dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+        dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
+    data$plate_number <- as.factor(data$plate_number)
+
+    ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
+        geom_boxplot() +
+        geom_point(position=position_dodge(0.75)) +
+        scale_y_continuous(trans="log10") +
+        ylab("Log10 raw luminescence value") +
+        xlab("Cell only or Virus only") +
+        theme_classic() +
+        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    '
+}
 
 function(input, output, sessions) {
 
@@ -474,6 +497,7 @@ function(input, output, sessions) {
     output$data_exploration_code <- renderText(print_data_exploration_code())
     output$drc_code              <- renderText(print_drc_code(input$drm_string))
     output$ic50_boxplot_code     <- renderText(print_ic50_boxplot_code(input$drm_string))
+    output$cv_boxplot_code       <- renderText(print_cv_boxplot_code())
     # Generate plots to display
     output$data_exploration <- renderPlot({
         req(input$luminescence_files)

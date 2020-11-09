@@ -135,7 +135,6 @@ dashboardPage(
                                     tabPanel("Data Exploration",
                                         tabBox(
                                             width = 12,
-                                            id = "tabset_results_data",
                                             tabPanel("View Plot", plotOutput("data_exploration")),
                                             tabPanel("View code", verbatimTextOutput("data_exploration_code"))
                                         )
@@ -143,7 +142,6 @@ dashboardPage(
                                     tabPanel("Dose Response Curve",
                                         tabBox(
                                             width = 12,
-                                            id = "tabset_results_drc",
                                             tabPanel("View Plot", plotOutput("drc")),
                                             tabPanel("View code", verbatimTextOutput("drc_code"))
                                         )
@@ -151,12 +149,17 @@ dashboardPage(
                                     tabPanel("IC50 Boxplot",
                                         tabBox(
                                             width = 12,
-                                            id = "tabset_results_drc",
                                             tabPanel("View Plot", plotOutput("ic50_boxplot")),
                                             tabPanel("View code", verbatimTextOutput("ic50_boxplot_code"))
                                         )
                                     ),
-                                    tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))
+                                    tabPanel("Virus + Cell Boxplot",
+                                        tabBox(
+                                            width = 12,
+                                            tabPanel("View Plot", plotOutput("cv_boxplot")),
+                                            tabPanel("View code", verbatimTextOutput("cv_boxplot_code"))
+                                        )
+                                    )
                                     # tabPanel("Posotive Control")
                             )
                         )
