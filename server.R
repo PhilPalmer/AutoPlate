@@ -471,7 +471,7 @@ function(input, output, sessions) {
             geom_boxplot() +
             geom_point(position=position_dodge(0.75)) +
             scale_y_continuous(trans="log10") +
-            ylab("Log10 raw value") +
+            ylab("Log10 raw luminescence value") +
             xlab("Cell only or Virus only") +
             theme_classic() +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
