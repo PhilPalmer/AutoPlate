@@ -180,7 +180,7 @@ print_drc_code <- function(drm_string) {
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
     new_data$pred <- predict(model, new_data=new_data,)
 
-    ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+    ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
         facet_wrap(.~inoculate) +
@@ -189,6 +189,36 @@ print_drc_code <- function(drm_string) {
         ylab("Neutralisation") +
         xlab("Dilution") +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    ')
+}
+print_ic50_boxplot_code <- function(drm_string) {
+    paste0('
+    library(dplyr)
+    library(drc)
+    library(ggplot2)
+
+    platelist_file <- "pmn_platelist.csv"
+
+    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    model <- drc::drm(',drm_string,')
+    ied <- as.data.frame(ED(model, 50, display=FALSE))
+    ied$subject <- gsub("e:|:50", "", row.names(ied))
+    ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
+    ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
+    # Average Neutralisation
+    avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
+    ied_order <- avied$inoculate[order(avied$av)]
+
+    ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
+        geom_boxplot() +
+        geom_point() +
+        scale_x_discrete(limits=ied_order) +
+        ylab(expression("Individual IC50 log"[10])) +
+        xlab("Inoculate") +
+        theme_classic() +
+        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
+        coord_flip()
     ')
 }
 
@@ -440,11 +470,16 @@ function(input, output, sessions) {
     ############
     # 3) Results
     ############
+    # Generate raw R code output to display 
+    output$data_exploration_code <- renderText(print_data_exploration_code())
+    output$drc_code              <- renderText(print_drc_code(input$drm_string))
+    output$ic50_boxplot_code     <- renderText(print_ic50_boxplot_code(input$drm_string))
+    # Generate plots to display
     output$data_exploration <- renderPlot({
         req(input$luminescence_files)
         assay_df <- values[["assay_df"]]
         assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
-        ggplot(assay_df, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+        ggplot2::ggplot(assay_df, aes(x=dilution, y=neutralisation, colour=inoculate)) +
             geom_point() +
             geom_smooth(se=F, span=1) +
             facet_wrap(.~primary) +
@@ -454,9 +489,6 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    })
-    output$data_exploration_code <- renderText({
-        print_data_exploration_code()
     })
     output$drc <- renderPlot({
         req(input$luminescence_files)
@@ -478,7 +510,7 @@ function(input, output, sessions) {
         #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
         #         'black')
 
-        ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+        ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
             geom_line() +
             geom_point(data=data, aes(y=neutralisation)) +
             facet_wrap(.~inoculate) +
@@ -488,9 +520,6 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    })
-    output$drc_code <- renderText({
-        print_drc_code(input$drm_string)
     })
     output$ic50_boxplot <- renderPlot({
         req(input$luminescence_files)
@@ -507,7 +536,7 @@ function(input, output, sessions) {
         avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
         ied_order <- avied$inoculate[order(avied$av)]
 
-        ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
+        ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
             geom_boxplot() +
             geom_point() +
             # scale_colour_manual(values=ccs) +
@@ -526,7 +555,7 @@ function(input, output, sessions) {
             dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
         assay_df$plate_number <- as.factor(assay_df$plate_number)
 
-        ggplot(assay_df, aes(x=types, y=rlu, colour=plate_number)) +
+        ggplot2::ggplot(assay_df, aes(x=types, y=rlu, colour=plate_number)) +
             geom_boxplot() +
             geom_point(position=position_dodge(0.75)) +
             scale_y_continuous(trans="log10") +

@@ -148,7 +148,14 @@ dashboardPage(
                                             tabPanel("View code", verbatimTextOutput("drc_code"))
                                         )
                                     ),
-                                    tabPanel("IC50 Boxplot", plotOutput("ic50_boxplot")),
+                                    tabPanel("IC50 Boxplot",
+                                        tabBox(
+                                            width = 12,
+                                            id = "tabset_results_drc",
+                                            tabPanel("View Plot", plotOutput("ic50_boxplot")),
+                                            tabPanel("View code", verbatimTextOutput("ic50_boxplot_code"))
+                                        )
+                                    ),
                                     tabPanel("Virus + Cell Boxplot", plotOutput("cv_boxplot"))
                                     # tabPanel("Posotive Control")
                             )
