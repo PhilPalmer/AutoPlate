@@ -424,7 +424,7 @@ function(input, output, sessions) {
 
         ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
             geom_line() +
-            # geom_point(data=data, aes(y=neutralisation)) +
+            geom_point(data=data, aes(y=neutralisation)) +
             facet_wrap(.~inoculate) +
             scale_x_continuous(trans="log10") +
             # scale_colour_manual(values=ccs) +
