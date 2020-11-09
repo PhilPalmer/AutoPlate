@@ -134,10 +134,10 @@ exclude_wells <- function(assay_df,exclusion_string) {
 ############
 # 3) Results
 ############
-gg_color_hue <- function(n) {
-  hues = seq(15, 375, length = n + 1)
-  hcl(h = hues, l = 65, c = 100)[1:n]
-}
+# gg_color_hue <- function(n) {
+#   hues = seq(15, 375, length = n + 1)
+#   hcl(h = hues, l = 65, c = 100)[1:n]
+# }
 
 function(input, output, sessions) {
 
@@ -442,7 +442,7 @@ function(input, output, sessions) {
         names(new_data) <- c("dilution", "subject")
         new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
         new_data$pred <- predict(model, new_data=new_data,)
-        inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
+        # inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
         # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
         #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
         #         'black')
