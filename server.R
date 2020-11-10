@@ -544,6 +544,10 @@ function(input, output, sessions) {
         filename = "data_exploration.png",
         content = function(file) ggsave(file, plot=values[["data_exploration"]])
     )
+    output$download_drc <- downloadHandler(
+        filename = "drc.png",
+        content = function(file) ggsave(file, plot=values[["drc"]])
+    )
     # Generate plots to display
     output$data_exploration <- renderPlot({
         req(input$luminescence_files)
@@ -581,7 +585,7 @@ function(input, output, sessions) {
         #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10], 
         #         'black')
 
-        ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+        values[["drc"]] <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
             geom_line() +
             geom_point(data=data, aes(y=neutralisation)) +
             facet_wrap(.~inoculate) +
@@ -591,6 +595,7 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+        values[["drc"]]
     })
     output$ic50_boxplot <- renderPlot({
         req(input$luminescence_files)

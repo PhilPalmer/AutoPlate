@@ -143,6 +143,8 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("Dose Response Curve",
+										downloadButton("download_drc", "Download PNG Plot"),
+										br(), br(),
                                         tabBox(
                                             width = 12,
                                             tabPanel("View Plot", plotOutput("drc")),
