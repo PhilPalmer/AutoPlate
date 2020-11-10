@@ -161,6 +161,8 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("Virus + Cell Boxplot",
+										downloadButton("download_cv_boxplot", "Download PNG Plot"),
+										br(), br(),
                                         tabBox(
                                             width = 12,
                                             tabPanel("View Plot", plotOutput("cv_boxplot")),

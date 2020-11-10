@@ -552,6 +552,10 @@ function(input, output, sessions) {
         filename = "ic50.png",
         content = function(file) ggsave(file, plot=values[["ic50"]])
     )
+    output$download_cv_boxplot <- downloadHandler(
+        filename = "cv_boxplot.png",
+        content = function(file) ggsave(file, plot=values[["cv_boxplot"]])
+    )
     # Generate plots to display
     output$data_exploration <- renderPlot({
         req(input$luminescence_files)
@@ -636,7 +640,7 @@ function(input, output, sessions) {
             dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
         assay_df$plate_number <- as.factor(assay_df$plate_number)
 
-        ggplot2::ggplot(assay_df, aes(x=types, y=rlu, colour=plate_number)) +
+        values[["cv_boxplot"]] <- ggplot2::ggplot(assay_df, aes(x=types, y=rlu, colour=plate_number)) +
             geom_boxplot() +
             geom_point(position=position_dodge(0.75)) +
             scale_y_continuous(trans="log10") +
@@ -644,6 +648,7 @@ function(input, output, sessions) {
             xlab("Cell only or Virus only") +
             theme_classic() +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
+        values[["cv_boxplot"]]
     })
 
 }
