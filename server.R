@@ -435,7 +435,7 @@ function(input, output, sessions) {
     # 2) QC
     #######
     # Download/export data to CSV 
-    output$downloadData <- downloadHandler(
+    output$download_data <- downloadHandler(
         # TODO: generate more unique name for file based on experiment ID etc.
         filename = function() {
             paste("pmn_platelist", ".csv", sep = "")
@@ -529,8 +529,8 @@ function(input, output, sessions) {
             # child of the global environment (this isolates the code in the document
             # from the code in this app).
             rmarkdown::render(tempReport, output_file = file,
-            params = params,
-            envir = new.env(parent = globalenv())
+                params = params,
+                envir = new.env(parent = globalenv())
             )
         }
     )
