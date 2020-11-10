@@ -152,6 +152,8 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("IC50 Boxplot",
+										downloadButton("download_ic50", "Download PNG Plot"),
+										br(), br(),
                                         tabBox(
                                             width = 12,
                                             tabPanel("View Plot", plotOutput("ic50_boxplot")),

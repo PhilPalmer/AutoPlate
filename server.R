@@ -543,10 +543,14 @@ function(input, output, sessions) {
     output$download_data_exploration <- downloadHandler(
         filename = "data_exploration.png",
         content = function(file) ggsave(file, plot=values[["data_exploration"]])
-    )
+    )  
     output$download_drc <- downloadHandler(
         filename = "drc.png",
         content = function(file) ggsave(file, plot=values[["drc"]])
+    )
+    output$download_ic50 <- downloadHandler(
+        filename = "ic50.png",
+        content = function(file) ggsave(file, plot=values[["ic50"]])
     )
     # Generate plots to display
     output$data_exploration <- renderPlot({
@@ -612,7 +616,7 @@ function(input, output, sessions) {
         avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
         ied_order <- avied$inoculate[order(avied$av)]
 
-        ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
+        values[["ic50"]] <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
             geom_boxplot() +
             geom_point() +
             # scale_colour_manual(values=ccs) +
@@ -622,6 +626,7 @@ function(input, output, sessions) {
             theme_classic() +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
             coord_flip()
+        values[["ic50"]]
     })
     output$cv_boxplot <- renderPlot({
         req(input$luminescence_files)
