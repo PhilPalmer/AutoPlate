@@ -134,7 +134,7 @@ dashboardPage(
                                     # The id lets us use input$tabset_results on the server to find the current tab
                                     id = "tabset_results",
                                     tabPanel("Data Exploration",
-										downloadButton("download_data_exploration", "Download SVG Plot"),
+										downloadButton("download_data_exploration", "Download PNG Plot"),
 										br(), br(),
                                         tabBox(
                                             width = 12,
@@ -143,7 +143,7 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("Dose Response Curve",
-										downloadButton("download_drc", "Download SVG Plot"),
+										downloadButton("download_drc", "Download PNG Plot"),
 										br(), br(),
                                         tabBox(
                                             width = 12,
@@ -152,7 +152,7 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("IC50 Boxplot",
-										downloadButton("download_ic50", "Download SVG Plot"),
+										downloadButton("download_ic50", "Download PNG Plot"),
 										br(), br(),
                                         tabBox(
                                             width = 12,
@@ -161,7 +161,7 @@ dashboardPage(
                                         )
                                     ),
                                     tabPanel("Virus + Cell Boxplot",
-										downloadButton("download_cv_boxplot", "Download SVG Plot"),
+										downloadButton("download_cv_boxplot", "Download PNG Plot"),
 										br(), br(),
                                         tabBox(
                                             width = 12,

@@ -9,7 +9,6 @@ library(ggplot2)
 library(drc)
 library(rmarkdown)
 library(knitr)
-library(svglite)
 
 ##########
 # 1) Input
@@ -542,19 +541,19 @@ function(input, output, sessions) {
     output$cv_boxplot_code       <- renderText(print_cv_boxplot_code())
     # Download plots
     output$download_data_exploration <- downloadHandler(
-        filename = "data_exploration.svg",
+        filename = "data_exploration.png",
         content = function(file) ggsave(file, plot=values[["data_exploration"]])
     )  
     output$download_drc <- downloadHandler(
-        filename = "drc.svg",
+        filename = "drc.png",
         content = function(file) ggsave(file, plot=values[["drc"]])
     )
     output$download_ic50 <- downloadHandler(
-        filename = "ic50.svg",
+        filename = "ic50.png",
         content = function(file) ggsave(file, plot=values[["ic50"]])
     )
     output$download_cv_boxplot <- downloadHandler(
-        filename = "cv_boxplot.svg",
+        filename = "cv_boxplot.png",
         content = function(file) ggsave(file, plot=values[["cv_boxplot"]])
     )
     # Generate plots to display
