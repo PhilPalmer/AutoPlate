@@ -57,6 +57,26 @@ dim(assay_df)[1] - dim(data)[1]
 
 # Quality Control
 
+## Average Virus + Cell Luminescence
+
+```{r, layout="l-body-outset"}
+av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
+av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
+no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
+no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
+av_lum_df <- do.call(rbind, Map(data.frame,
+    plate_number=plates,
+    average_cell_luminescence=av_cell_lum,
+    average_viral_luminescence=av_viral_lum,
+    number_of_cell_wells=no_cell_wells,
+    number_of_virus_wells=no_viral_wells
+))
+knitr::kable(av_lum_df)
+```
+
+
+## Heatmaps for The 96 Well Plate(s)
+
 ```{r}
 plot_heatmap <- function(plate_number,assay_df,feature,title) {
     plate_df <- assay_df[assay_df$plate_number == plate_number, ]
@@ -87,7 +107,7 @@ for (feature in features) {
 # Results
 
 
-## Data exploration
+## Data Exploration
 
 ```{r}
 data <- dplyr::filter(data, types %in% c("x", "m"))
@@ -172,7 +192,7 @@ ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
     ggtitle(title)
 ```
 
-# Session info for reproducibility
+# Session Info for Reproducibility
 
 ```{r}
 sessionInfo()
