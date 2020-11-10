@@ -134,6 +134,8 @@ dashboardPage(
                                     # The id lets us use input$tabset_results on the server to find the current tab
                                     id = "tabset_results",
                                     tabPanel("Data Exploration",
+										downloadButton("download_data_exploration", "Download SVG Plot"),
+										br(), br(),
                                         tabBox(
                                             width = 12,
                                             tabPanel("View Plot", plotOutput("data_exploration")),

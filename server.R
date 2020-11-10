@@ -539,12 +539,17 @@ function(input, output, sessions) {
     output$drc_code              <- renderText(print_drc_code(input$drm_string))
     output$ic50_boxplot_code     <- renderText(print_ic50_boxplot_code(input$drm_string))
     output$cv_boxplot_code       <- renderText(print_cv_boxplot_code())
+    # Download plots
+    output$download_data_exploration <- downloadHandler(
+        filename = "data_exploration.png",
+        content = function(file) ggsave(file, plot=values[["data_exploration"]])
+    )
     # Generate plots to display
     output$data_exploration <- renderPlot({
         req(input$luminescence_files)
         assay_df <- values[["assay_df"]]
         assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
-        ggplot2::ggplot(assay_df, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+        values[["data_exploration"]] <- ggplot2::ggplot(assay_df, aes(x=dilution, y=neutralisation, colour=inoculate)) +
             geom_point() +
             geom_smooth(se=F, span=1) +
             facet_wrap(.~primary) +
@@ -554,6 +559,7 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
+        values[["data_exploration"]]
     })
     output$drc <- renderPlot({
         req(input$luminescence_files)
