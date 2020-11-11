@@ -319,6 +319,9 @@ function(input, output, sessions) {
             x = serum sample"
         )
     })
+    output$tooltip_features <- renderText({
+        create_tooltip("Set the values for new features such as the \"primary\" based on existing features such as the \"subject\" (i.e. mouse number)")
+    })
     # Create message to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {

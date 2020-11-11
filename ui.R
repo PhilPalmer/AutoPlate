@@ -98,7 +98,7 @@ dashboardPage(
                         box(
                             title = "Other features*",
                             width = 12,
-                            icon("question-circle", lib = "font-awesome"),
+							uiOutput(outputId = "tooltip_features"),
                             tabBox(
                                 title = "",
                                 width = 8,
