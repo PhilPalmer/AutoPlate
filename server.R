@@ -301,6 +301,10 @@ function(input, output, sessions) {
     dilution_values <- reactiveValues()
     values <- reactiveValues()
 
+    # Create tooltip icons
+    output$tooltip_input_files <- renderText({
+        HTML("<i class='fa fa-question-circle' title='Raw plate readout CSV files specifying all of the wells and their luminescence values'</i>")
+    })
     # Create messages to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {

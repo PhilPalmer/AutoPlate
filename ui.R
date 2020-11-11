@@ -75,7 +75,7 @@ dashboardPage(
                             title = "Luminescence files*",
                             width = 6,
 							uiOutput(outputId = "message_input_files"),
-                            icon("question-circle", lib = "font-awesome"),
+							uiOutput(outputId = "tooltip_input_files"),
                             fileInput("luminescence_files", "Please select all luminescence readout CSV files (OR a CSV exported from AutoPlate)",
                                       multiple = TRUE,
                                       accept = c("text/csv",
