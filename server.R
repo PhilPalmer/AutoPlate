@@ -20,6 +20,9 @@ read_plus <- function(name,file) {
     read.csv(file) %>% 
         dplyr::mutate(filename = name)
 }
+create_tooltip <- function(text) {
+    HTML(paste0("<i class='fa fa-question-circle' title='",text,"'</i>"))
+}
 init_subject <- function(assay_df,wcol1,wcol2,subject) {
     assay_df$subject <- ifelse(
         assay_df$wcol == wcol1 | assay_df$wcol == wcol2, paste("Mouse",(as.numeric(assay_df$plate_number)-1)*5+subject), assay_df$subject
@@ -303,9 +306,9 @@ function(input, output, sessions) {
 
     # Create tooltip icons
     output$tooltip_input_files <- renderText({
-        HTML("<i class='fa fa-question-circle' title='Raw plate readout CSV files specifying all of the wells and their luminescence values'</i>")
+        create_tooltip("Raw plate readout CSV files specifying all of the wells and their luminescence values")
     })
-    # Create messages to display to user
+    # Create message to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {
             box(HTML(paste0(
