@@ -323,7 +323,7 @@ function(input, output, sessions) {
         create_tooltip("Set the values for new features such as the \"primary\" based on existing features such as the \"subject\" (i.e. mouse number)")
     })
     output$tooltip_exclude <- renderText({
-        create_tooltip("You may wish to exclude certain wells/plates if they have failed the control")
+        create_tooltip("You may wish to exclude certain wells/plates if they have failed the control for example")
     })
     output$tooltip_download_data <- renderText({
         create_tooltip("Export the full assay dataframe as a CSV")
