@@ -85,7 +85,7 @@ dashboardPage(
                         box(
                             title = "Concentrations/dilutions*",
                             width = 6,
-                            icon("question-circle", lib = "font-awesome"),
+							uiOutput(outputId = "tooltip_dilutions"),
                             rHandsontableOutput("dilutions")
                         ),
                         box(

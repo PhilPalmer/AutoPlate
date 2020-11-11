@@ -308,6 +308,9 @@ function(input, output, sessions) {
     output$tooltip_input_files <- renderText({
         create_tooltip("Raw plate readout CSV files specifying all of the wells and their luminescence values")
     })
+    output$tooltip_dilutions <- renderText({
+        create_tooltip("Dilutions will be used to set the corresponding rows in the 96-well plate")
+    })
     # Create message to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {
