@@ -323,7 +323,7 @@ function(input, output, sessions) {
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {
             box(HTML(paste0(
-                "<p>You will need to upload your CSV files first to use the app which meet the following criteria:<p>
+                "<p>You will need to upload your CSV files <b>first</b> to use the app which meet the following criteria:<p>
                     <ul>
                         <li>The file names end with the plate number, such as \"n1.csv\" for plate 1, 
                             for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
