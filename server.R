@@ -311,6 +311,14 @@ function(input, output, sessions) {
     output$tooltip_dilutions <- renderText({
         create_tooltip("Dilutions will be used to set the corresponding rows in the 96-well plate")
     })
+    output$tooltip_plates <- renderText({
+        create_tooltip("Specify the subject (eg \"Mouse 1\") and type (eg \"x\") for each well
+            c = cell only control
+            m = monoclonal antibody (posotive control)
+            v = virus (or pseudotype) only control
+            x = serum sample"
+        )
+    })
     # Create message to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {

@@ -91,9 +91,7 @@ dashboardPage(
                         box(
                             title = "96-Well Plate Data*",
                             width = 12,
-                            icon("question-circle", lib = "font-awesome"),
-                            # TODO: Hide message below once user has uploaded their luminescence files
-                            "Before entering the plate data you must upload your luminescence files above.",
+							uiOutput(outputId = "tooltip_plates"),
                             uiOutput('plate_tabs'),
                             rHandsontableOutput("plate_data")
                         ),
