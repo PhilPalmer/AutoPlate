@@ -328,7 +328,10 @@ function(input, output, sessions) {
     output$tooltip_download_data <- renderText({
         create_tooltip("Export the full assay dataframe as a CSV")
     })
-    # Create message to display to user
+    output$tooltip_download_report <- renderText({
+        create_tooltip("Export all QC and results plots as a shareable HTML file")
+    })
+    # Create messages to display to user
     output$message_input_files <- renderUI({
         if (is.null(input$luminescence_files)) {
             box(HTML(paste0(
@@ -343,7 +346,9 @@ function(input, output, sessions) {
             )), width=12, background = 'yellow')
         }
     })
-
+    output$message_drm_string <- renderText({
+        HTML("<p>Dose Response Model: specify the model for the dose response curve as per the <a href='https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/drm'>DRM function</a></p>")
+    })
     # Create a tab for each uploaded plate
     output$plate_tabs = renderUI({
         if (is.null(input$luminescence_files)) {
