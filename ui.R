@@ -17,11 +17,57 @@ dashboardPage(
         ),
         tabItems(
             tabItem(tabName = "home",
-                    fluidRow(
-                        box(
-                            title = "Home"
-                        )
+                        shiny::tagList(
+        shiny::fluidRow(
+            shiny::column(width = 9,
+                shiny::fluidRow(
+                    shinydashboard::box(width = 12, status = "primary",
+						shiny::div(shiny::img(src = 'images/virus.svg',
+								width = 300, id = "logo"),
+						style = "text-align:left; float:right;"),
+                        h3("Automate Your 96-Well Plate Analysis with AutoPlate!"),
+						h4("What is AutoPlate?"),
+						p("AutoPlate is an ", a(href = "https://shiny.rstudio.com/", "R Shiny web application"), 
+							"(and UI) that helps you automate the analysis of biological assays conducted on 96-well plates."),
+						h4("What biological assays can I analyse?"),
+						p("Currently, the only supported assay type is the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseduotype Micro Neutralisation (pMN) assay", .noWS = "outside"), 
+							", for which dose-response curves can be fit.",
+							"In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported.",
+							"Let us know if there's an assay that you would like us to support!",
+							.noWS = c("after-begin", "before-end")),
+						h4("How does it work?"),
+						p("An analysis can be run in three simple steps:"),
+						tags$ol(
+							uiOutput(outputId = "steps")
+						)
                     )
+                ),
+                shiny::fluidRow(
+                    shinydashboard::box(width = 12, status = "primary",
+						h3("Citing AutoPlate"),
+						p("AutoPlate is yet to be published but we're hoping to change this soon!")
+                    )
+                )
+            ),
+            shiny::column(width = 3,
+                shiny::fluidRow(
+                    shinydashboard::valueBoxOutput("autoplate_version", width=12)
+                ),
+                shiny::fluidRow(
+                    shinydashboard::box(width = 12, status = "primary",
+					h3("Contact"),
+					p("If you have questions or feedback, please don't hesitate to contact me!"),
+					shiny::fluidRow(
+						shinydashboard::valueBoxOutput("new_issue", width=12)
+					),
+					shiny::fluidRow(
+						shinydashboard::valueBoxOutput("email", width=12)
+					)
+                    )
+                )
+            )
+        )
+    )
             ),
             tabItem(tabName = "input",
                     fluidRow(

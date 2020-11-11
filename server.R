@@ -251,6 +251,43 @@ print_cv_boxplot_code <- function() {
 
 function(input, output, sessions) {
 
+    #########
+    # 0) Home
+    #########
+
+    output$steps <- renderText({
+        HTML(paste0(
+            "<li><b>Input</b> - upload the raw plate readouts for your 96 well-plates and specify what each well contained</li>",
+            "<li><b>Quality control</b> - visualise the data you entered in step 1 and check that the controls have worked for each plate/well</li>", 
+            "<li><b>Results</b> - analyse the data and generate downloadable plots such as a Dose Response Curve</li>"
+        ))
+    })
+    output$autoplate_version <- shinydashboard::renderValueBox({
+        shinydashboard::valueBox(
+            value = "1.0.0",
+            width = 12,
+            subtitle = "GitHub Release Version",
+            icon = shiny::icon("box-open"),
+            color = "light-blue")
+    })
+    output$new_issue <- shinydashboard::renderValueBox({
+        shinydashboard::valueBox(
+            value = "New issue",
+            width = 12,
+            subtitle = "Go to GitHub issues",
+            href = "https://github.com/PhilPalmer/AutoPlate/issues",
+            icon = shiny::icon("github"),
+            color = "maroon")
+    })
+    output$email <- shinydashboard::renderValueBox({
+        shinydashboard::valueBox(
+            value = "Email",
+            width = 12,
+            subtitle = "pp502@cam.ac.uk",
+            icon = shiny::icon("envelope"),
+            color = "green")
+    })
+
     ##########
     # 1) Input
     ##########
