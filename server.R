@@ -548,30 +548,40 @@ function(input, output, sessions) {
             paste("pmn_report", ".html", sep = "")
         },
         content = function(file) {
+            shiny::withProgress(
+                message = paste0("Generating Report Data"),
+                value = 0,
+                {
+                    shiny::incProgress(1/10)
+                    Sys.sleep(3)
+                    shiny::incProgress(5/10)
             write.table(apply(assay_df(),2,as.character),  
                 file      = file.path(tempdir(), "pmn_platelist.csv"),
                 append    = FALSE, 
-                quote     = FALSE, 
-                sep       = ",",
-                row.names = F,
-                col.names = T)
-            # Copy the report file to a temporary directory before processing it, in
-            # case we don't have write permissions to the current working dir (which
-            # can happen when deployed).
-            tempReport <- file.path(tempdir(), "report.Rmd")
-            file.copy("report.Rmd", tempReport, overwrite = TRUE)
-            # Set up parameters to pass to Rmd document
-            params <- list(drm_model = input$drm_string)
-            # Write dataframe to file
-            # Knit the document, passing in the `params` list, and eval it in a
-            # child of the global environment (this isolates the code in the document
-            # from the code in this app).
-            rmarkdown::render(tempReport, output_file = file,
-                params = params,
-                envir = new.env(parent = globalenv())
+                        quote     = FALSE, 
+                        sep       = ",",
+                        row.names = F,
+                        col.names = T)
+                    # Copy the report file to a temporary directory before processing it, in
+                    # case we don't have write permissions to the current working dir (which
+                    # can happen when deployed).
+                    tempReport <- file.path(tempdir(), "report.Rmd")
+                    file.copy("report.Rmd", tempReport, overwrite = TRUE)
+                    # Set up parameters to pass to Rmd document
+                    params <- list(drm_model = input$drm_string)
+                    # Write dataframe to file
+                    # Knit the document, passing in the `params` list, and eval it in a
+                    # child of the global environment (this isolates the code in the document
+                    # from the code in this app).
+                    rmarkdown::render(tempReport, output_file = file,
+                        params = params,
+                        envir = new.env(parent = globalenv())
+                    )
+                }
             )
         }
     )
+
     # Generate raw R code output to display 
     output$data_exploration_code <- renderText(print_data_exploration_code())
     output$drc_code              <- renderText(print_drc_code(input$drm_string))
