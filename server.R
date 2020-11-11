@@ -301,6 +301,22 @@ function(input, output, sessions) {
     dilution_values <- reactiveValues()
     values <- reactiveValues()
 
+    # Create messages to display to user
+    output$message_input_files <- renderUI({
+        if (is.null(input$luminescence_files)) {
+            box(HTML(paste0(
+                "<p>You will need to upload your CSV files first to use the app which meet the following criteria:<p>
+                    <ul>
+                        <li>The file names end with the plate number, such as \"n1.csv\" for plate 1, 
+                            for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
+                        <li>Each file must contain the following columns: 
+                            \"ID,SequenceID,WellPosition,ScanPosition,Tag,RLU,RLU(RQ),Timestamp(ms)\"
+                    </ul>
+                </p>"
+            )), width=12, background = 'yellow')
+        }
+    })
+
     # Create a tab for each uploaded plate
     output$plate_tabs = renderUI({
         if (is.null(input$luminescence_files)) {
@@ -555,9 +571,9 @@ function(input, output, sessions) {
                     shiny::incProgress(1/10)
                     Sys.sleep(3)
                     shiny::incProgress(5/10)
-            write.table(apply(assay_df(),2,as.character),  
-                file      = file.path(tempdir(), "pmn_platelist.csv"),
-                append    = FALSE, 
+                    write.table(apply(assay_df(),2,as.character),  
+                        file      = file.path(tempdir(), "pmn_platelist.csv"),
+                        append    = FALSE, 
                         quote     = FALSE, 
                         sep       = ",",
                         row.names = F,
