@@ -149,7 +149,7 @@ dashboardPage(
                         ),
                         box(
                             width = 12,
-                            icon("question-circle", lib = "font-awesome"),
+							uiOutput(outputId = "tooltip_exclude"),
                             textInput("exclude_wells",
                                 label = tags$div(
                                     h4("Wells to exclude from analysis (specify any combination of the following, comma-seperated)"),
@@ -161,7 +161,7 @@ dashboardPage(
                                 ),
                                 placeholder = "1,2A1,3A1:B12"
                             ),
-                            icon("question-circle", lib = "font-awesome"),
+							uiOutput(outputId = "tooltip_download_data"),
                             downloadButton("download_data", "Download CSV data"),
                             uiOutput("heatmaps")
                         )
