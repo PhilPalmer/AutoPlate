@@ -12,249 +12,14 @@ library(knitr)
 library(svglite)
 library(plotly)
 
-##########
-# 1) Input
-##########
-source("helpers/make_table.R")
-# Define helper func to read CSVs + append name
-read_plus <- function(name,file) {
-    read.csv(file) %>% 
-        dplyr::mutate(filename = name)
-}
+# Import helper scripts
+source("helpers/1_input.R")
+source("helpers/2_qc.R")
+source("helpers/3_results.R")
+
+# Define helper func
 create_tooltip <- function(text) {
     HTML(paste0("<i class='fa fa-question-circle' title='",text,"'</i>"))
-}
-init_subject <- function(assay_df,wcol1,wcol2,subject) {
-    assay_df$subject <- ifelse(
-        assay_df$wcol == wcol1 | assay_df$wcol == wcol2, paste("Mouse",(as.numeric(assay_df$plate_number)-1)*5+subject), assay_df$subject
-    )
-    return(assay_df)
-}
-update_dilutions <- function(assay_df,dilutions) {
-    assay_df %>% 
-        dplyr::mutate(dilution = case_when(
-            wrow == "A" & types == "x" ~ dilutions[1,1],
-            wrow == "B" & types == "x" ~ dilutions[2,1],
-            wrow == "C" & types == "x" ~ dilutions[3,1],
-            wrow == "D" & types == "x" ~ dilutions[4,1],
-            wrow == "E" & types == "x" ~ dilutions[5,1],
-            wrow == "F" & types == "x" ~ dilutions[6,1],
-            wrow == "G" & types == "x" ~ dilutions[7,1],
-            wrow == "H" & types == "x" ~ dilutions[8,1],
-            wrow == "A" & types == "m" ~ dilutions[1,2],
-            wrow == "B" & types == "m" ~ dilutions[2,2],
-            wrow == "C" & types == "m" ~ dilutions[3,2],
-            wrow == "D" & types == "m" ~ dilutions[4,2],
-            wrow == "E" & types == "m" ~ dilutions[5,2],
-            wrow == "F" & types == "m" ~ dilutions[6,2],
-            wrow == "G" & types == "m" ~ dilutions[7,2],
-            wrow == "H" & types == "m" ~ dilutions[8,2]
-        ))
-}
-create_feature_dropdown <- function(new_feature,input,values) {
-    req(input$plate_data)
-    assay_df <- isolate(values[["assay_df"]])
-    selectInput(new_feature, "Select existing feature", names(assay_df))
-}
-create_feature_table <- function(new_feature,input,values) {
-    req(input[[new_feature]])
-    assay_df <- isolate(values[["assay_df"]])
-    feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
-    feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
-    new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow=length(feature_levels), byrow=T))
-    names(new_feature_df) <- input[[new_feature]]
-    new_feature_df[[new_feature]] <- as.character(NA)
-    rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
-}
-update_feature <- function(new_feature,input,values) {
-    new_feature_table <- paste0(new_feature, "_table")
-    req(new_feature_table)
-    existing_feature <- input[[new_feature]]
-    assay_df <- values[["assay_df"]]
-    mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
-    assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]),2]
-    values[["assay_df"]] <- assay_df
-}
-
-#######
-# 2) QC
-#######
-plot_heatmap <- function(plate_number,values,feature,title) {
-    assay_df <- isolate(values[["assay_df"]])
-    plate_df <- assay_df[assay_df$plate_number == plate_number, ]
-    feature_list <- unlist(plate_df[[feature]], use.names=FALSE)
-    vals <- matrix(feature_list,byrow=T,ncol=12,nrow=8)
-    row.names(vals) <- LETTERS[1:8]
-    # Set params for plot based on the feature
-    features <- c("types","subject","dilution","primary","rlu","neutralisation","inoculate","study","bleed","exclude")
-    fmt.cells = c("%.5s","%.8s","%.5s","%.15s","%.0f","%.0f","%.15s","%.8s","%.8s","%.8s")
-    features <- do.call(rbind, Map(data.frame,features=features,fmt.cells=fmt.cells))
-    fmt.cell <- as.character(features[feature,]$fmt.cells)
-    col <- if(feature %in% c("dilution","rlu","neutralisation")) viridis else rainbow
-    side <- if(feature %in% c("subject","inoculate","study","bleed", "exclude")) 3 else 4
-    # Generate heatmap plot
-    plot(vals,col=col,fmt.cell=fmt.cell,main=paste("Plate",plate_number,title),key=list(side=side))
-}
-exclude_wells <- function(assay_df,exclusion_string) {
-    exclusion_string <- gsub(" ", "", exclusion_string)
-    wells_to_exclude <- lapply(strsplit(exclusion_string,","), function(x) strsplit(x, ":"))[[1]]
-    for (i in seq(1,length(wells_to_exclude))) {
-        exclusion <- wells_to_exclude[[i]]
-        tryCatch({
-            # Exclude a whole plate
-            if (length(exclusion) == 1 & nchar(exclusion[1]) <= 1) {
-                plate <- exclusion[1]
-                assay_df <- assay_df %>% 
-                    dplyr::mutate(exclude = ifelse( (plate_number == plate), TRUE, exclude))
-            }
-            # Exclude an individual well
-            if (length(exclusion) == 1 & nchar(exclusion[1]) > 1) {
-                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", exclusion[1]) )
-                row <- strsplit(exclusion[1],split="[0-9]+")[[1]]
-                col <- strsplit(exclusion[1],split="[A-Z]+")[[1]][2]
-                assay_df <- assay_df %>% 
-                    dplyr::mutate(exclude = ifelse( (plate_number == plate) & (wcol %in% col) & (wrow %in% row), TRUE, exclude))
-            }
-            # Exclude a range of wells
-            if (length(exclusion) > 1) {
-                # get plate to exclude
-                plate <- as.numeric( sub("\\D*(\\d+).*", "\\1", exclusion[1]) )
-                exclusion[1] <- strsplit(exclusion[1],split="^[0-9]+")[[1]][2]
-                # get start and end rows and columns
-                row_start <- strsplit(exclusion[1],split="[0-9]+")[[1]]
-                row_end <- strsplit(exclusion[2],split="[0-9]+")[[1]]
-                col_start <- strsplit(exclusion[1],split="[A-Z]+")[[1]][2]
-                col_end <- strsplit(exclusion[2],split="[A-Z]+")[[1]][2]
-                # get vector of rows & columns to exclude
-                cols_to_exclude <- seq(col_start,col_end)
-                rows_to_exclude <- seq(match(row_start, LETTERS), match(row_end, LETTERS))
-                rows_to_exclude <- sapply(rows_to_exclude, function(i) LETTERS[i])
-                # update excluded plates in main assay dataframe
-                assay_df <- assay_df %>% 
-                    dplyr::mutate(exclude = ifelse( (plate_number == plate) & (wcol %in% cols_to_exclude) & (wrow %in% rows_to_exclude), TRUE, exclude))
-            }
-        },
-        error=function(error_message) { print (error_message) } )
-    }
-    return(assay_df)
-}
-
-############
-# 3) Results
-############
-# gg_color_hue <- function(n) {
-#   hues = seq(15, 375, length = n + 1)
-#   hcl(h = hues, l = 65, c = 100)[1:n]
-# }
-print_data_exploration_code <- function() {
-    '
-    library(dplyr)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-
-    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
-        geom_point() +
-        geom_smooth(se=F, span=1) +
-        facet_wrap(.~primary) +
-        ylim(c(-100, 110)) +
-        scale_x_continuous(trans="log10") +
-        theme_classic() +
-        ylab("Neutralisation") +
-        xlab("Dilution") +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(data_exploration_plot)
-    '
-}
-print_drc_code <- function(drm_string) {
-    paste0('
-    library(dplyr)
-    library(drc)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    data$subject <- unlist(data$subject)        
-    model <- drc::drm(',drm_string,')
-    n <- 100
-    new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
-    subjects<-unique(data$subject)
-    new_data <- expand.grid(new_dilution, subjects)
-    names(new_data) <- c("dilution", "subject")
-    new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
-    new_data$pred <- predict(model, new_data=new_data,)
-
-    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
-        geom_line() +
-        geom_point(data=data, aes(y=neutralisation)) +
-        facet_wrap(.~inoculate) +
-        scale_x_continuous(trans="log10") +
-        theme_classic() +
-        ylab("Neutralisation") +
-        xlab("Dilution") +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(drc_plot)
-    ')
-}
-print_ic50_boxplot_code <- function(drm_string) {
-    paste0('
-    library(dplyr)
-    library(drc)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    model <- drc::drm(',drm_string,')
-    ied <- as.data.frame(ED(model, 50, display=FALSE))
-    ied$subject <- gsub("e:|:50", "", row.names(ied))
-    ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
-    ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
-    # Average Neutralisation
-    avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
-    ied_order <- avied$inoculate[order(avied$av)]
-
-    ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
-        geom_boxplot() +
-        geom_point() +
-        scale_x_discrete(limits=ied_order) +
-        ylab(expression("Individual IC50 log"[10])) +
-        xlab("Inoculate") +
-        theme_classic() +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
-        coord_flip()
-    plotly::ggplotly(ic50_boxplot)
-    ')
-}
-print_cv_boxplot_code <- function() {
-    '
-    library(dplyr)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
-        dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
-        dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
-    data$plate_number <- as.factor(data$plate_number)
-
-    cv_boxplot <- ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
-        geom_boxplot() +
-        geom_point(position=position_dodge(0.75)) +
-        scale_y_continuous(trans="log10") +
-        ylab("Log10 raw luminescence value") +
-        xlab("Cell only or Virus only") +
-        theme_classic() +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(cv_boxplot)
-    '
 }
 
 function(input, output, sessions) {
@@ -497,9 +262,25 @@ function(input, output, sessions) {
         return(plate_df)
     })
     
-    # Make tables
-    # TODO: refactor/generalize the `make_table()` func (& others?) so that it can be used for the dilutions & plate_data tables
-    make_table(input,output,dilutions,"dilutions",dilution_values,TRUE)
+    # Make dilutions table
+    observe({
+        if (!is.null(input[["dilutions"]])) {
+        values[["previous"]] <- isolate(values[["dilutions"]])
+        dilutions = hot_to_r(input[["dilutions"]])
+        } else {
+        if (is.null(values[["dilutions"]]))
+            dilutions <- dilutions
+        else
+            dilutions <- values[["dilutions"]]
+        }
+        values[["dilutions"]] <- dilutions
+    })
+    output[["dilutions"]] <- renderRHandsontable({
+        dilutions <- values[["dilutions"]]
+        if (!is.null(dilutions))
+        rhandsontable(dilutions, stretchH = "all", rowHeaders = TRUE)
+    })
+    # Make plate data table
     output$plate_data <- renderRHandsontable({
         rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
     })
