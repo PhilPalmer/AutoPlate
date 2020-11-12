@@ -185,7 +185,7 @@ dashboardPage(
 										br(), br(),
                                         tabBox(
                                             width = 12,
-                                            tabPanel("View Plot", plotOutput("data_exploration")),
+                                            tabPanel("View Plot", plotlyOutput("data_exploration")),
                                             tabPanel("View code", verbatimTextOutput("data_exploration_code"))
                                         )
                                     ),
@@ -194,7 +194,7 @@ dashboardPage(
 										br(), br(),
                                         tabBox(
                                             width = 12,
-                                            tabPanel("View Plot", plotOutput("drc")),
+                                            tabPanel("View Plot", plotlyOutput("drc")),
                                             tabPanel("View code", verbatimTextOutput("drc_code"))
                                         )
                                     ),
@@ -203,7 +203,7 @@ dashboardPage(
 										br(), br(),
                                         tabBox(
                                             width = 12,
-                                            tabPanel("View Plot", plotOutput("ic50_boxplot")),
+                                            tabPanel("View Plot", plotlyOutput("ic50_boxplot")),
                                             tabPanel("View code", verbatimTextOutput("ic50_boxplot_code"))
                                         )
                                     ),
@@ -212,7 +212,7 @@ dashboardPage(
 										br(), br(),
                                         tabBox(
                                             width = 12,
-                                            tabPanel("View Plot", plotOutput("cv_boxplot")),
+                                            tabPanel("View Plot", plotlyOutput("cv_boxplot")),
                                             tabPanel("View code", verbatimTextOutput("cv_boxplot_code"))
                                         )
                                     )

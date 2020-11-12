@@ -10,6 +10,7 @@ library(drc)
 library(rmarkdown)
 library(knitr)
 library(svglite)
+library(plotly)
 
 ##########
 # 1) Input
@@ -155,7 +156,7 @@ print_data_exploration_code <- function() {
     data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
 
-    ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
         geom_point() +
         geom_smooth(se=F, span=1) +
         facet_wrap(.~primary) +
@@ -165,6 +166,7 @@ print_data_exploration_code <- function() {
         ylab("Neutralisation") +
         xlab("Dilution") +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    plotly::ggplotly(data_exploration_plot)
     '
 }
 print_drc_code <- function(drm_string) {
@@ -187,7 +189,7 @@ print_drc_code <- function(drm_string) {
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
     new_data$pred <- predict(model, new_data=new_data,)
 
-    ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
         facet_wrap(.~inoculate) +
@@ -196,6 +198,7 @@ print_drc_code <- function(drm_string) {
         ylab("Neutralisation") +
         xlab("Dilution") +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    plotly::ggplotly(drc_plot)
     ')
 }
 print_ic50_boxplot_code <- function(drm_string) {
@@ -217,7 +220,7 @@ print_ic50_boxplot_code <- function(drm_string) {
     avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
     ied_order <- avied$inoculate[order(avied$av)]
 
-    ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
+    ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
         geom_boxplot() +
         geom_point() +
         scale_x_discrete(limits=ied_order) +
@@ -226,6 +229,7 @@ print_ic50_boxplot_code <- function(drm_string) {
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip()
+    plotly::ggplotly(ic50_boxplot)
     ')
 }
 print_cv_boxplot_code <- function() {
@@ -241,7 +245,7 @@ print_cv_boxplot_code <- function() {
         dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
     data$plate_number <- as.factor(data$plate_number)
 
-    ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
+    cv_boxplot <- ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
         geom_boxplot() +
         geom_point(position=position_dodge(0.75)) +
         scale_y_continuous(trans="log10") +
@@ -249,6 +253,7 @@ print_cv_boxplot_code <- function() {
         xlab("Cell only or Virus only") +
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+    plotly::ggplotly(cv_boxplot)
     '
 }
 
@@ -653,7 +658,7 @@ function(input, output, sessions) {
         content = function(file) ggsave(file, plot=values[["cv_boxplot"]])
     )
     # Generate plots to display
-    output$data_exploration <- renderPlot({
+    output$data_exploration <- renderPlotly({
         req(input$luminescence_files)
         assay_df <- values[["assay_df"]]
         assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
@@ -667,9 +672,9 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-        values[["data_exploration"]]
+        plotly::ggplotly(ggplot2::last_plot())
     })
-    output$drc <- renderPlot({
+    output$drc <- renderPlotly({
         req(input$luminescence_files)
         data <- values[["assay_df"]]
         data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
@@ -699,9 +704,9 @@ function(input, output, sessions) {
             ylab("Neutralisation") +
             xlab("Dilution") +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-        values[["drc"]]
+        plotly::ggplotly(ggplot2::last_plot())
     })
-    output$ic50_boxplot <- renderPlot({
+    output$ic50_boxplot <- renderPlotly({
         req(input$luminescence_files)
         data <- values[["assay_df"]]
         data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary?
@@ -721,14 +726,14 @@ function(input, output, sessions) {
             geom_point() +
             # scale_colour_manual(values=ccs) +
             scale_x_discrete(limits=ied_order) +
-            ylab(expression("Individual IC50 log"[10])) +
+            ylab("Individual IC50 log10") +
             xlab("Inoculate") +
             theme_classic() +
             ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
             coord_flip()
-        values[["ic50"]]
+        plotly::ggplotly(ggplot2::last_plot())
     })
-    output$cv_boxplot <- renderPlot({
+    output$cv_boxplot <- renderPlotly({
         req(input$luminescence_files)
         assay_df <- values[["assay_df"]]
         assay_df <- dplyr::filter(assay_df, types %in% c("c", "v"), exclude == FALSE)  %>%
@@ -744,7 +749,7 @@ function(input, output, sessions) {
             xlab("Cell only or Virus only") +
             theme_classic() +
             ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-        values[["cv_boxplot"]]
+        plotly::ggplotly(ggplot2::last_plot())
     })
 
 }
