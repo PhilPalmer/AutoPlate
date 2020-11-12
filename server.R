@@ -71,7 +71,6 @@ function(input, output, sessions) {
                           header           = TRUE, 
                           stringsAsFactors = FALSE, 
                           check.names      = FALSE)
-    dilution_values <- reactiveValues()
     values <- reactiveValues()
 
     # Create tooltip icons
