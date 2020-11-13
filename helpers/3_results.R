@@ -46,11 +46,12 @@ print_drc_code <- function(drm_string) {
     names(new_data) <- c("dilution", "subject")
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
     new_data$pred <- predict(model, newdata=new_data,)
+    facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
 
     drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
-        facet_wrap(.~inoculate) +
+        facet_wrap(facets) +
         scale_x_continuous(trans="log10") +
         theme_classic() +
         ylab("Neutralisation") +
@@ -74,6 +75,8 @@ print_ic50_boxplot_code <- function(drm_string) {
     ied$subject <- gsub("e:|:50", "", row.names(ied))
     ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
     ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
+    ied$primary <- data$primary[match(ied$subject, data$subject)]
+    facets <- if(length(unique(data$primary))>1) c("primary") else NULL
     # Average Neutralisation
     avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
     ied_order <- avied$inoculate[order(avied$av)]
@@ -81,6 +84,7 @@ print_ic50_boxplot_code <- function(drm_string) {
     ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
         geom_boxplot() +
         geom_point() +
+        facet_wrap(facets) +
         scale_x_discrete(limits=ied_order) +
         ylab(expression("Individual IC50 log"[10])) +
         xlab("Inoculate") +

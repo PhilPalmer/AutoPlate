@@ -477,6 +477,7 @@ function(input, output, sessions) {
     names(new_data) <- c("dilution", "subject")
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
     new_data$pred <- predict(model, newdata = new_data, )
+    facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
     # inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
     # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
     #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10],
@@ -485,7 +486,7 @@ function(input, output, sessions) {
     values[["drc"]] <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = inoculate, group = subject)) +
       geom_line() +
       geom_point(data = data, aes(y = neutralisation)) +
-      facet_wrap(. ~ inoculate) +
+      facet_wrap(facets) +
       scale_x_continuous(trans = "log10") +
       # scale_colour_manual(values=ccs) +
       theme_classic() +
@@ -505,6 +506,8 @@ function(input, output, sessions) {
     ied$subject <- gsub("e:|:50", "", row.names(ied))
     ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
     ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
+    ied$primary <- data$primary[match(ied$subject, data$subject)]
+    facets <- if(length(unique(data$primary))>1) c("primary") else NULL
     # Average Neutralisation
     avied <- summarise(group_by(ied, inoculate), av = median(Estimate))
     ied_order <- avied$inoculate[order(avied$av)]
@@ -512,6 +515,7 @@ function(input, output, sessions) {
     values[["ic50"]] <- ggplot2::ggplot(ied, aes(x = inoculate, y = Estimate, colour = inoculate)) +
       geom_boxplot() +
       geom_point() +
+      facet_wrap(facets) +
       # scale_colour_manual(values=ccs) +
       scale_x_discrete(limits = ied_order) +
       ylab("Individual IC50 log10") +
