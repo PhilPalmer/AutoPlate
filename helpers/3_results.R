@@ -5,7 +5,7 @@
 ################################################
 
 print_data_exploration_code <- function() {
-    '
+  '
     library(dplyr)
     library(ggplot2)
 
@@ -28,7 +28,7 @@ print_data_exploration_code <- function() {
     '
 }
 print_drc_code <- function(drm_string) {
-    paste0('
+  paste0('
     library(dplyr)
     library(drc)
     library(ggplot2)
@@ -38,7 +38,7 @@ print_drc_code <- function(drm_string) {
     data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     data$subject <- unlist(data$subject)        
-    model <- drc::drm(',drm_string,')
+    model <- drc::drm(', drm_string, ')
     n <- 100
     new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
     subjects<-unique(data$subject)
@@ -60,7 +60,7 @@ print_drc_code <- function(drm_string) {
     ')
 }
 print_ic50_boxplot_code <- function(drm_string) {
-    paste0('
+  paste0('
     library(dplyr)
     library(drc)
     library(ggplot2)
@@ -69,7 +69,7 @@ print_ic50_boxplot_code <- function(drm_string) {
 
     data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    model <- drc::drm(',drm_string,')
+    model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
     ied$subject <- gsub("e:|:50", "", row.names(ied))
     ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
@@ -91,7 +91,7 @@ print_ic50_boxplot_code <- function(drm_string) {
     ')
 }
 print_cv_boxplot_code <- function() {
-    '
+  '
     library(dplyr)
     library(ggplot2)
 
