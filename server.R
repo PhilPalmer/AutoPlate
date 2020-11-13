@@ -476,7 +476,7 @@ function(input, output, sessions) {
     new_data <- expand.grid(new_dilution, subjects)
     names(new_data) <- c("dilution", "subject")
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
-    new_data$pred <- predict(model, new_data = new_data, )
+    new_data$pred <- predict(model, newdata = new_data, )
     # inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
     # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
     #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10],

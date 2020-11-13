@@ -45,7 +45,7 @@ print_drc_code <- function(drm_string) {
     new_data <- expand.grid(new_dilution, subjects)
     names(new_data) <- c("dilution", "subject")
     new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
-    new_data$pred <- predict(model, new_data=new_data,)
+    new_data$pred <- predict(model, newdata=new_data,)
 
     drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
         geom_line() +
