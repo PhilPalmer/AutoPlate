@@ -1,5 +1,6 @@
 library(shinydashboard)
 library(rhandsontable)
+library(plotly)
 
 dashboardPage(
     dashboardHeader(title = "AutoPlate"),
