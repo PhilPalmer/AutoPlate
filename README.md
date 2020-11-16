@@ -23,13 +23,19 @@ Currently the dashboard contains the following tabs and features, which allow yo
 
     The opening page gives an introduction to AutoPlate and contains useful links for support and this GitHub repository
 
+    <br /> <br />
+
 - :arrow_right: **1) Input** <img src="www/images/input.png" align="right" width="40%"  />
 
     Upload the raw plate readouts for your 96 well-plates and specify what each well contained in terms of dilutions, subjects, types, bleed, inoculate, primary and study
+
+    <br /> <br />
     
 - :heavy_check_mark: **2) Quality Control**  <img src="www/images/quality_control.png" align="right" width="40%"  />
 
     Visualise the data you entered in step 1 and check that the controls have worked for each plate/well. If the controls have failed for any wells these can be excluded from the analysis
+
+    <br /> <br />
 
 - :chart_with_upwards_trend: **3) Results**  <img src="www/images/results.png" align="right" width="40%"  />
 
