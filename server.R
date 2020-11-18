@@ -541,6 +541,6 @@ function(input, output, sessions) {
       xlab("Cell only or Virus only") +
       theme_classic() +
       ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot())
+    plotly::ggplotly(ggplot2::last_plot()) %>% layout(boxmode = "group")
   })
 }
