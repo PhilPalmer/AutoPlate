@@ -115,6 +115,6 @@ print_cv_boxplot_code <- function() {
         xlab("Cell only or Virus only") +
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(cv_boxplot)
+    plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
     '
 }

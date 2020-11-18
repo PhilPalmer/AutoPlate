@@ -198,7 +198,7 @@ cv_boxplot <- ggplot2::ggplot(data, aes(x = types, y = rlu, colour = plate_numbe
   xlab("Cell only or Virus only") +
   theme_classic() +
   ggtitle(title)
-plotly::ggplotly(cv_boxplot)
+plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
 ```
 
 # Session Info for Reproducibility
