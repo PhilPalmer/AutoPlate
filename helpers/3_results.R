@@ -108,7 +108,7 @@ print_cv_boxplot_code <- function() {
     data$plate_number <- as.factor(data$plate_number)
 
     cv_boxplot <- ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
-        geom_boxplot() +
+        geom_boxplot(position=position_dodge(0.75)) +
         geom_point(position=position_dodge(0.75)) +
         scale_y_continuous(trans="log10") +
         ylab("Log10 raw luminescence value") +
