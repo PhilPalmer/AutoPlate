@@ -9,7 +9,7 @@
 
 [AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny web application](https://shiny.rstudio.com/) (and UI) that helps you automate the analysis of biological assays conducted on 96-well plates. It lets you go from raw data to publication ready figures in minutes!
 
-Currently, the only supported assay type is the [Pseduotype Micro Neutralisation (pMN) assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which dose-response curves can be fit. In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported. Let us know if there's an assay that you would like us to support!
+Currently, the only supported assay type is the [Pseudotype Micro Neutralisation (pMN) assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which dose-response curves can be fit. In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported. Let us know if there's an assay that you would like us to support!
 
 ## Getting started
 
