@@ -24,9 +24,9 @@ exclude_wells <- function(assay_df, exclusion_string) {
   exclusion_string <- gsub(" ", "", exclusion_string)
   wells_to_exclude <- lapply(strsplit(exclusion_string, ","), function(x) strsplit(x, ":"))[[1]]
   for (i in seq(1, length(wells_to_exclude))) {
-    exclusion <- wells_to_exclude[[i]]
     tryCatch(
       {
+        exclusion <- wells_to_exclude[[i]]
         # Exclude a whole plate
         if (length(exclusion) == 1 & nchar(exclusion[1]) <= 1) {
           plate <- exclusion[1]
