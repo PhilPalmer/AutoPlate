@@ -155,7 +155,7 @@ function(input, output, session) {
       assay_df <-
         apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", "\\1", filename)) %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
       assay_df$types <- ""
       assay_df$subject <- ""
