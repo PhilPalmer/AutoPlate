@@ -61,7 +61,7 @@ dim(assay_df)[1] - dim(data)[1]
 ## Average Virus + Cell Luminescence
 
 ```{r, layout="l-body-outset"}
-plates <- unique(assay_df$plate_number)
+plates <- sort(unique(assay_df$plate_number))
 av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
 av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
 no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
