@@ -212,32 +212,41 @@ function(input, output, session) {
 
   # Update the subject and types of the main assay dataframe based on user input
   observeEvent(input$plate_data, {
+    req(input$plate_tabs)
     plate_n <- values[["plate_n"]]
     assay_df <- values[["assay_df"]]
-    updated_plate_df <- hot_to_r(input$plate_data)
-    # Update main assay dataframe with subject
-    updated_subjects <- updated_plate_df[1, ]
-    for (i in seq(1, length(updated_subjects))) {
-      assay_df <- assay_df %>%
-        dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
-    }
-    # Update main assay dataframe with types
-    updated_types <- tail(updated_plate_df, -1)
-    for (col in seq(1, length(updated_types))) {
-      full_col <- updated_types[, col]
-      for (i in seq(1, length(full_col))) {
-        row <- row.names(updated_types)[i]
-        updated_type <- updated_types[row, col]
-        current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
-        if (current_type != updated_type) {
-          print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
+    # Catch errors because when plate 1 is not uploaded loading input$plate_data will initially throw an error
+    tryCatch(
+      {
+        updated_plate_df <- hot_to_r(input$plate_data)
+        # Update main assay dataframe with subject
+        updated_subjects <- updated_plate_df[1, ]
+        for (i in seq(1, length(updated_subjects))) {
           assay_df <- assay_df %>%
-            dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
+            dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
         }
+        # Update main assay dataframe with types
+        updated_types <- tail(updated_plate_df, -1)
+        for (col in seq(1, length(updated_types))) {
+          full_col <- updated_types[, col]
+          for (i in seq(1, length(full_col))) {
+            row <- row.names(updated_types)[i]
+            updated_type <- updated_types[row, col]
+            current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
+            if (current_type != updated_type) {
+              print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
+              assay_df <- assay_df %>%
+                dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
+            }
+          }
+        }
+        updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
+        values[["assay_df"]] <- assay_df
+      },
+      error = function(error_message) {
+        print(error_message)
       }
-    }
-    updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
-    values[["assay_df"]] <- assay_df
+    )
   })
 
   # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
