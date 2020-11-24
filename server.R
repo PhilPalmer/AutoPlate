@@ -124,7 +124,7 @@ function(input, output, session) {
   # Create a tab for each uploaded plate
   output$plate_tabs <- renderUI({
     if (is.null(input$luminescence_files)) {
-      plates <- 1
+      plates <- "NA - Please upload your CSV file(s) to display plates"
     } else {
       assay_df <- values[["assay_df"]]
       plates <- unique(isolate(assay_df$plate_number))
