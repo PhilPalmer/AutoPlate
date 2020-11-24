@@ -10,9 +10,18 @@ read_plus <- function(name, file) {
     dplyr::mutate(filename = name)
 }
 init_subject <- function(assay_df, wcol1, wcol2, subject) {
+  plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
+  if (plates_not_numbered) {
+    assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
+    assay_df$plate_number <- assay_df$rank
+  }
   assay_df$subject <- ifelse(
     assay_df$wcol == wcol1 | assay_df$wcol == wcol2, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + subject), assay_df$subject
   )
+  if (plates_not_numbered) {
+    assay_df$plate_number <- assay_df$filename
+    assay_df$rank <- NA
+  }
   return(assay_df)
 }
 update_dilutions <- function(assay_df, dilutions) {

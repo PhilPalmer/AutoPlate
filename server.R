@@ -109,10 +109,10 @@ function(input, output, session) {
       box(HTML(paste0(
         "<h4>Start here!</h4><p>Upload your CSV files first to use the app, which meet the following criteria:<p>
             <ul>
-                <li>The file names end with the plate number, such as \"n1.csv\" for plate 1, 
-                    for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
                 <li>Each file must contain the following columns: 
                     \"ID,SequenceID,WellPosition,ScanPosition,Tag,RLU,RLU(RQ),Timestamp(ms)\"
+                <li>(Recommended) the file names end with the plate number, such as \"n1.csv\" for plate 1, 
+                    for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
             </ul>
         </p>"
       )), width = 12, background = "yellow")
@@ -127,7 +127,7 @@ function(input, output, session) {
       plates <- "NA - Please upload your CSV file(s) to display plates"
     } else {
       assay_df <- values[["assay_df"]]
-      plates <- unique(isolate(assay_df$plate_number))
+      plates <- sort(unique(isolate(assay_df$plate_number)))
     }
     plate_tabs <- lapply(paste("Plate", plates), tabPanel)
     do.call(tabsetPanel, c(plate_tabs, id = "plate_tabs"))
@@ -157,6 +157,7 @@ function(input, output, session) {
         dplyr::bind_rows() %>%
         dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
+      assay_df$filename <- gsub(".csv","",assay_df$filename)
       assay_df$types <- ""
       assay_df$subject <- ""
       assay_df$dilution <- ""
@@ -326,7 +327,9 @@ function(input, output, session) {
       paste("pmn_platelist", ".csv", sep = "")
     },
     content = function(file) {
-      write.table(apply(assay_df(), 2, as.character),
+      assay_df <- assay_df()
+      assay_df <- assay_df[order(assay_df$plate_number),]
+      write.table(apply(assay_df, 2, as.character),
         file = file,
         append = FALSE,
         quote = FALSE,
@@ -348,7 +351,7 @@ function(input, output, session) {
   output$av_lum <- renderTable({
     assay_df <- isolate(values[["assay_df"]])
     # TODO: add plates to reactive values so that it can be accessed globally
-    plates <- unique(assay_df$plate_number)
+    plates <- sort(unique(assay_df$plate_number))
     av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
     av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
     no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
@@ -366,7 +369,7 @@ function(input, output, session) {
   observeEvent(input$tabset_qc, {
     feature <- tolower(input$tabset_qc)
     assay_df <- isolate(values[["assay_df"]])
-    plates <- unique(assay_df$plate_number)
+    plates <- sort(unique(assay_df$plate_number))
     values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)
     lapply(values[["heatmap_input"]]$plates, function(i) {
       output[[paste("plot", i, sep = "")]] <- renderPlot({
