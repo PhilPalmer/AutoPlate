@@ -21,6 +21,16 @@ source("helpers/3_results.R")
 create_tooltip <- function(text) {
   HTML(paste0("<i class='fa fa-question-circle' title='", text, "'</i>"))
 }
+# Format code with tags and language
+prism_add_tags <- function(code, language = "r") {
+  paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
+}
+prism_code_block <- function(code, language = "r") {
+  tagList(
+    HTML(prism_add_tags(code, language = language)),
+    tags$script("Prism.highlightAll()")
+  )
+}
 
 function(input, output, session) {
 
@@ -461,10 +471,18 @@ function(input, output, session) {
   )
 
   # Generate raw R code output to display
-  output$data_exploration_code <- renderText(print_data_exploration_code())
-  output$drc_code <- renderText(print_drc_code(input$drm_string))
-  output$ic50_boxplot_code <- renderText(print_ic50_boxplot_code(input$drm_string))
-  output$cv_boxplot_code <- renderText(print_cv_boxplot_code())
+  output$data_exploration_code <- renderUI({
+    prism_code_block(code = print_data_exploration_code(), language = "r")
+  })
+  output$drc_code <- renderUI({
+    prism_code_block(code = print_drc_code(input$drm_string), language = "r")
+  })
+  output$ic50_boxplot_code <- renderUI({
+    prism_code_block(code = print_ic50_boxplot_code(input$drm_string), language = "r")
+  })
+  output$cv_boxplot_code <- renderUI({
+    prism_code_block(code = print_cv_boxplot_code(), language = "r")
+  })
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
