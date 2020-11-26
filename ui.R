@@ -14,7 +14,12 @@ dashboardPage(
   ),
   dashboardBody(
     tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+      # Prism for syntax highting
+      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/prism.min.js"),
+      tags$link(rel = "stylesheet", type = "text/css",
+                href = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/themes/prism.min.css"),
+      tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/components/prism-r.min.js")
     ),
     tabItems(
       tabItem(
@@ -211,7 +216,7 @@ dashboardPage(
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("data_exploration")),
-                  tabPanel("View code", verbatimTextOutput("data_exploration_code"))
+                  tabPanel("View code", uiOutput("data_exploration_code"))
                 )
               ),
               tabPanel(
@@ -221,7 +226,7 @@ dashboardPage(
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("drc")),
-                  tabPanel("View code", verbatimTextOutput("drc_code"))
+                  tabPanel("View code", uiOutput("drc_code"))
                 )
               ),
               tabPanel(
@@ -231,7 +236,7 @@ dashboardPage(
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("ic50_boxplot")),
-                  tabPanel("View code", verbatimTextOutput("ic50_boxplot_code"))
+                  tabPanel("View code", uiOutput("ic50_boxplot_code"))
                 )
               ),
               tabPanel(
@@ -241,7 +246,7 @@ dashboardPage(
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("cv_boxplot")),
-                  tabPanel("View code", verbatimTextOutput("cv_boxplot_code"))
+                  tabPanel("View code", uiOutput("cv_boxplot_code"))
                 )
               )
               # tabPanel("Posotive Control")
