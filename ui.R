@@ -168,7 +168,8 @@ dashboardPage(
             tabPanel("Inoculate"),
             tabPanel("Study"),
             tabPanel("Bleed"),
-            tabPanel("Exclude")
+            tabPanel("Exclude"),
+            tabPanel("Types Boxplot", plotlyOutput("types_boxplot"))
           ),
           box(
             width = 12,
