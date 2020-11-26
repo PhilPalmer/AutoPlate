@@ -105,6 +105,26 @@ for (feature in features) {
 }
 ```
 
+## Types boxplot
+
+```{r}
+boxplot_data <- data %>%
+  dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
+  dplyr::mutate(types = ifelse((types == "m"), "monoclonal antibody", types)) %>%
+  dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
+  dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
+boxplot_data$plate_number <- as.factor(boxplot_data$plate_number)
+
+types_boxplot <- ggplot2::ggplot(boxplot_data, aes(x = plate_number, y = rlu, colour = types)) +
+  geom_boxplot() +
+  geom_point(position=position_dodge(0.75)) +
+  ylab("Raw luminescence value") +
+  xlab("Plate number") +
+  theme_classic() +
+  ggtitle(title)
+plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
+```
+
 # Results
 
 
@@ -185,12 +205,9 @@ plotly::ggplotly(ic50_boxplot)
 
 ## Virus + Cell Boxplot
 ```{r}
-data <- dplyr::filter(assay_df, types %in% c("c", "v"), exclude == FALSE) %>%
-  dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
-  dplyr::mutate(types = ifelse((types == "v"), "virus", types))
-data$plate_number <- as.factor(data$plate_number)
+boxplot_data <- dplyr::filter(boxplot_data, types %in% c("cell", "virus"))
 
-cv_boxplot <- ggplot2::ggplot(data, aes(x = types, y = rlu, colour = plate_number)) +
+cv_boxplot <- ggplot2::ggplot(boxplot_data, aes(x = types, y = rlu, colour = plate_number)) +
   geom_boxplot() +
   geom_point(position = position_dodge(0.75)) +
   scale_y_continuous(trans = "log10") +
