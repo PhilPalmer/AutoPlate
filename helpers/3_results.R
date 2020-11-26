@@ -4,6 +4,16 @@
 # Helper functions for AutoPlate Step 3) Results
 ################################################
 
+# Format code with tags and language
+prism_add_tags <- function(code, language = "r") {
+  paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
+}
+prism_code_block <- function(code, language = "r") {
+  tagList(
+    HTML(prism_add_tags(code, language = language)),
+    tags$script("Prism.highlightAll()")
+  )
+}
 print_data_exploration_code <- function() {
   '
     library(dplyr)

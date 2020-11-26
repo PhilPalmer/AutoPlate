@@ -21,16 +21,6 @@ source("helpers/3_results.R")
 create_tooltip <- function(text) {
   HTML(paste0("<i class='fa fa-question-circle' title='", text, "'</i>"))
 }
-# Format code with tags and language
-prism_add_tags <- function(code, language = "r") {
-  paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
-}
-prism_code_block <- function(code, language = "r") {
-  tagList(
-    HTML(prism_add_tags(code, language = language)),
-    tags$script("Prism.highlightAll()")
-  )
-}
 
 function(input, output, session) {
 
