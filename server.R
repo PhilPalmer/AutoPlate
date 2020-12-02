@@ -402,7 +402,7 @@ function(input, output, session) {
 
   # Generate raw R code output to display
   output$data_exploration_code <- renderUI({
-    prism_code_block(code = data_exploration_code(), language = "r")
+    prism_code_block(code = data_exploration_code("all"), language = "r")
   })
   output$drc_code <- renderUI({
     prism_code_block(code = print_drc_code(input$drm_string), language = "r")
@@ -437,7 +437,7 @@ function(input, output, session) {
     req(input$luminescence_files)
     data <- values[["assay_df"]]
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    eval(parse(text=data_exploration_plot_code()))
+    eval(parse(text=data_exploration_code("plot")))
   })
   output$drc <- renderPlotly({
     req(input$luminescence_files)
