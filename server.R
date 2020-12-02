@@ -69,13 +69,13 @@ function(input, output, session) {
   ##########
 
   # Define variables
+  values <- reactiveValues()
   dilutions_file <- "data/dilutions.csv"
   dilutions <- read.csv(dilutions_file,
     header = TRUE,
     stringsAsFactors = FALSE,
     check.names = FALSE
   )
-  values <- reactiveValues()
 
   # Create tooltip icons
   output$tooltip_input_files <- renderText({
@@ -103,6 +103,7 @@ function(input, output, session) {
   output$tooltip_download_report <- renderText({
     create_tooltip("Export all QC and results plots as a shareable HTML file")
   })
+
   # Create messages to display to user
   output$message_input_files <- renderUI({
     if (is.null(input$luminescence_files)) {
@@ -121,6 +122,7 @@ function(input, output, session) {
   output$message_drm_string <- renderText({
     HTML("<p>Dose Response Model: specify the model for the dose response curve as per the <a href='https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/drm'>DRM function</a></p>")
   })
+
   # Create a tab for each uploaded plate
   output$plate_tabs <- renderUI({
     if (is.null(input$luminescence_files)) {
@@ -269,6 +271,7 @@ function(input, output, session) {
   #######
   # 2) QC
   #######
+
   # Download/export data to CSV
   output$download_data <- downloadHandler(
     # TODO: generate more unique name for file based on experiment ID etc.
@@ -288,6 +291,7 @@ function(input, output, session) {
       )
     }
   )
+
   # Update main assay dataframe with excluded plates
   observeEvent(input$exclude_wells, {
     req(input$luminescence_files)
@@ -296,12 +300,14 @@ function(input, output, session) {
     assay_df <- exclude_wells(assay_df, input$exclude_wells)
     values[["assay_df"]] <- assay_df
   })
+
   # Calculate average viral and cell luminescence
   output$av_lum <- renderTable({
     assay_df <- isolate(values[["assay_df"]])
     av_lum_df <- init_av_lum_df(assay_df)
     return(av_lum_df)
   })
+
   # Generate plots for each plate on change of the QC tabs
   observeEvent(input$tabset_qc, {
     feature <- tolower(input$tabset_qc)
@@ -325,6 +331,7 @@ function(input, output, session) {
       do.call(tagList, plot_output_list)
     }
   })
+
   # Generate types boxplot
    output$types_boxplot <- renderPlotly({
     req(input$luminescence_files)
@@ -349,6 +356,7 @@ function(input, output, session) {
   ############
   # 3) Results
   ############
+
   # Download HTML report
   output$download_report <- downloadHandler(
     # TODO: generate more unique name for file based on experiment ID etc.
@@ -405,6 +413,7 @@ function(input, output, session) {
   output$cv_boxplot_code <- renderUI({
     prism_code_block(code = print_cv_boxplot_code(), language = "r")
   })
+
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
@@ -422,6 +431,7 @@ function(input, output, session) {
     filename = "cv_boxplot.svg",
     content = function(file) ggsave(file, plot = values[["cv_boxplot"]])
   )
+  
   # Generate plots to display
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
