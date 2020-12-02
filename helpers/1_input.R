@@ -22,6 +22,16 @@ init_cols <- function(assay_df) {
   assay_df$exclude <- FALSE
   return(assay_df)
 }
+init_types <- function(assay_df) {
+  assay_df <- assay_df %>%
+    dplyr::mutate(types = case_when(
+      wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
+      wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
+      wcol %in% seq(2, 11) ~ "x",
+      wcol == 12 ~ "m",
+    ))
+  return(assay_df)
+}
 init_subject <- function(assay_df, wcol1, wcol2, subject) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {

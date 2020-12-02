@@ -162,13 +162,7 @@ function(input, output, session) {
       # Rename columns
       assay_df <- rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
       # Populate main assay df with types using the default plate layout
-      assay_df <- assay_df %>%
-        dplyr::mutate(types = case_when(
-          wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
-          wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
-          wcol %in% seq(2, 11) ~ "x",
-          wcol == 12 ~ "m",
-        ))
+      assay_df <- init_types(assay_df)
       # Populate main assay df with default subject info
       assay_df <- init_subject(assay_df = assay_df, wcol1 = 2, wcol2 = 3, subject = 1)
       assay_df <- init_subject(assay_df = assay_df, wcol1 = 4, wcol2 = 5, subject = 2)
