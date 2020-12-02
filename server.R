@@ -405,7 +405,7 @@ function(input, output, session) {
     prism_code_block(code = data_exploration_code("all"), language = "r")
   })
   output$drc_code <- renderUI({
-    prism_code_block(code = print_drc_code(input$drm_string), language = "r")
+    prism_code_block(code = drc_code("all",input$drm_string), language = "r")
   })
   output$ic50_boxplot_code <- renderUI({
     prism_code_block(code = print_ic50_boxplot_code(input$drm_string), language = "r")
