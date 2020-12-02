@@ -441,35 +441,7 @@ function(input, output, session) {
   output$drc <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
-    data$subject <- unlist(data$subject)
-    model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
-    # plot(model, type="all", col=TRUE)
-
-    n <- 100
-    new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out = n))
-    subjects <- unique(data$subject)
-    new_data <- expand.grid(new_dilution, subjects)
-    names(new_data) <- c("dilution", "subject")
-    new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
-    new_data$pred <- predict(model, newdata = new_data, )
-    facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
-    # inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
-    # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
-    #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10],
-    #         'black')
-
-    values[["drc"]] <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = inoculate, group = subject)) +
-      geom_line() +
-      geom_point(data = data, aes(y = neutralisation)) +
-      facet_wrap(facets) +
-      scale_x_continuous(trans = "log10") +
-      # scale_colour_manual(values=ccs) +
-      theme_classic() +
-      ylab("Neutralisation") +
-      xlab("Dilution") +
-      ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(ggplot2::last_plot())
+    eval(parse(text=drc_code("plot",input$drm_string)))
   })
   output$ic50_boxplot <- renderPlotly({
     req(input$luminescence_files)
