@@ -173,17 +173,7 @@ function(input, output, session) {
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)
       # Calculate normalised luminescence values
-      plates <- unique(assay_df$plate_number)
-      for (plate_n in plates) {
-        plate_df <- assay_df[assay_df$plate_number == plate_n, ]
-        # max & min levels of cell infection
-        neu0 <- mean(plate_df[plate_df$types == "v", ]$rlu)
-        neu100 <- mean(plate_df[plate_df$types == "c", ]$rlu)
-        # express rlu as neutralisation percentage between neu0 and new100
-        plate_df$neutralisation <- 100 * ((plate_df$rlu - neu0) / (neu100 - neu0))
-        # update main assay dataframe with neutralisations
-        assay_df[rownames(plate_df), ] <- plate_df
-      }
+      assay_df <- init_neut(assay_df)
       values[["assay_df"]] <- assay_df
     }
     # Update main assay dataframe with new dilutions
