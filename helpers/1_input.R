@@ -131,3 +131,22 @@ update_feature <- function(new_feature, input, values) {
   assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
   values[["assay_df"]] <- assay_df
 }
+assay_to_plate_df <- function(assay_df, plate_n) {
+  plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
+    dplyr::select(wrow, wcol, types) %>%
+    tidyr::spread(key = wcol, value = types) %>%
+    dplyr::rename(Well = wrow)
+  # Re-order cols
+  plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
+  # Get the subjects
+  subjects <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
+    dplyr::filter(wrow == "A") %>%
+    dplyr::select(subject)
+  subject <- c("Subject", subjects$subject)
+  # Reformat the row & col names + add a subject row
+  names(subject) <- names(plate_df)
+  plate_df <- rbind(subject, plate_df)
+  row.names(plate_df) <- plate_df$Well
+  plate_df[1] <- NULL
+  return(plate_df)
+}

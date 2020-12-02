@@ -216,24 +216,9 @@ function(input, output, session) {
   # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
   plate_df <- reactive({
     req(input$luminescence_files)
-    plate_number <- values[["plate_n"]]
+    plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
-    plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-      dplyr::select(wrow, wcol, types) %>%
-      tidyr::spread(key = wcol, value = types) %>%
-      dplyr::rename(Well = wrow)
-    # Re-order cols
-    plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
-    # Get the subjects
-    subjects <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-      dplyr::filter(wrow == "A") %>%
-      dplyr::select(subject)
-    subject <- c("Subject", subjects$subject)
-    # Reformat the row & col names + add a subject row
-    names(subject) <- names(plate_df)
-    plate_df <- rbind(subject, plate_df)
-    row.names(plate_df) <- plate_df$Well
-    plate_df[1] <- NULL
+    plate_df <- assay_to_plate_df(assay_df, plate_n)
     return(plate_df)
   })
 
