@@ -450,7 +450,7 @@ function(input, output, session) {
   })
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
-    assay_df <- values[["assay_df"]]
+    data <- values[["assay_df"]]
     eval(parse(text=cv_boxplot_code("plot"))) 
   })
 }

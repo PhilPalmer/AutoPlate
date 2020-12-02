@@ -118,11 +118,10 @@ ic50_boxplot_code <- function(code, drm_string) {
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
 }
-cv_boxplot_code <- function() {
+cv_boxplot_code <- function(code) {
   setup <- setup_code(drc_plot = FALSE)
   plot <- '
     # Preprocessing
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
         dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
         dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
