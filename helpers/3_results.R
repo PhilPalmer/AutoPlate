@@ -118,19 +118,17 @@ ic50_boxplot_code <- function(code, drm_string) {
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
 }
-print_cv_boxplot_code <- function() {
-  '
-    library(dplyr)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
+cv_boxplot_code <- function() {
+  setup <- setup_code(drc_plot = FALSE)
+  plot <- '
+    # Preprocessing
     data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
         dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
         dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
     data$plate_number <- as.factor(data$plate_number)
 
+    # Generate plot
     cv_boxplot <- ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
         geom_boxplot() +
         geom_point(position=position_dodge(0.75)) +
@@ -141,4 +139,7 @@ print_cv_boxplot_code <- function() {
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
     plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
     '
+  if (code == "plot") code_text <- plot
+  if (code == "all") code_text <- paste0(setup,plot)
+  return(code_text)
 }

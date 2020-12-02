@@ -411,7 +411,7 @@ function(input, output, session) {
     prism_code_block(code = ic50_boxplot_code("all",input$drm_string), language = "r")
   })
   output$cv_boxplot_code <- renderUI({
-    prism_code_block(code = print_cv_boxplot_code(), language = "r")
+    prism_code_block(code = cv_boxplot_code("all"), language = "r")
   })
 
   # Download plots
@@ -451,19 +451,6 @@ function(input, output, session) {
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
     assay_df <- values[["assay_df"]]
-    assay_df <- dplyr::filter(assay_df, types %in% c("c", "v"), exclude == FALSE) %>%
-      dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
-      dplyr::mutate(types = ifelse((types == "v"), "virus", types))
-    assay_df$plate_number <- as.factor(assay_df$plate_number)
-
-    values[["cv_boxplot"]] <- ggplot2::ggplot(assay_df, aes(x = types, y = rlu, colour = plate_number)) +
-      geom_boxplot() +
-      geom_point(position = position_dodge(0.75)) +
-      scale_y_continuous(trans = "log10") +
-      ylab("Log10 raw luminescence value") +
-      xlab("Cell only or Virus only") +
-      theme_classic() +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot()) %>% layout(boxmode = "group")
+    eval(parse(text=cv_boxplot_code("plot"))) 
   })
 }
