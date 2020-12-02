@@ -221,6 +221,10 @@ function(input, output, session) {
     plate_df <- assay_to_plate_df(assay_df, plate_n)
     return(plate_df)
   })
+  # Render plate data table
+  output$plate_data <- renderRHandsontable({
+    rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
+  })
 
   # Make dilutions table
   observe({
@@ -236,15 +240,12 @@ function(input, output, session) {
     }
     values[["dilutions"]] <- dilutions
   })
-  output[["dilutions"]] <- renderRHandsontable({
+  # Render dilutions table
+  output$dilutions <- renderRHandsontable({
     dilutions <- values[["dilutions"]]
     if (!is.null(dilutions)) {
       rhandsontable(dilutions, stretchH = "all", rowHeaders = TRUE)
     }
-  })
-  # Make plate data table
-  output$plate_data <- renderRHandsontable({
-    rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
   })
 
   # Create dropdown for features: bleed, inoculate, primary & study
