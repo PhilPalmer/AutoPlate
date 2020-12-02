@@ -90,6 +90,23 @@ update_subjects <- function(assay_df, updated_plate_df, plate_n) {
   }
   return(assay_df)
 }
+update_types <- function(assay_df, updated_plate_df, plate_n) {
+  updated_types <- tail(updated_plate_df, -1)
+  for (col in seq(1, length(updated_types))) {
+    full_col <- updated_types[, col]
+    for (i in seq(1, length(full_col))) {
+      row <- row.names(updated_types)[i]
+      updated_type <- updated_types[row, col]
+      current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
+      if (current_type != updated_type) {
+        print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
+        assay_df <- assay_df %>%
+          dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
+      }
+    }
+  }
+  return(assay_df)
+}
 create_feature_dropdown <- function(new_feature, input, values) {
   req(input$plate_data)
   assay_df <- isolate(values[["assay_df"]])
