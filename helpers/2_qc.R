@@ -67,3 +67,18 @@ exclude_wells <- function(assay_df, exclusion_string) {
   }
   return(assay_df)
 }
+init_av_lum_df <- function(assay_df) {
+  plates <- sort(unique(assay_df$plate_number))
+  av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
+  av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
+  no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
+  no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
+  av_lum_df <- do.call(rbind, Map(data.frame,
+    plate_number = plates,
+    average_cell_luminescence = av_cell_lum,
+    average_viral_luminescence = av_viral_lum,
+    number_of_cell_wells = no_cell_wells,
+    number_of_virus_wells = no_viral_wells
+  ))
+  return(av_lum_df)
+}

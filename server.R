@@ -299,19 +299,7 @@ function(input, output, session) {
   # Calculate average viral and cell luminescence
   output$av_lum <- renderTable({
     assay_df <- isolate(values[["assay_df"]])
-    # TODO: add plates to reactive values so that it can be accessed globally
-    plates <- sort(unique(assay_df$plate_number))
-    av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
-    av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
-    no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
-    no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
-    av_lum_df <- do.call(rbind, Map(data.frame,
-      plate_number = plates,
-      average_cell_luminescence = av_cell_lum,
-      average_viral_luminescence = av_viral_lum,
-      number_of_cell_wells = no_cell_wells,
-      number_of_virus_wells = no_viral_wells
-    ))
+    av_lum_df <- init_av_lum_df(assay_df)
     return(av_lum_df)
   })
   # Generate plots for each plate on change of the QC tabs
