@@ -14,21 +14,28 @@ prism_code_block <- function(code, language = "r") {
     tags$script("Prism.highlightAll()")
   )
 }
-data_exploration_code <- function(code) {
-  setup <- '
+setup_code <- function(drc_plot) {
+  libraries <- '
     # Load libraries
     library(dplyr)
     library(ggplot2)
     library(plotly)
-
-    # Specify input file path
-    platelist_file <- "pmn_platelist.csv"
-
-    # Preprocessing
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
   '
+  if (drc_plot) libraries <- paste0(libraries,"\tlibrary(drc)\n")
+  input_file <- '
+    # Load input file - make sure your input file path is correct!
+    platelist_file <- "pmn_platelist.csv"
+    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+  '
+  setup_code <- paste0(libraries,input_file)
+  return(setup_code)
+}
+data_exploration_code <- function(code) {
+  setup <- setup_code(drc_plot = FALSE)
   plot <- '
+    # Preprocessing
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+
     # Generate plot
     data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
       geom_point() +

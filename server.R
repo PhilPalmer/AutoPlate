@@ -436,7 +436,6 @@ function(input, output, session) {
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     eval(parse(text=data_exploration_code("plot")))
   })
   output$drc <- renderPlotly({
