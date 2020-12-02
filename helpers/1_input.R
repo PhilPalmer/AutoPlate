@@ -9,6 +9,19 @@ read_plus <- function(name, file) {
   read.csv(file) %>%
     dplyr::mutate(filename = name)
 }
+init_cols <- function(assay_df) {
+  assay_df$filename <- gsub(".csv","",assay_df$filename)
+  assay_df$types <- ""
+  assay_df$subject <- ""
+  assay_df$dilution <- ""
+  assay_df$bleed <- ""
+  assay_df$inoculate <- ""
+  assay_df$primary <- ""
+  assay_df$study <- ""
+  assay_df$neutralisation <- as.numeric("")
+  assay_df$exclude <- FALSE
+  return(assay_df)
+}
 init_subject <- function(assay_df, wcol1, wcol2, subject) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {

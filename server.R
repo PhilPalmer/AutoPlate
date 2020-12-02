@@ -157,16 +157,8 @@ function(input, output, session) {
         dplyr::bind_rows() %>%
         dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
-      assay_df$filename <- gsub(".csv","",assay_df$filename)
-      assay_df$types <- ""
-      assay_df$subject <- ""
-      assay_df$dilution <- ""
-      assay_df$bleed <- ""
-      assay_df$inoculate <- ""
-      assay_df$primary <- ""
-      assay_df$study <- ""
-      assay_df$neutralisation <- as.numeric("")
-      assay_df$exclude <- FALSE
+      # Initialise new columns
+      assay_df <- init_cols(assay_df)
       # Rename columns
       assay_df <- rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
       # Populate main assay df with types using the default plate layout
@@ -252,7 +244,6 @@ function(input, output, session) {
         }
       )
     }
-
   })
 
   # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
