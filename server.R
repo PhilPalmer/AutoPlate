@@ -402,7 +402,7 @@ function(input, output, session) {
 
   # Generate raw R code output to display
   output$data_exploration_code <- renderUI({
-    prism_code_block(code = print_data_exploration_code(), language = "r")
+    prism_code_block(code = data_exploration_code(), language = "r")
   })
   output$drc_code <- renderUI({
     prism_code_block(code = print_drc_code(input$drm_string), language = "r")
@@ -431,23 +431,13 @@ function(input, output, session) {
     filename = "cv_boxplot.svg",
     content = function(file) ggsave(file, plot = values[["cv_boxplot"]])
   )
-  
+
   # Generate plots to display
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
-    assay_df <- values[["assay_df"]]
-    assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
-    values[["data_exploration"]] <- ggplot2::ggplot(assay_df, aes(x = dilution, y = neutralisation, colour = inoculate)) +
-      geom_point() +
-      geom_smooth(se = F, span = 1) +
-      facet_wrap(. ~ primary) +
-      ylim(c(-100, 110)) +
-      scale_x_continuous(trans = "log10") +
-      theme_classic() +
-      ylab("Neutralisation") +
-      xlab("Dilution") +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot())
+    data <- values[["assay_df"]]
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    eval(parse(text=data_exploration_plot_code()))
   })
   output$drc <- renderPlotly({
     req(input$luminescence_files)

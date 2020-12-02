@@ -14,28 +14,42 @@ prism_code_block <- function(code, language = "r") {
     tags$script("Prism.highlightAll()")
   )
 }
-print_data_exploration_code <- function() {
+data_exploration_setup_code <- function() {
   '
-    library(dplyr)
-    library(ggplot2)
+  # Load libraries
+  library(dplyr)
+  library(ggplot2)
+  library(plotly)
 
-    platelist_file <- "pmn_platelist.csv"
+  # Specify input file path
+  platelist_file <- "pmn_platelist.csv"
 
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-
-    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
-        geom_point() +
-        geom_smooth(se=F, span=1) +
-        facet_wrap(.~primary) +
-        ylim(c(-100, 110)) +
-        scale_x_continuous(trans="log10") +
-        theme_classic() +
-        ylab("Neutralisation") +
-        xlab("Dilution") +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(data_exploration_plot)
-    '
+  # Preprocessing
+  data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+  data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+  '
+}
+data_exploration_plot_code <- function() {
+  '
+  # Generate plot
+  data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+    geom_point() +
+    geom_smooth(se=F, span=1) +
+    facet_wrap(.~primary) +
+    ylim(c(-100, 110)) +
+    scale_x_continuous(trans="log10") +
+    theme_classic() +
+    ylab("Neutralisation") +
+    xlab("Dilution") +
+    ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
+  plotly::ggplotly(data_exploration_plot)
+  '
+}
+data_exploration_code <- function() {
+  paste0(
+    data_exploration_setup_code(),
+    data_exploration_plot_code()
+  )
 }
 print_drc_code <- function(drm_string) {
   paste0('
