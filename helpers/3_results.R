@@ -85,15 +85,10 @@ drc_code <- function(code, drm_string) {
     if (code == "all") code_text <- paste0(setup,plot)
     return(code_text)
 }
-print_ic50_boxplot_code <- function(drm_string) {
-  paste0('
-    library(dplyr)
-    library(drc)
-    library(ggplot2)
-
-    platelist_file <- "pmn_platelist.csv"
-
-    data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+ic50_boxplot_code <- function(code, drm_string) {
+  setup <- setup_code(drc_plot = TRUE)
+  plot <- paste0('
+    # Preprocessing
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
@@ -106,6 +101,7 @@ print_ic50_boxplot_code <- function(drm_string) {
     avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
     ied_order <- avied$inoculate[order(avied$av)]
 
+    # Generate plot
     ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
         geom_boxplot() +
         geom_point() +
@@ -117,7 +113,10 @@ print_ic50_boxplot_code <- function(drm_string) {
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip()
     plotly::ggplotly(ic50_boxplot)
-    ')
+  ')
+  if (code == "plot") code_text <- plot
+  if (code == "all") code_text <- paste0(setup,plot)
+  return(code_text)
 }
 print_cv_boxplot_code <- function() {
   '

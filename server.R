@@ -408,7 +408,7 @@ function(input, output, session) {
     prism_code_block(code = drc_code("all",input$drm_string), language = "r")
   })
   output$ic50_boxplot_code <- renderUI({
-    prism_code_block(code = print_ic50_boxplot_code(input$drm_string), language = "r")
+    prism_code_block(code = ic50_boxplot_code("all",input$drm_string), language = "r")
   })
   output$cv_boxplot_code <- renderUI({
     prism_code_block(code = print_cv_boxplot_code(), language = "r")
@@ -432,7 +432,7 @@ function(input, output, session) {
     content = function(file) ggsave(file, plot = values[["cv_boxplot"]])
   )
 
-  # Generate plots to display
+  # Generate and render results plots
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
@@ -446,32 +446,7 @@ function(input, output, session) {
   output$ic50_boxplot <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary?
-    data$subject <- unlist(data$subject)
-    model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
-
-    ied <- as.data.frame(ED(model, 50, display = FALSE))
-    ied$subject <- gsub("e:|:50", "", row.names(ied))
-    ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
-    ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
-    ied$primary <- data$primary[match(ied$subject, data$subject)]
-    facets <- if(length(unique(data$primary))>1) c("primary") else NULL
-    # Average Neutralisation
-    avied <- summarise(group_by(ied, inoculate), av = median(Estimate))
-    ied_order <- avied$inoculate[order(avied$av)]
-
-    values[["ic50"]] <- ggplot2::ggplot(ied, aes(x = inoculate, y = Estimate, colour = inoculate)) +
-      geom_boxplot() +
-      geom_point() +
-      facet_wrap(facets) +
-      # scale_colour_manual(values=ccs) +
-      scale_x_discrete(limits = ied_order) +
-      ylab("Individual IC50 log10") +
-      xlab("Inoculate") +
-      theme_classic() +
-      ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
-      coord_flip()
-    plotly::ggplotly(ggplot2::last_plot())
+    eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
   })
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
