@@ -82,6 +82,14 @@ update_dilutions <- function(assay_df, dilutions) {
       wrow == "H" & types == "m" ~ dilutions[8, 2]
     ))
 }
+update_subjects <- function(assay_df, updated_plate_df, plate_n) {
+  updated_subjects <- updated_plate_df[1, ]
+  for (i in seq(1, length(updated_subjects))) {
+    assay_df <- assay_df %>%
+      dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
+  }
+  return(assay_df)
+}
 create_feature_dropdown <- function(new_feature, input, values) {
   req(input$plate_data)
   assay_df <- isolate(values[["assay_df"]])
