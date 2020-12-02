@@ -336,21 +336,8 @@ function(input, output, session) {
    output$types_boxplot <- renderPlotly({
     req(input$luminescence_files)
     assay_df <- values[["assay_df"]]
-    assay_df <- assay_df %>%
-      dplyr::filter(exclude == FALSE) %>%
-      dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
-      dplyr::mutate(types = ifelse((types == "m"), "monoclonal antibody", types)) %>%
-      dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
-      dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
-    assay_df$plate_number <- as.factor(assay_df$plate_number)
-    values[["types_boxplot"]] <- ggplot2::ggplot(assay_df, aes(x = plate_number, y = rlu, colour = types)) +
-      geom_boxplot() +
-      geom_point(position=position_dodge(0.75)) +
-      ylab("Raw luminescence value") +
-      xlab("Plate number") +
-      theme_classic() +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot()) %>% layout(boxmode = "group")
+    types_boxplot <- init_types_boxplot(assay_df)
+    plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
   })
 
   ############
