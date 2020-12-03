@@ -47,7 +47,8 @@ data_exploration_code <- function(code) {
       ylab("Neutralisation") +
       xlab("Dilution") +
       ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(data_exploration_plot)
+    data_exploration_plotly <- plotly::ggplotly(data_exploration_plot)
+    data_exploration_plotly
   '
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
@@ -79,7 +80,8 @@ drc_code <- function(code, drm_string) {
         ylab("Neutralisation") +
         xlab("Dilution") +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(drc_plot)
+    drc_plotly <- plotly::ggplotly(drc_plot)
+    drc_plotly
     ')
     if (code == "plot") code_text <- plot
     if (code == "all") code_text <- paste0(setup,plot)
@@ -112,7 +114,8 @@ ic50_boxplot_code <- function(code, drm_string) {
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip()
-    plotly::ggplotly(ic50_boxplot)
+    ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
+    ic50_boxplotly
   ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
@@ -136,7 +139,8 @@ cv_boxplot_code <- function(code) {
         xlab("Cell only or Virus only") +
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
+    cv_boxplotly <- plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
+    cv_boxplotly
     '
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)

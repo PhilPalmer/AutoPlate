@@ -412,7 +412,7 @@ function(input, output, session) {
   )
   output$download_ic50 <- downloadHandler(
     filename = "ic50.svg",
-    content = function(file) ggsave(file, plot = values[["ic50"]])
+    content = function(file) ggsave(file, plot = values[["ic50_boxplot"]])
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
@@ -424,20 +424,25 @@ function(input, output, session) {
     req(input$luminescence_files)
     data <- values[["assay_df"]]
     eval(parse(text=data_exploration_code("plot")))
+    values[["data_exploration"]] <- data_exploration_plot
   })
   output$drc <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
     eval(parse(text=drc_code("plot",input$drm_string)))
+    values[["drc"]] <- drc_plot
   })
   output$ic50_boxplot <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
     eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
+    values[["ic50_boxplot"]] <- ic50_boxplot
   })
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
     eval(parse(text=cv_boxplot_code("plot"))) 
+    values[["cv_boxplot"]] <- cv_boxplot
+    cv_boxplotly
   })
 }
