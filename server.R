@@ -429,14 +429,24 @@ function(input, output, session) {
   output$drc <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    eval(parse(text=drc_code("plot",input$drm_string)))
-    values[["drc"]] <- drc_plot
+    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+    tryCatch({
+        eval(parse(text=drc_code("plot",input$drm_string)))
+        values[["drc"]] <- drc_plot
+      }, error = function(error_message) {
+        print(error_message)
+    })
   })
   output$ic50_boxplot <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
-    values[["ic50_boxplot"]] <- ic50_boxplot
+    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+    tryCatch({
+      eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
+      values[["ic50_boxplot"]] <- ic50_boxplot
+      }, error = function(error_message) {
+        print(error_message)
+    })
   })
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
