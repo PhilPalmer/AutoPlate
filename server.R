@@ -411,7 +411,7 @@ function(input, output, session) {
     content = function(file) ggsave(file, plot = values[["drc"]])
   )
   output$download_ic50 <- downloadHandler(
-    filename = "ic50.svg",
+    filename = "ic50_boxplot.svg",
     content = function(file) ggsave(file, plot = values[["ic50_boxplot"]])
   )
   output$download_cv_boxplot <- downloadHandler(
