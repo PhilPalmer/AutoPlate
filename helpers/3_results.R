@@ -109,7 +109,7 @@ ic50_boxplot_code <- function(code, drm_string) {
         geom_point() +
         facet_wrap(facets) +
         scale_x_discrete(limits=ied_order) +
-        ylab(expression("Individual IC50 log"[10])) +
+        ylab("Individual IC50 log10") +
         xlab("Inoculate") +
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
