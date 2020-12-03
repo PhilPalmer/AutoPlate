@@ -67,3 +67,35 @@ exclude_wells <- function(assay_df, exclusion_string) {
   }
   return(assay_df)
 }
+init_av_lum_df <- function(assay_df) {
+  plates <- sort(unique(assay_df$plate_number))
+  av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
+  av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
+  no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
+  no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
+  av_lum_df <- do.call(rbind, Map(data.frame,
+    plate_number = plates,
+    average_cell_luminescence = av_cell_lum,
+    average_viral_luminescence = av_viral_lum,
+    number_of_cell_wells = no_cell_wells,
+    number_of_virus_wells = no_viral_wells
+  ))
+  return(av_lum_df)
+}
+init_types_boxplot <- function(assay_df) {
+  assay_df <- assay_df %>%
+    dplyr::filter(exclude == FALSE) %>%
+    dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
+    dplyr::mutate(types = ifelse((types == "m"), "monoclonal antibody", types)) %>%
+    dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
+    dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
+  assay_df$plate_number <- as.factor(assay_df$plate_number)
+  types_boxplot <- ggplot2::ggplot(assay_df, aes(x = plate_number, y = rlu, colour = types)) +
+    geom_boxplot() +
+    geom_point(position=position_dodge(0.75)) +
+    ylab("Raw luminescence value") +
+    xlab("Plate number") +
+    theme_classic() +
+    ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
+  return(types_boxplot)
+}

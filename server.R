@@ -21,16 +21,6 @@ source("helpers/3_results.R")
 create_tooltip <- function(text) {
   HTML(paste0("<i class='fa fa-question-circle' title='", text, "'</i>"))
 }
-# Format code with tags and language
-prism_add_tags <- function(code, language = "r") {
-  paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
-}
-prism_code_block <- function(code, language = "r") {
-  tagList(
-    HTML(prism_add_tags(code, language = language)),
-    tags$script("Prism.highlightAll()")
-  )
-}
 
 function(input, output, session) {
 
@@ -79,13 +69,13 @@ function(input, output, session) {
   ##########
 
   # Define variables
+  values <- reactiveValues()
   dilutions_file <- "data/dilutions.csv"
   dilutions <- read.csv(dilutions_file,
     header = TRUE,
     stringsAsFactors = FALSE,
     check.names = FALSE
   )
-  values <- reactiveValues()
 
   # Create tooltip icons
   output$tooltip_input_files <- renderText({
@@ -113,6 +103,7 @@ function(input, output, session) {
   output$tooltip_download_report <- renderText({
     create_tooltip("Export all QC and results plots as a shareable HTML file")
   })
+
   # Create messages to display to user
   output$message_input_files <- renderUI({
     if (is.null(input$luminescence_files)) {
@@ -131,6 +122,7 @@ function(input, output, session) {
   output$message_drm_string <- renderText({
     HTML("<p>Dose Response Model: specify the model for the dose response curve as per the <a href='https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/drm'>DRM function</a></p>")
   })
+
   # Create a tab for each uploaded plate
   output$plate_tabs <- renderUI({
     if (is.null(input$luminescence_files)) {
@@ -167,26 +159,12 @@ function(input, output, session) {
         dplyr::bind_rows() %>%
         dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
-      assay_df$filename <- gsub(".csv","",assay_df$filename)
-      assay_df$types <- ""
-      assay_df$subject <- ""
-      assay_df$dilution <- ""
-      assay_df$bleed <- ""
-      assay_df$inoculate <- ""
-      assay_df$primary <- ""
-      assay_df$study <- ""
-      assay_df$neutralisation <- as.numeric("")
-      assay_df$exclude <- FALSE
+      # Initialise new columns
+      assay_df <- init_cols(assay_df)
       # Rename columns
       assay_df <- rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
       # Populate main assay df with types using the default plate layout
-      assay_df <- assay_df %>%
-        dplyr::mutate(types = case_when(
-          wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
-          wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
-          wcol %in% seq(2, 11) ~ "x",
-          wcol == 12 ~ "m",
-        ))
+      assay_df <- init_types(assay_df)
       # Populate main assay df with default subject info
       assay_df <- init_subject(assay_df = assay_df, wcol1 = 2, wcol2 = 3, subject = 1)
       assay_df <- init_subject(assay_df = assay_df, wcol1 = 4, wcol2 = 5, subject = 2)
@@ -197,17 +175,7 @@ function(input, output, session) {
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)
       # Calculate normalised luminescence values
-      plates <- unique(assay_df$plate_number)
-      for (plate_n in plates) {
-        plate_df <- assay_df[assay_df$plate_number == plate_n, ]
-        # max & min levels of cell infection
-        neu0 <- mean(plate_df[plate_df$types == "v", ]$rlu)
-        neu100 <- mean(plate_df[plate_df$types == "c", ]$rlu)
-        # express rlu as neutralisation percentage between neu0 and new100
-        plate_df$neutralisation <- 100 * ((plate_df$rlu - neu0) / (neu100 - neu0))
-        # update main assay dataframe with neutralisations
-        assay_df[rownames(plate_df), ] <- plate_df
-      }
+      assay_df <- init_neut(assay_df)
       values[["assay_df"]] <- assay_df
     }
     # Update main assay dataframe with new dilutions
@@ -234,26 +202,9 @@ function(input, output, session) {
         {
           updated_plate_df <- hot_to_r(input$plate_data)
           # Update main assay dataframe with subject
-          updated_subjects <- updated_plate_df[1, ]
-          for (i in seq(1, length(updated_subjects))) {
-            assay_df <- assay_df %>%
-              dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
-          }
+          assay_df <- update_subjects(assay_df, updated_plate_df, plate_n)
           # Update main assay dataframe with types
-          updated_types <- tail(updated_plate_df, -1)
-          for (col in seq(1, length(updated_types))) {
-            full_col <- updated_types[, col]
-            for (i in seq(1, length(full_col))) {
-              row <- row.names(updated_types)[i]
-              updated_type <- updated_types[row, col]
-              current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
-              if (current_type != updated_type) {
-                print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
-                assay_df <- assay_df %>%
-                  dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
-              }
-            }
-          }
+          assay_df <- update_types(assay_df, updated_plate_df, plate_n)
           updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
           values[["assay_df"]] <- assay_df
         },
@@ -262,31 +213,19 @@ function(input, output, session) {
         }
       )
     }
-
   })
 
   # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
   plate_df <- reactive({
     req(input$luminescence_files)
-    plate_number <- values[["plate_n"]]
+    plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
-    plate_df <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-      dplyr::select(wrow, wcol, types) %>%
-      tidyr::spread(key = wcol, value = types) %>%
-      dplyr::rename(Well = wrow)
-    # Re-order cols
-    plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
-    # Get the subjects
-    subjects <- isolate(assay_df[assay_df$plate_number == plate_number, ]) %>%
-      dplyr::filter(wrow == "A") %>%
-      dplyr::select(subject)
-    subject <- c("Subject", subjects$subject)
-    # Reformat the row & col names + add a subject row
-    names(subject) <- names(plate_df)
-    plate_df <- rbind(subject, plate_df)
-    row.names(plate_df) <- plate_df$Well
-    plate_df[1] <- NULL
+    plate_df <- assay_to_plate_df(assay_df, plate_n)
     return(plate_df)
+  })
+  # Render plate data table
+  output$plate_data <- renderRHandsontable({
+    rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
   })
 
   # Make dilutions table
@@ -303,15 +242,12 @@ function(input, output, session) {
     }
     values[["dilutions"]] <- dilutions
   })
-  output[["dilutions"]] <- renderRHandsontable({
+  # Render dilutions table
+  output$dilutions <- renderRHandsontable({
     dilutions <- values[["dilutions"]]
     if (!is.null(dilutions)) {
       rhandsontable(dilutions, stretchH = "all", rowHeaders = TRUE)
     }
-  })
-  # Make plate data table
-  output$plate_data <- renderRHandsontable({
-    rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
   })
 
   # Create dropdown for features: bleed, inoculate, primary & study
@@ -335,6 +271,7 @@ function(input, output, session) {
   #######
   # 2) QC
   #######
+
   # Download/export data to CSV
   output$download_data <- downloadHandler(
     # TODO: generate more unique name for file based on experiment ID etc.
@@ -354,6 +291,7 @@ function(input, output, session) {
       )
     }
   )
+
   # Update main assay dataframe with excluded plates
   observeEvent(input$exclude_wells, {
     req(input$luminescence_files)
@@ -362,24 +300,14 @@ function(input, output, session) {
     assay_df <- exclude_wells(assay_df, input$exclude_wells)
     values[["assay_df"]] <- assay_df
   })
+
   # Calculate average viral and cell luminescence
   output$av_lum <- renderTable({
     assay_df <- isolate(values[["assay_df"]])
-    # TODO: add plates to reactive values so that it can be accessed globally
-    plates <- sort(unique(assay_df$plate_number))
-    av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
-    av_viral_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "v"))$rlu))
-    no_cell_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "c"))
-    no_viral_wells <- lapply(plates, function(plate_n) sum(dplyr::filter(assay_df, (plate_number == plate_n))$types == "v"))
-    av_lum_df <- do.call(rbind, Map(data.frame,
-      plate_number = plates,
-      average_cell_luminescence = av_cell_lum,
-      average_viral_luminescence = av_viral_lum,
-      number_of_cell_wells = no_cell_wells,
-      number_of_virus_wells = no_viral_wells
-    ))
+    av_lum_df <- init_av_lum_df(assay_df)
     return(av_lum_df)
   })
+
   # Generate plots for each plate on change of the QC tabs
   observeEvent(input$tabset_qc, {
     feature <- tolower(input$tabset_qc)
@@ -403,30 +331,19 @@ function(input, output, session) {
       do.call(tagList, plot_output_list)
     }
   })
+
   # Generate types boxplot
    output$types_boxplot <- renderPlotly({
     req(input$luminescence_files)
     assay_df <- values[["assay_df"]]
-    assay_df <- assay_df %>%
-      dplyr::filter(exclude == FALSE) %>%
-      dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
-      dplyr::mutate(types = ifelse((types == "m"), "monoclonal antibody", types)) %>%
-      dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
-      dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
-    assay_df$plate_number <- as.factor(assay_df$plate_number)
-    values[["types_boxplot"]] <- ggplot2::ggplot(assay_df, aes(x = plate_number, y = rlu, colour = types)) +
-      geom_boxplot() +
-      geom_point(position=position_dodge(0.75)) +
-      ylab("Raw luminescence value") +
-      xlab("Plate number") +
-      theme_classic() +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot()) %>% layout(boxmode = "group")
+    types_boxplot <- init_types_boxplot(assay_df)
+    plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
   })
 
   ############
   # 3) Results
   ############
+
   # Download HTML report
   output$download_report <- downloadHandler(
     # TODO: generate more unique name for file based on experiment ID etc.
@@ -472,17 +389,18 @@ function(input, output, session) {
 
   # Generate raw R code output to display
   output$data_exploration_code <- renderUI({
-    prism_code_block(code = print_data_exploration_code(), language = "r")
+    prism_code_block(code = data_exploration_code("all"), language = "r")
   })
   output$drc_code <- renderUI({
-    prism_code_block(code = print_drc_code(input$drm_string), language = "r")
+    prism_code_block(code = drc_code("all",input$drm_string), language = "r")
   })
   output$ic50_boxplot_code <- renderUI({
-    prism_code_block(code = print_ic50_boxplot_code(input$drm_string), language = "r")
+    prism_code_block(code = ic50_boxplot_code("all",input$drm_string), language = "r")
   })
   output$cv_boxplot_code <- renderUI({
-    prism_code_block(code = print_cv_boxplot_code(), language = "r")
+    prism_code_block(code = cv_boxplot_code("all"), language = "r")
   })
+
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
@@ -493,109 +411,48 @@ function(input, output, session) {
     content = function(file) ggsave(file, plot = values[["drc"]])
   )
   output$download_ic50 <- downloadHandler(
-    filename = "ic50.svg",
-    content = function(file) ggsave(file, plot = values[["ic50"]])
+    filename = "ic50_boxplot.svg",
+    content = function(file) ggsave(file, plot = values[["ic50_boxplot"]])
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
     content = function(file) ggsave(file, plot = values[["cv_boxplot"]])
   )
-  # Generate plots to display
+
+  # Generate and render results plots
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
-    assay_df <- values[["assay_df"]]
-    assay_df <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE)
-    values[["data_exploration"]] <- ggplot2::ggplot(assay_df, aes(x = dilution, y = neutralisation, colour = inoculate)) +
-      geom_point() +
-      geom_smooth(se = F, span = 1) +
-      facet_wrap(. ~ primary) +
-      ylim(c(-100, 110)) +
-      scale_x_continuous(trans = "log10") +
-      theme_classic() +
-      ylab("Neutralisation") +
-      xlab("Dilution") +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot())
+    data <- values[["assay_df"]]
+    eval(parse(text=data_exploration_code("plot")))
+    values[["data_exploration"]] <- data_exploration_plot
   })
   output$drc <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary
-    data$subject <- unlist(data$subject)
-    model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
-    # plot(model, type="all", col=TRUE)
-
-    n <- 100
-    new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out = n))
-    subjects <- unique(data$subject)
-    new_data <- expand.grid(new_dilution, subjects)
-    names(new_data) <- c("dilution", "subject")
-    new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
-    new_data$pred <- predict(model, newdata = new_data, )
-    facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
-    # inoculate_cols <- gg_color_hue(10) # TODO: make controls different colour
-    # ccs <- c('grey', inoculate_cols[1], inoculate_cols[2], inoculate_cols[3], inoculate_cols[4],
-    #         inoculate_cols[5], inoculate_cols[6], inoculate_cols[7], inoculate_cols[8], inoculate_cols[9], inoculate_cols[10],
-    #         'black')
-
-    values[["drc"]] <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = inoculate, group = subject)) +
-      geom_line() +
-      geom_point(data = data, aes(y = neutralisation)) +
-      facet_wrap(facets) +
-      scale_x_continuous(trans = "log10") +
-      # scale_colour_manual(values=ccs) +
-      theme_classic() +
-      ylab("Neutralisation") +
-      xlab("Dilution") +
-      ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
-    plotly::ggplotly(ggplot2::last_plot())
+    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+    tryCatch({
+        eval(parse(text=drc_code("plot",input$drm_string)))
+        values[["drc"]] <- drc_plot
+      }, error = function(error_message) {
+        print(error_message)
+    })
   })
   output$ic50_boxplot <- renderPlotly({
     req(input$luminescence_files)
     data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE) # TODO: filter for each primary?
-    data$subject <- unlist(data$subject)
-    model <- eval(parse(text = paste("drc::drm(", input$drm_string, ")")))
-
-    ied <- as.data.frame(ED(model, 50, display = FALSE))
-    ied$subject <- gsub("e:|:50", "", row.names(ied))
-    ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
-    ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
-    ied$primary <- data$primary[match(ied$subject, data$subject)]
-    facets <- if(length(unique(data$primary))>1) c("primary") else NULL
-    # Average Neutralisation
-    avied <- summarise(group_by(ied, inoculate), av = median(Estimate))
-    ied_order <- avied$inoculate[order(avied$av)]
-
-    values[["ic50"]] <- ggplot2::ggplot(ied, aes(x = inoculate, y = Estimate, colour = inoculate)) +
-      geom_boxplot() +
-      geom_point() +
-      facet_wrap(facets) +
-      # scale_colour_manual(values=ccs) +
-      scale_x_discrete(limits = ied_order) +
-      ylab("Individual IC50 log10") +
-      xlab("Inoculate") +
-      theme_classic() +
-      ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
-      coord_flip()
-    plotly::ggplotly(ggplot2::last_plot())
+    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+    tryCatch({
+      eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
+      values[["ic50_boxplot"]] <- ic50_boxplot
+      }, error = function(error_message) {
+        print(error_message)
+    })
   })
   output$cv_boxplot <- renderPlotly({
     req(input$luminescence_files)
-    assay_df <- values[["assay_df"]]
-    assay_df <- dplyr::filter(assay_df, types %in% c("c", "v"), exclude == FALSE) %>%
-      dplyr::mutate(types = ifelse((types == "c"), "cell", types)) %>%
-      dplyr::mutate(types = ifelse((types == "v"), "virus", types))
-    assay_df$plate_number <- as.factor(assay_df$plate_number)
-
-    values[["cv_boxplot"]] <- ggplot2::ggplot(assay_df, aes(x = types, y = rlu, colour = plate_number)) +
-      geom_boxplot() +
-      geom_point(position = position_dodge(0.75)) +
-      scale_y_continuous(trans = "log10") +
-      ylab("Log10 raw luminescence value") +
-      xlab("Cell only or Virus only") +
-      theme_classic() +
-      ggtitle(paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary)))
-    plotly::ggplotly(ggplot2::last_plot()) %>% layout(boxmode = "group")
+    data <- values[["assay_df"]]
+    eval(parse(text=cv_boxplot_code("plot"))) 
+    values[["cv_boxplot"]] <- cv_boxplot
+    cv_boxplotly
   })
 }

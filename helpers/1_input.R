@@ -9,6 +9,29 @@ read_plus <- function(name, file) {
   read.csv(file) %>%
     dplyr::mutate(filename = name)
 }
+init_cols <- function(assay_df) {
+  assay_df$filename <- gsub(".csv","",assay_df$filename)
+  assay_df$types <- ""
+  assay_df$subject <- ""
+  assay_df$dilution <- ""
+  assay_df$bleed <- ""
+  assay_df$inoculate <- ""
+  assay_df$primary <- ""
+  assay_df$study <- ""
+  assay_df$neutralisation <- as.numeric("")
+  assay_df$exclude <- FALSE
+  return(assay_df)
+}
+init_types <- function(assay_df) {
+  assay_df <- assay_df %>%
+    dplyr::mutate(types = case_when(
+      wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
+      wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
+      wcol %in% seq(2, 11) ~ "x",
+      wcol == 12 ~ "m",
+    ))
+  return(assay_df)
+}
 init_subject <- function(assay_df, wcol1, wcol2, subject) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
@@ -21,6 +44,20 @@ init_subject <- function(assay_df, wcol1, wcol2, subject) {
   if (plates_not_numbered) {
     assay_df$plate_number <- assay_df$filename
     assay_df$rank <- NA
+  }
+  return(assay_df)
+}
+init_neut <- function(assay_df) {
+  plates <- unique(assay_df$plate_number)
+  for (plate_n in plates) {
+    plate_df <- assay_df[assay_df$plate_number == plate_n, ]
+    # max & min levels of cell infection
+    neu0 <- mean(plate_df[plate_df$types == "v", ]$rlu)
+    neu100 <- mean(plate_df[plate_df$types == "c", ]$rlu)
+    # express rlu as neutralisation percentage between neu0 and new100
+    plate_df$neutralisation <- 100 * ((plate_df$rlu - neu0) / (neu100 - neu0))
+    # update main assay dataframe with neutralisations
+    assay_df[rownames(plate_df), ] <- plate_df
   }
   return(assay_df)
 }
@@ -45,6 +82,31 @@ update_dilutions <- function(assay_df, dilutions) {
       wrow == "H" & types == "m" ~ dilutions[8, 2]
     ))
 }
+update_subjects <- function(assay_df, updated_plate_df, plate_n) {
+  updated_subjects <- updated_plate_df[1, ]
+  for (i in seq(1, length(updated_subjects))) {
+    assay_df <- assay_df %>%
+      dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
+  }
+  return(assay_df)
+}
+update_types <- function(assay_df, updated_plate_df, plate_n) {
+  updated_types <- tail(updated_plate_df, -1)
+  for (col in seq(1, length(updated_types))) {
+    full_col <- updated_types[, col]
+    for (i in seq(1, length(full_col))) {
+      row <- row.names(updated_types)[i]
+      updated_type <- updated_types[row, col]
+      current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
+      if (current_type != updated_type) {
+        print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
+        assay_df <- assay_df %>%
+          dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
+      }
+    }
+  }
+  return(assay_df)
+}
 create_feature_dropdown <- function(new_feature, input, values) {
   req(input$plate_data)
   assay_df <- isolate(values[["assay_df"]])
@@ -68,4 +130,23 @@ update_feature <- function(new_feature, input, values) {
   mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
   assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
   values[["assay_df"]] <- assay_df
+}
+assay_to_plate_df <- function(assay_df, plate_n) {
+  plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
+    dplyr::select(wrow, wcol, types) %>%
+    tidyr::spread(key = wcol, value = types) %>%
+    dplyr::rename(Well = wrow)
+  # Re-order cols
+  plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
+  # Get the subjects
+  subjects <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
+    dplyr::filter(wrow == "A") %>%
+    dplyr::select(subject)
+  subject <- c("Subject", subjects$subject)
+  # Reformat the row & col names + add a subject row
+  names(subject) <- names(plate_df)
+  plate_df <- rbind(subject, plate_df)
+  row.names(plate_df) <- plate_df$Well
+  plate_df[1] <- NULL
+  return(plate_df)
 }
