@@ -4,16 +4,46 @@
 # Helper functions for AutoPlate Step 3) Results
 ################################################
 
-# Format code with tags and language
+#' @title Prism add tags
+#'
+#' @description Add code HTML tags to a HTML block input
+#' @param code HTML code to add the code tags to
+#' @param language The programming language of the HTML code block, default is R
+#' @return A HTML block with relevant langugage code tags
+#' @keywords HTML code
+#' @export
+#' @examples
+#' prism_add_tags()
 prism_add_tags <- function(code, language = "r") {
   paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
 }
+
+#' @title Prism code block
+#'
+#' @description Add syntax highlighting to a HTML code block with Prism
+#' @param code HTML code to highlight with Prism
+#' @param language The programming language of the HTML code block, default is R
+#' @return A HTML block with syntax highlighting
+#' @keywords HTML code Prism
+#' @export
+#' @examples
+#' prism_code_block()
 prism_code_block <- function(code, language = "r") {
   tagList(
     HTML(prism_add_tags(code, language = language)),
     tags$script("Prism.highlightAll()")
   )
 }
+
+#' @title Setup code
+#'
+#' @description Function to return the setup code for a results plot
+#' @param drc_plot Bool value to specify if the requires the drc library
+#' @return A string containing the code required to setup a results plot
+#' @keywords setup code
+#' @export
+#' @examples
+#' setup_code()
 setup_code <- function(drc_plot) {
   libraries <- '
     # Load libraries
@@ -30,6 +60,16 @@ setup_code <- function(drc_plot) {
   setup_code <- paste0(libraries,input_file)
   return(setup_code)
 }
+
+#' @title Data exploration code
+#'
+#' @description Function to return the setup code for the data exploration results plot
+#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @return A string containing the code required for the data exploration plot results code
+#' @keywords plot code
+#' @export
+#' @examples
+#' data_exploration_code()
 data_exploration_code <- function(code) {
   setup <- setup_code(drc_plot = FALSE)
   plot <- '
@@ -54,6 +94,17 @@ data_exploration_code <- function(code) {
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
 }
+
+#' @title DRC code
+#'
+#' @description Function to return the DRC plot results plot code
+#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string String specifying the code the dose response model
+#' @return A string containing the code required for the DRC plot results code
+#' @keywords plot code
+#' @export
+#' @examples
+#' drc_code()
 drc_code <- function(code, drm_string) {
   setup <- setup_code(drc_plot = TRUE)
   plot <- paste0('
@@ -87,6 +138,17 @@ drc_code <- function(code, drm_string) {
     if (code == "all") code_text <- paste0(setup,plot)
     return(code_text)
 }
+
+#' @title IC50 boxplot code
+#'
+#' @description Function to return the IC50 plot results plot code
+#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string String specifying the code the dose response model
+#' @return A string containing the code required for the IC50 plot results code
+#' @keywords plot code
+#' @export
+#' @examples
+#' ic50_boxplot_code()
 ic50_boxplot_code <- function(code, drm_string) {
   setup <- setup_code(drc_plot = TRUE)
   plot <- paste0('
@@ -121,6 +183,17 @@ ic50_boxplot_code <- function(code, drm_string) {
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
 }
+
+#' @title Cell virus boxplot code
+#'
+#' @description Function to return the cell virus boxplot results plot code
+#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string String specifying the code the dose response model
+#' @return A string containing the code required for the cell virus boxplot results code
+#' @keywords plot code
+#' @export
+#' @examples
+#' cv_boxplot_code()
 cv_boxplot_code <- function(code) {
   setup <- setup_code(drc_plot = FALSE)
   plot <- '
