@@ -13,9 +13,9 @@ library(svglite)
 library(plotly)
 
 # Import helper scripts
-source("helpers/1_input.R")
-source("helpers/2_qc.R")
-source("helpers/3_results.R")
+source("../../helpers/1_input.R")
+source("../../helpers/2_qc.R")
+source("../../helpers/3_results.R")
 
 # Define helper func
 create_tooltip <- function(text) {
@@ -70,7 +70,7 @@ function(input, output, session) {
 
   # Define variables
   values <- reactiveValues()
-  dilutions_file <- "data/dilutions.csv"
+  dilutions_file <- "../../data/dilutions.csv"
   dilutions <- read.csv(dilutions_file,
     header = TRUE,
     stringsAsFactors = FALSE,
@@ -370,7 +370,7 @@ function(input, output, session) {
           # case we don't have write permissions to the current working dir (which
           # can happen when deployed).
           tempReport <- file.path(tempdir(), "report.Rmd")
-          file.copy("report.Rmd", tempReport, overwrite = TRUE)
+          file.copy("../../helpers/report.Rmd", tempReport, overwrite = TRUE)
           # Set up parameters to pass to Rmd document
           params <- list(drm_model = input$drm_string)
           # Write dataframe to file
