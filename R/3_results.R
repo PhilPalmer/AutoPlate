@@ -7,8 +7,8 @@
 #' @title Prism add tags
 #'
 #' @description Add code HTML tags to a HTML block input
-#' @param code HTML code to add the code tags to
-#' @param language The programming language of the HTML code block, default is R
+#' @param code character, HTML code to add the code tags to
+#' @param language character, programming language of the HTML code block, default is R
 #' @return A HTML block with relevant langugage code tags
 #' @keywords HTML code
 #' @export
@@ -21,8 +21,8 @@ prism_add_tags <- function(code, language = "r") {
 #' @title Prism code block
 #'
 #' @description Add syntax highlighting to a HTML code block with Prism
-#' @param code HTML code to highlight with Prism
-#' @param language The programming language of the HTML code block, default is R
+#' @param code character, HTML code to highlight with Prism
+#' @param language character, programming language of the HTML code block, default is R
 #' @return A HTML block with syntax highlighting
 #' @keywords HTML code Prism
 #' @export
@@ -38,8 +38,8 @@ prism_code_block <- function(code, language = "r") {
 #' @title Setup code
 #'
 #' @description Function to return the setup code for a results plot
-#' @param drc_plot Bool value to specify if the requires the drc library
-#' @return A string containing the code required to setup a results plot
+#' @param drc_plot bool, value to specify if the plot requires the drc library
+#' @return character, containing the code required to setup a results plot
 #' @keywords setup code
 #' @export
 #' @examples
@@ -64,8 +64,8 @@ setup_code <- function(drc_plot) {
 #' @title Data exploration code
 #'
 #' @description Function to return the setup code for the data exploration results plot
-#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
-#' @return A string containing the code required for the data exploration plot results code
+#' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @return character, containing the code required for the data exploration plot results code
 #' @keywords plot code
 #' @export
 #' @examples
@@ -98,9 +98,9 @@ data_exploration_code <- function(code) {
 #' @title DRC code
 #'
 #' @description Function to return the DRC plot results plot code
-#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
-#' @param drm_string String specifying the code the dose response model
-#' @return A string containing the code required for the DRC plot results code
+#' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string character, specifying the code the dose response model
+#' @return character, containing the code required for the DRC plot results code
 #' @keywords plot code
 #' @export
 #' @examples
@@ -142,9 +142,9 @@ drc_code <- function(code, drm_string) {
 #' @title IC50 boxplot code
 #'
 #' @description Function to return the IC50 plot results plot code
-#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
-#' @param drm_string String specifying the code the dose response model
-#' @return A string containing the code required for the IC50 plot results code
+#' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string character, specifying the code the dose response model
+#' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
 #' @export
 #' @examples
@@ -187,9 +187,9 @@ ic50_boxplot_code <- function(code, drm_string) {
 #' @title Cell virus boxplot code
 #'
 #' @description Function to return the cell virus boxplot results plot code
-#' @param code Code that's required, either "all" for setup and plot code or "plot" for just plot code
-#' @param drm_string String specifying the code the dose response model
-#' @return A string containing the code required for the cell virus boxplot results code
+#' @param code character, that's required, either "all" for setup and plot code or "plot" for just plot code
+#' @param drm_string character, specifying the code the dose response model
+#' @return character, containing the code required for the cell virus boxplot results code
 #' @keywords plot code
 #' @export
 #' @examples

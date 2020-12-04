@@ -15,7 +15,7 @@ library(plotly)
 # Import helper scripts
 source("../../helpers/1_input.R")
 source("../../helpers/2_qc.R")
-source("../../helpers/3_results.R")
+source("../3_results.R")
 
 # Define helper func
 create_tooltip <- function(text) {
