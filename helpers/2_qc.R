@@ -4,8 +4,19 @@
 # Helper functions for AutoPlate Step 2) Quality Control
 ########################################################
 
-plot_heatmap <- function(plate_number, values, feature, title) {
-  assay_df <- isolate(values[["assay_df"]])
+#' @title Plot heatmap
+#'
+#' @description Generate a heatmap plot in 96-well plate format for a feature from the assay dataframe
+#' @param plate_number integer, to specify plate number you wish to plot from assay dataframe
+#' @param assay_df dataframe, main assay dataframe
+#' @param feature character, name of feature to plot, must be a column in assay_df
+#' @param title character, title to be used for the plot title along with the plate number
+#' @return heatmap plot
+#' @keywords plot heatmap
+#' @export
+#' @examples
+#' plot_heatmap()
+plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
   feature_list <- unlist(plate_df[[feature]], use.names = FALSE)
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
@@ -20,6 +31,17 @@ plot_heatmap <- function(plate_number, values, feature, title) {
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
+
+#' @title Exclude wells
+#'
+#' @description Exclude values in dataframe based on exclusion criteria
+#' @param assay_df dataframe, main assay dataframe
+#' @param exclusion_string character, comma-seperated string containing exclusion criteria
+#' @return dataframe, main assay with updated values in the exclude column based on the exclusion criteria
+#' @keywords exclude wells
+#' @export
+#' @examples
+#' exclude_wells()
 exclude_wells <- function(assay_df, exclusion_string) {
   exclusion_string <- gsub(" ", "", exclusion_string)
   wells_to_exclude <- lapply(strsplit(exclusion_string, ","), function(x) strsplit(x, ":"))[[1]]
@@ -67,6 +89,16 @@ exclude_wells <- function(assay_df, exclusion_string) {
   }
   return(assay_df)
 }
+
+#' @title Initialise average luminescence dataframe
+#'
+#' @description Initialise average luminescence dataframe
+#' @param assay_df dataframe, main assay dataframe
+#' @return dataframe, containing average luminescence data for each plate
+#' @keywords average luminescence dataframe
+#' @export
+#' @examples
+#' init_av_lum_df()
 init_av_lum_df <- function(assay_df) {
   plates <- sort(unique(assay_df$plate_number))
   av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
@@ -82,6 +114,16 @@ init_av_lum_df <- function(assay_df) {
   ))
   return(av_lum_df)
 }
+
+#' @title Initialise types boxplot
+#'
+#' @description Generate types boxplot
+#' @param assay_df dataframe, main assay dataframe
+#' @return boxplot containing types data for each of the different plates 
+#' @keywords types boxplot
+#' @export
+#' @examples
+#' init_types_boxplot()
 init_types_boxplot <- function(assay_df) {
   assay_df <- assay_df %>%
     dplyr::filter(exclude == FALSE) %>%

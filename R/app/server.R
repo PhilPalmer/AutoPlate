@@ -316,7 +316,8 @@ function(input, output, session) {
     values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)
     lapply(values[["heatmap_input"]]$plates, function(i) {
       output[[paste("plot", i, sep = "")]] <- renderPlot({
-        plot_heatmap(i, values, values[["heatmap_input"]]$feature, input$tabset_qc)
+        assay_df <- isolate(values[["assay_df"]])
+        plot_heatmap(i, assay_df, values[["heatmap_input"]]$feature, input$tabset_qc)
       })
     })
   })
