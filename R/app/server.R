@@ -14,7 +14,7 @@ library(plotly)
 
 # Import helper scripts
 source("../../helpers/1_input.R")
-source("../../helpers/2_qc.R")
+source("../2_qc.R")
 source("../3_results.R")
 
 # Define helper func
