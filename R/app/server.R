@@ -13,7 +13,7 @@ library(svglite)
 library(plotly)
 
 # Import helper scripts
-source("../../helpers/1_input.R")
+source("../1_input.R")
 source("../2_qc.R")
 source("../3_results.R")
 
@@ -372,7 +372,7 @@ function(input, output, session) {
           # case we don't have write permissions to the current working dir (which
           # can happen when deployed).
           tempReport <- file.path(tempdir(), "report.Rmd")
-          file.copy("../../helpers/report.Rmd", tempReport, overwrite = TRUE)
+          file.copy("report.Rmd", tempReport, overwrite = TRUE)
           # Set up parameters to pass to Rmd document
           params <- list(drm_model = input$drm_string)
           # Write dataframe to file
