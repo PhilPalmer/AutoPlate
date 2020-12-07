@@ -4,11 +4,30 @@
 # Helper functions for AutoPlate Step 1) Input
 ##############################################
 
-# Read CSVs + append name
-read_plus <- function(name, file) {
-  read.csv(file) %>%
-    dplyr::mutate(filename = name)
+#' @title Read plus
+#'
+#' @description Read CSV file appending the filename as an additional column in the dataframe
+#' @param filename character, file name to be added to the dataframe
+#' @param filepath character, path to the CSV file
+#' @return dataframe, generated from the input CSV containing the filenames
+#' @keywords read input CSV files
+#' @export
+#' @examples
+#' read_plus()
+read_plus <- function(filename, filepath) {
+  read.csv(filepath) %>%
+    dplyr::mutate(filename = filename)
 }
+
+#' @title Init cols
+#'
+#' @description Initialise columns for assay dataframe
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @return dataframe, containing the initialised columns
+#' @keywords assay
+#' @export
+#' @examples
+#' init_cols()
 init_cols <- function(assay_df) {
   assay_df$filename <- gsub(".csv","",assay_df$filename)
   assay_df$types <- ""
@@ -22,6 +41,16 @@ init_cols <- function(assay_df) {
   assay_df$exclude <- FALSE
   return(assay_df)
 }
+
+#' @title Init types
+#'
+#' @description Initialise types (c,m,v,x) for assay dataframe based on template 96-well plate format
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @return dataframe, containing the initialised type column
+#' @keywords assay
+#' @export
+#' @examples
+#' init_types()
 init_types <- function(assay_df) {
   assay_df <- assay_df %>%
     dplyr::mutate(types = case_when(
@@ -32,6 +61,18 @@ init_types <- function(assay_df) {
     ))
   return(assay_df)
 }
+
+#' @title Init subject
+#'
+#' @description Initialise subject (mouse number) for assay dataframe based on input parameters
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param wcols vector, list of column numbers to update for each plate
+#' @param wcols character, name to set subject to for specified columns
+#' @return dataframe, containing the initialised subject column
+#' @keywords assay
+#' @export
+#' @examples
+#' init_subject()
 init_subject <- function(assay_df, wcols, subject) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
@@ -51,6 +92,16 @@ init_subject <- function(assay_df, wcols, subject) {
   }
   return(assay_df)
 }
+
+#' @title Init neut
+#'
+#' @description Initialise/calculate neutralisation using the RLU values and normalisation with the virus and cell only controls
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @return dataframe, containing the initialised neutralisation column
+#' @keywords assay
+#' @export
+#' @examples
+#' init_neut()
 init_neut <- function(assay_df) {
   plates <- unique(assay_df$plate_number)
   for (plate_n in plates) {
@@ -65,6 +116,17 @@ init_neut <- function(assay_df) {
   }
   return(assay_df)
 }
+
+#' @title Update dilutions
+#'
+#' @description Update dilutions in main assay dataframe based on the input dilutions dataframe
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param assay_df dataframe, containing two columns for serum and control dilutions
+#' @return dataframe, containing the updated dilutions
+#' @keywords assay
+#' @export
+#' @examples
+#' update_dilutions()
 update_dilutions <- function(assay_df, dilutions) {
   assay_df %>%
     dplyr::mutate(dilution = case_when(
@@ -86,6 +148,18 @@ update_dilutions <- function(assay_df, dilutions) {
       wrow == "H" & types == "m" ~ dilutions[8, 2]
     ))
 }
+
+#' @title Update subjects
+#'
+#' @description Update subjects in main assay dataframe for a single plate based on the input plate dataframe
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param updated_plate_df dataframe, containing 96-well plate data
+#' @param plate_n integer, plate number to update
+#' @return dataframe, containing the updated subjects
+#' @keywords assay
+#' @export
+#' @examples
+#' update_subjects()
 update_subjects <- function(assay_df, updated_plate_df, plate_n) {
   updated_subjects <- updated_plate_df[1, ]
   for (i in seq(1, length(updated_subjects))) {
@@ -94,6 +168,18 @@ update_subjects <- function(assay_df, updated_plate_df, plate_n) {
   }
   return(assay_df)
 }
+
+#' @title Update types
+#'
+#' @description Update types in main assay dataframe for a single plate based on the input plate dataframe
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param updated_plate_df dataframe, containing 96-well plate data
+#' @param plate_n integer, plate number to update
+#' @return dataframe, containing the updated types
+#' @keywords assay
+#' @export
+#' @examples
+#' update_types()
 update_types <- function(assay_df, updated_plate_df, plate_n) {
   updated_types <- tail(updated_plate_df, -1)
   for (col in seq(1, length(updated_types))) {
@@ -111,11 +197,35 @@ update_types <- function(assay_df, updated_plate_df, plate_n) {
   }
   return(assay_df)
 }
+
+#' @title Create feature dropdown
+#'
+#' @description Create feature dropdown that can be used to select an existing column from a dataframe
+#' @param new_feature character, name of feature to update eg "bleed"
+#' @param input object, R shiny server input parameter/object containing `plate_data` dataframe and `new_feature` character
+#' @param values object, containing `assay_df` biological assay data from plate reader
+#' @return dropdown of existing columns that can be used to define the `new_feature`
+#' @keywords assay
+#' @export
+#' @examples
+#' create_feature_dropdown()
 create_feature_dropdown <- function(new_feature, input, values) {
   req(input$plate_data)
   assay_df <- isolate(values[["assay_df"]])
   selectInput(new_feature, "Select existing feature", names(assay_df))
 }
+
+#' @title Create feature table
+#'
+#' @description Create feature table that can be used to display existing levels for a selected column in a dataframe
+#' @param new_feature character, name of feature to update eg "bleed"
+#' @param input object, R shiny server input parameter/object containing `new_feature` character
+#' @param values object, containing `assay_df` biological assay data from plate reader
+#' @return rhandsontable interactive table of levles for selected feature/table in dataframe
+#' @keywords assay
+#' @export
+#' @examples
+#' create_feature_table()
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- isolate(values[["assay_df"]])
@@ -126,6 +236,18 @@ create_feature_table <- function(new_feature, input, values) {
   new_feature_df[[new_feature]] <- as.character(NA)
   rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
 }
+
+#' @title Update feature
+#'
+#' @description For a given feature update the values in the main assay dataframe reactive values based on the input from the feature table
+#' @param new_feature character, name of feature to update eg "bleed"
+#' @param input object, R shiny server input parameter/object containing new_feature` character and `new_feature_table` dataframe
+#' @param values object, containing `assay_df` biological assay data from plate reader
+#' @return null, automatically updates the main assay dataframe within the reactive values
+#' @keywords assay
+#' @export
+#' @examples
+#' update_feature()
 update_feature <- function(new_feature, input, values) {
   new_feature_table <- paste0(new_feature, "_table")
   req(new_feature_table)
@@ -135,6 +257,17 @@ update_feature <- function(new_feature, input, values) {
   assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
   values[["assay_df"]] <- assay_df
 }
+
+#' @title Assay to plate dataframe
+#'
+#' @description Convert full assay dataframe to 96-well plate format for a specified plate number
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param plate_n integer, plate number to update
+#' @return dataframe, plate dataframe in 96-well plate format
+#' @keywords assay
+#' @export
+#' @examples
+#' assay_to_plate_df()
 assay_to_plate_df <- function(assay_df, plate_n) {
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
     dplyr::select(wrow, wcol, types) %>%
