@@ -166,11 +166,12 @@ function(input, output, session) {
       # Populate main assay df with types using the default plate layout
       assay_df <- init_types(assay_df)
       # Populate main assay df with default subject info
-      assay_df <- init_subject(assay_df = assay_df, wcol1 = 2, wcol2 = 3, subject = 1)
-      assay_df <- init_subject(assay_df = assay_df, wcol1 = 4, wcol2 = 5, subject = 2)
-      assay_df <- init_subject(assay_df = assay_df, wcol1 = 6, wcol2 = 7, subject = 3)
-      assay_df <- init_subject(assay_df = assay_df, wcol1 = 8, wcol2 = 9, subject = 4)
-      assay_df <- init_subject(assay_df = assay_df, wcol1 = 10, wcol2 = 11, subject = 5)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(2,3), subject = 1)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(4,5), subject = 2)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(6,7), subject = 3)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(8,9), subject = 4)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(10,11), subject = 5)
+      assay_df <- init_subject(assay_df = assay_df, wcols = c(12), subject = "Antibody")
       assay_df$subject <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$subject)
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)

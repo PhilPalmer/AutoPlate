@@ -32,15 +32,19 @@ init_types <- function(assay_df) {
     ))
   return(assay_df)
 }
-init_subject <- function(assay_df, wcol1, wcol2, subject) {
+init_subject <- function(assay_df, wcols, subject) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
     assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
     assay_df$plate_number <- assay_df$rank
   }
-  assay_df$subject <- ifelse(
-    assay_df$wcol == wcol1 | assay_df$wcol == wcol2, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + subject), assay_df$subject
-  )
+  if (subject != "Antibody") {
+    assay_df$subject <- ifelse(
+      assay_df$wcol %in% wcols, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + subject), assay_df$subject
+    )
+  } else {
+    assay_df$subject <- ifelse( assay_df$wcol %in% wcols, subject, assay_df$subject )
+  }
   if (plates_not_numbered) {
     assay_df$plate_number <- assay_df$filename
     assay_df$rank <- NA
