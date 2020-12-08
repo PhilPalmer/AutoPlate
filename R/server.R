@@ -1,28 +1,27 @@
-library(shiny)
-library(shinydashboard)
-library(rhandsontable)
-library(tidyr)
-library(dplyr)
-library(plot.matrix)
-library(viridis)
-library(ggplot2)
-library(drc)
-library(rmarkdown)
-library(knitr)
-library(svglite)
-library(plotly)
+#!/usr/bin/env Rscript
 
-# Import helper scripts
-source("../1_input.R")
-source("../2_qc.R")
-source("../3_results.R")
+##############################################
+# The server-side of the AutoPlate application
+##############################################
 
-# Define helper func
-create_tooltip <- function(text) {
-  HTML(paste0("<i class='fa fa-question-circle' title='", text, "'</i>"))
-}
+##' Server main function
+##'
+##' @param input,output,session Internal parameters for {shiny}.
+##'
+##' @noRd
+server <- function(input, output, session) {
 
-function(input, output, session) {
+  ##################
+  # Define variables
+  ##################
+  values <- reactiveValues()
+  report_filepath <- "report.Rmd"
+  dilutions_filepath <- "data/dilutions.csv"
+  dilutions <- read.csv(dilutions_filepath,
+    header = TRUE,
+    stringsAsFactors = FALSE,
+    check.names = FALSE
+  )
 
   #########
   # 0) Home
@@ -68,15 +67,10 @@ function(input, output, session) {
   # 1) Input
   ##########
 
-  # Define variables
-  values <- reactiveValues()
-  dilutions_file <- "../../data/dilutions.csv"
-  dilutions <- read.csv(dilutions_file,
-    header = TRUE,
-    stringsAsFactors = FALSE,
-    check.names = FALSE
-  )
-
+  # Helper func to create tooltips
+  create_tooltip <- function(text) {
+    HTML(paste0("<i class='fa fa-question-circle' title='", text, "'</i>"))
+  }
   # Create tooltip icons
   output$tooltip_input_files <- renderText({
     create_tooltip("Raw plate readout CSV files specifying all of the wells and their luminescence values")
@@ -372,7 +366,7 @@ function(input, output, session) {
           # case we don't have write permissions to the current working dir (which
           # can happen when deployed).
           tempReport <- file.path(tempdir(), "report.Rmd")
-          file.copy("report.Rmd", tempReport, overwrite = TRUE)
+          file.copy(report_filepath, tempReport, overwrite = TRUE)
           # Set up parameters to pass to Rmd document
           params <- list(drm_model = input$drm_string)
           # Write dataframe to file

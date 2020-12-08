@@ -1,8 +1,16 @@
-library(shinydashboard)
-library(rhandsontable)
-library(plotly)
+#!/usr/bin/env Rscript
 
-dashboardPage(
+#################################################
+# The user-interface of the AutoPlate application
+#################################################
+
+##' UI main function
+##'
+##' @param request Internal parameter for `{shiny}`.
+##'
+##' @noRd
+ui <- dashboardPage(
+  # includeCSS("www/styles.css"),
   dashboardHeader(title = "AutoPlate"),
   dashboardSidebar(
     sidebarMenu(
