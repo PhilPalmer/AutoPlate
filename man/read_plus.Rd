@@ -7,12 +7,12 @@
 read_plus(filename, filepath)
 }
 \arguments{
-\item{name}{File name to be added to the dataframe}
+\item{filename}{character, file name to be added to the dataframe}
 
-\item{file}{Path to the CSV file}
+\item{filepath}{character, path to the CSV file}
 }
 \value{
-A dataframe generated from the input CSV containing the filenames
+dataframe, generated from the input CSV containing the filenames
 }
 \description{
 Read CSV file appending the filename as an additional column in the dataframe
