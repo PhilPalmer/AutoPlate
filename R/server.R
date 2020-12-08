@@ -170,7 +170,7 @@ server <- function(input, output, session) {
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)
       # Calculate normalised luminescence values
-      assay_df <- init_neut(assay_df)
+      assay_df <- calc_neut(assay_df)
       values[["assay_df"]] <- assay_df
     }
     # Update main assay dataframe with new dilutions
@@ -200,6 +200,8 @@ server <- function(input, output, session) {
           assay_df <- update_subjects(assay_df, updated_plate_df, plate_n)
           # Update main assay dataframe with types
           assay_df <- update_types(assay_df, updated_plate_df, plate_n)
+          # Update the neutralisation values
+          assay_df <- calc_neut(assay_df)
           updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
           values[["assay_df"]] <- assay_df
         },

@@ -93,16 +93,16 @@ init_subject <- function(assay_df, wcols, subject) {
   return(assay_df)
 }
 
-#' @title Init neut
+#' @title Calculate neutralisation
 #'
-#' @description Initialise/calculate neutralisation using the RLU values and normalisation with the virus and cell only controls
+#' @description Calculate neutralisation using the RLU values and normalisation with the virus and cell only controls
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @return dataframe, containing the initialised neutralisation column
 #' @keywords assay
 #' @export
 #' @examples
-#' init_neut()
-init_neut <- function(assay_df) {
+#' calc_neut()
+calc_neut <- function(assay_df) {
   plates <- unique(assay_df$plate_number)
   for (plate_n in plates) {
     plate_df <- assay_df[assay_df$plate_number == plate_n, ]
