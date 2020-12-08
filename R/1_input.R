@@ -67,7 +67,7 @@ init_types <- function(assay_df) {
 #' @description Initialise subject (mouse number) for assay dataframe based on input parameters
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param wcols vector, list of column numbers to update for each plate
-#' @param wcols character, name to set subject to for specified columns
+#' @param subject character, name to set subject to for specified columns
 #' @return dataframe, containing the initialised subject column
 #' @keywords assay
 #' @export
@@ -121,7 +121,7 @@ init_neut <- function(assay_df) {
 #'
 #' @description Update dilutions in main assay dataframe based on the input dilutions dataframe
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param assay_df dataframe, containing two columns for serum and control dilutions
+#' @param dilutions dataframe, containing two columns for serum and control dilutions
 #' @return dataframe, containing the updated dilutions
 #' @keywords assay
 #' @export
@@ -262,7 +262,7 @@ update_feature <- function(new_feature, input, values) {
 #'
 #' @description Convert full assay dataframe to 96-well plate format for a specified plate number
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param plate_n integer, plate number to update
+#' @param plate_n integer, plate number to generate dataframe for
 #' @return dataframe, plate dataframe in 96-well plate format
 #' @keywords assay
 #' @export
