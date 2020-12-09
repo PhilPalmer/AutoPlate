@@ -154,6 +154,7 @@ ic50_boxplot_code <- function(code, drm_string) {
   plot <- paste0('
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    data$subject <- as.character(data$subject)
     model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
     ied$subject <- gsub("e:|:50", "", row.names(ied))
