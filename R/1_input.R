@@ -107,8 +107,8 @@ calc_neut <- function(assay_df) {
   for (plate_n in plates) {
     plate_df <- assay_df[assay_df$plate_number == plate_n, ]
     # max & min levels of cell infection
-    neu0 <- mean(plate_df[plate_df$types == "v", ]$rlu)
-    neu100 <- mean(plate_df[plate_df$types == "c", ]$rlu)
+    neu0 <- median(plate_df[plate_df$types == "v", ]$rlu)
+    neu100 <- median(plate_df[plate_df$types == "c", ]$rlu)
     # express rlu as neutralisation percentage between neu0 and new100
     plate_df$neutralisation <- 100 * ((plate_df$rlu - neu0) / (neu100 - neu0))
     # update main assay dataframe with neutralisations
