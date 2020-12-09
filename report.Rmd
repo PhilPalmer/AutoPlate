@@ -190,6 +190,8 @@ facets <- if(length(unique(data$primary))>1) c("primary") else NULL
 avied <- summarise(group_by(ied, inoculate), av = median(Estimate))
 ied_order <- avied$inoculate[order(avied$av)]
 
+knitr::kable(ied)
+
 ic50_boxplot <- ggplot2::ggplot(ied, aes(x = inoculate, y = Estimate, colour = inoculate)) +
   geom_boxplot() +
   geom_point() +
