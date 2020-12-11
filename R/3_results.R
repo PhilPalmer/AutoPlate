@@ -150,8 +150,9 @@ drc_code <- function(code, drm_string) {
 #' @export
 #' @examples
 #' ic50_boxplot_code()
-ic50_boxplot_code <- function(code, drm_string) {
+ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
   setup <- setup_code(drc_plot = TRUE)
+  plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
   plot <- paste0('
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
@@ -170,7 +171,7 @@ ic50_boxplot_code <- function(code, drm_string) {
 
     # Generate plot
     ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
-        geom_boxplot() +
+        geom_',plot_type,'() +
         geom_point() +
         facet_wrap(facets) +
         scale_x_discrete(limits=ied_order) +

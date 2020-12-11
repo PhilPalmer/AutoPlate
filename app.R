@@ -13,6 +13,7 @@ library(rmarkdown)
 library(knitr)
 library(svglite)
 library(plotly)
+library(shinyWidgets)
 
 # Import helper scripts
 source("R/1_input.R")

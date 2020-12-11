@@ -393,7 +393,7 @@ server <- function(input, output, session) {
     prism_code_block(code = drc_code("all",input$drm_string), language = "r")
   })
   output$ic50_boxplot_code <- renderUI({
-    prism_code_block(code = ic50_boxplot_code("all",input$drm_string), language = "r")
+    prism_code_block(code = ic50_boxplot_code("all",input$drm_string,input$ic50_is_boxplot), language = "r")
   })
   output$cv_boxplot_code <- renderUI({
     prism_code_block(code = cv_boxplot_code("all"), language = "r")
@@ -440,7 +440,7 @@ server <- function(input, output, session) {
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-      eval(parse(text=ic50_boxplot_code("plot",input$drm_string)))
+      eval(parse(text=ic50_boxplot_code("plot",input$drm_string,input$ic50_is_boxplot)))
       values[["ic50_boxplot"]] <- ic50_boxplot
       }, error = function(error_message) {
         print(error_message)

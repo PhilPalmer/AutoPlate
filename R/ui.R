@@ -7,6 +7,7 @@
 library(shinydashboard)
 library(rhandsontable)
 library(plotly)
+library(shinyWidgets)
 
 ##' UI main function
 ##'
@@ -245,6 +246,7 @@ ui <- dashboardPage(
                 "IC50 Boxplot",
                 downloadButton("download_ic50", "Download SVG Plot"),
                 br(), br(),
+                switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"),
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("ic50_boxplot")),

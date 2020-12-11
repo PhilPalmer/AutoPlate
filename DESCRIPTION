@@ -27,4 +27,5 @@ Imports:
     rmarkdown,
     knitr,
     svglite,
-    plotly
+    plotly,
+    shinyWidgets
