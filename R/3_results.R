@@ -128,6 +128,7 @@ drc_code <- function(code, drm_string) {
         facet_wrap(facets) +
         scale_x_continuous(trans="log10") +
         theme_classic() +
+        theme(strip.background = element_blank()) +
         ylab("Neutralisation") +
         xlab("Dilution") +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
