@@ -4,6 +4,10 @@
 # The user-interface of the AutoPlate application
 #################################################
 
+library(shinydashboard)
+library(rhandsontable)
+library(plotly)
+
 ##' UI main function
 ##'
 ##' @param request Internal parameter for `{shiny}`.
