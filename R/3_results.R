@@ -163,6 +163,7 @@ ic50_boxplot_code <- function(code, drm_string) {
     ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
     ied$primary <- data$primary[match(ied$subject, data$subject)]
     facets <- if(length(unique(data$primary))>1) c("primary") else NULL
+    control_median <- median(ied[tolower(ied$inoculate) %in% tolower(c("PBS", "negative_control")),]$Estimate)
     # Average Neutralisation
     avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
     ied_order <- avied$inoculate[order(avied$av)]
@@ -177,7 +178,8 @@ ic50_boxplot_code <- function(code, drm_string) {
         xlab("Inoculate") +
         theme_classic() +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
-        coord_flip()
+        coord_flip() + 
+        geom_hline(yintercept=c(control_median), linetype="dotted", )
     ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
     ic50_boxplotly
   ')

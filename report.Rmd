@@ -187,6 +187,7 @@ ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
 ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
 ied$primary <- data$primary[match(ied$subject, data$subject)]
 facets <- if(length(unique(data$primary))>1) c("primary") else NULL
+control_median <- median(ied[tolower(ied$inoculate) %in% tolower(c("PBS", "negative_control")),]$Estimate)
 # Average Neutralisation
 avied <- summarise(group_by(ied, inoculate), av = median(Estimate))
 ied_order <- avied$inoculate[order(avied$av)]
@@ -202,7 +203,8 @@ ic50_boxplot <- ggplot2::ggplot(ied, aes(x = inoculate, y = Estimate, colour = i
   xlab("Inoculate") +
   theme_classic() +
   ggtitle(title) +
-  coord_flip()
+  coord_flip() +
+  geom_hline(yintercept=c(control_median), linetype="dotted", )
 plotly::ggplotly(ic50_boxplot)
 ```
 
