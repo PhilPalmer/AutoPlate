@@ -219,7 +219,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
         scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip() + 
-        geom_hline(yintercept=c(control_median), linetype="dotted", )
+        geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
     ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
     ic50_boxplotly
   ')
