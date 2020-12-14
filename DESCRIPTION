@@ -28,4 +28,5 @@ Imports:
     knitr,
     svglite,
     plotly,
-    shinyWidgets
+    shinyWidgets,
+    metafolio

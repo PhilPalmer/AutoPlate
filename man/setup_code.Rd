@@ -4,10 +4,12 @@
 \alias{setup_code}
 \title{Setup code}
 \usage{
-setup_code(drc_plot)
+setup_code(is_drc_plot, is_vc_plot)
 }
 \arguments{
-\item{drc_plot}{bool, value to specify if the plot requires the drc library}
+\item{is_drc_plot}{bool, value to specify if the plot requires the drc library}
+
+\item{is_vc_plot}{bool, value to specify if the plot requires the metafolio library}
 }
 \value{
 character, containing the code required to setup a results plot

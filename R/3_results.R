@@ -38,20 +38,22 @@ prism_code_block <- function(code, language = "r") {
 #' @title Setup code
 #'
 #' @description Function to return the setup code for a results plot
-#' @param drc_plot bool, value to specify if the plot requires the drc library
+#' @param is_drc_plot bool, value to specify if the plot requires the drc library
+#' @param is_vc_plot bool, value to specify if the plot requires the metafolio library
 #' @return character, containing the code required to setup a results plot
 #' @keywords setup code
 #' @export
 #' @examples
 #' setup_code()
-setup_code <- function(drc_plot) {
+setup_code <- function(is_drc_plot, is_vc_plot) {
   libraries <- '
     # Load libraries
     library(dplyr)
     library(ggplot2)
     library(plotly)
   '
-  if (drc_plot) libraries <- paste0(libraries,"\tlibrary(drc)\n")
+  if (is_drc_plot) libraries <- paste0(libraries,"\tlibrary(drc)\n")
+  if (!is_vc_plot) libraries <- paste0(libraries,"\tlibrary(metafolio)\n")
   input_file <- '
     # Load input file - make sure your input file path is correct!
     platelist_file <- "pmn_platelist.csv"
@@ -59,6 +61,35 @@ setup_code <- function(drc_plot) {
   '
   setup_code <- paste0(libraries,input_file)
   return(setup_code)
+}
+
+#' @title Update inoculates colours and order code
+#'
+#' @description Function to return the code to update the colours and ordering of inoculates before plotting
+#' @return character, containing code to update the inoculates colour and order before plotting a results plot
+#' @keywords colours code
+#' @export
+#' @examples
+#' update_cols_order_code()
+update_cols_order_code <- function() {
+  '
+    # Update order and colours of incoluates
+    inoculates <- unique(data$inoculate)
+    inoculate_cols <- gg_color_hue(length(inoculates),0,360)
+    negative_control <- c("pbs", "negative_control")
+    posotive_control <- unique(data[data$type == "m",]$inoculate)
+    if (any(negative_control %in% tolower(inoculates))) {
+      negative_control_index <- which(tolower(inoculates) %in% negative_control)
+      inoculates <- c(inoculates[negative_control_index],inoculates[-negative_control_index])
+      inoculate_cols[1] <- "grey"
+    }
+    if (!is.na(posotive_control)) {
+      posotive_control_index <- which(inoculates %in% posotive_control)
+      inoculates <- c(inoculates[-posotive_control_index],inoculates[posotive_control_index])
+      inoculate_cols[length(inoculates)] <- "black"
+    }
+    data$inoculate <- factor(data$inoculate, levels = inoculates)
+  '
 }
 
 #' @title Data exploration code
@@ -71,11 +102,11 @@ setup_code <- function(drc_plot) {
 #' @examples
 #' data_exploration_code()
 data_exploration_code <- function(code) {
-  setup <- setup_code(drc_plot = FALSE)
-  plot <- '
-    # Preprocessing
+  setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = FALSE)
+  plot <- paste0('
+    # Filter out unwanted types and excluded data
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-
+    ',update_cols_order_code(),'
     # Generate plot
     data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
       geom_point() +
@@ -84,12 +115,13 @@ data_exploration_code <- function(code) {
       ylim(c(-100, 110)) +
       scale_x_continuous(trans="log10") +
       theme_classic() +
+      scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
       ylab("Neutralisation") +
       xlab("Dilution") +
       ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
     data_exploration_plotly <- plotly::ggplotly(data_exploration_plot)
     data_exploration_plotly
-  '
+  ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
@@ -106,10 +138,12 @@ data_exploration_code <- function(code) {
 #' @examples
 #' drc_code()
 drc_code <- function(code, drm_string) {
-  setup <- setup_code(drc_plot = TRUE)
+  setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot <- paste0('
-    # Preprocessing
+    # Filter out unwanted types and excluded data
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    ',update_cols_order_code(),'
+    # Preprocessing
     data$subject <- unlist(data$subject)        
     model <- drc::drm(', drm_string, ')
     n <- 100
@@ -128,6 +162,7 @@ drc_code <- function(code, drm_string) {
         facet_wrap(facets) +
         scale_x_continuous(trans="log10") +
         theme_classic() +
+        scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
         theme(strip.background = element_blank()) +
         ylab("Neutralisation") +
         xlab("Dilution") +
@@ -145,17 +180,20 @@ drc_code <- function(code, drm_string) {
 #' @description Function to return the IC50 plot results plot code
 #' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @param drm_string character, specifying the code the dose response model
+#' @param ic50_is_boxplot bool, specify plot type, true for boxplot, false for scatter plot 
 #' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
 #' @export
 #' @examples
 #' ic50_boxplot_code()
 ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
-  setup <- setup_code(drc_plot = TRUE)
+  setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
   plot <- paste0('
-    # Preprocessing
+    # Filter out unwanted types and excluded data
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    ',update_cols_order_code(),'
+    # Preprocessing
     data$subject <- as.character(data$subject)
     model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
@@ -178,6 +216,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
         ylab("Individual IC50 log10") +
         xlab("Inoculate") +
         theme_classic() +
+        scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip() + 
         geom_hline(yintercept=c(control_median), linetype="dotted", )
@@ -200,7 +239,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
 #' @examples
 #' cv_boxplot_code()
 cv_boxplot_code <- function(code) {
-  setup <- setup_code(drc_plot = FALSE)
+  setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = TRUE)
   plot <- '
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%

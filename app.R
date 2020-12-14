@@ -14,6 +14,7 @@ library(knitr)
 library(svglite)
 library(plotly)
 library(shinyWidgets)
+library(metafolio)
 
 # Import helper scripts
 source("R/1_input.R")
