@@ -242,8 +242,9 @@ server <- function(input, output, session) {
   # Render dilutions table
   output$dilutions <- renderRHandsontable({
     dilutions <- values[["dilutions"]]
+    row.names(dilutions) <- LETTERS[1:dim(dilutions)[1]]
     if (!is.null(dilutions)) {
-      rhandsontable(dilutions, stretchH = "all", rowHeaders = TRUE)
+      rhandsontable(dilutions, stretchH = "all")
     }
   })
 
