@@ -86,21 +86,21 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
   # Set params for plot based on the feature
-  features <- c("types", "subject", "dilution", "primary", "rlu", "neutralisation", "inoculate", "study", "bleed", "exclude")
+  features <- c("types", "sample_id", "dilution", "primary", "rlu", "neutralisation", "inoculate", "study", "bleed", "exclude")
   fmt.cells <- c("%.5s", "%.5s", "%.5s", "%.5s", "%.0f", "%.0f", "%.5s", "%.5s", "%.5s", "%.5s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
   col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis else rainbow
-  side <- if (feature %in% c("subject", "inoculate", "study", "bleed", "exclude")) 3 else 4
+  side <- if (feature %in% c("sample_id", "inoculate", "study", "bleed", "exclude")) 3 else 4
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
 
-features <- c("Types", "Subject", "Dilution", "Primary", "RLU", "Neutralisation", "Inoculate", "Study", "Bleed", "Exclude")
+features <- c("Types", "Sample ID", "Dilution", "Primary", "RLU", "Neutralisation", "Inoculate", "Study", "Bleed", "Exclude")
 
 for (feature in features) {
   for (plate in plates) {
-    plot_heatmap(plate, assay_df, tolower(feature), feature)
+    plot_heatmap(plate, assay_df, gsub(" ", "_", tolower(feature), fixed = TRUE), feature)
   }
 }
 ```
@@ -156,17 +156,17 @@ params$drm_model
 ## Dose Response Curve(s)
 
 ```{r}
-data$subject <- unlist(data$subject)
+data$sample_id <- unlist(data$sample_id)
 n <- 100
 new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out = n))
-subjects <- unique(data$subject)
-new_data <- expand.grid(new_dilution, subjects)
-names(new_data) <- c("dilution", "subject")
-new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
+sample_ids <- unique(data$sample_id)
+new_data <- expand.grid(new_dilution, sample_ids)
+names(new_data) <- c("dilution", "sample_id")
+new_data$inoculate <- data$inoculate[match(new_data$sample_id, data$sample_id)]
 new_data$pred <- predict(model, newdata = new_data, )
 facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
 
-drc_plot <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = inoculate, group = subject)) +
+drc_plot <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = inoculate, group = sample_id)) +
   geom_line() +
   geom_point(data = data, aes(y = neutralisation)) +
   facet_wrap(facets) +
@@ -182,10 +182,10 @@ plotly::ggplotly(drc_plot)
 ## IC50 Boxplot
 ```{r}
 ied <- as.data.frame(ED(model, 50, display = FALSE))
-ied$subject <- gsub("e:|:50", "", row.names(ied))
-ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
-ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
-ied$primary <- data$primary[match(ied$subject, data$subject)]
+ied$sample_id <- gsub("e:|:50", "", row.names(ied))
+ied$inoculate <- data$inoculate[match(ied$sample_id, data$sample_id)]
+ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
+ied$primary <- data$primary[match(ied$sample_id, data$sample_id)]
 facets <- if(length(unique(data$primary))>1) c("primary") else NULL
 control_median <- median(ied[tolower(ied$inoculate) %in% tolower(c("PBS", "negative_control")),]$Estimate)
 # Average Neutralisation

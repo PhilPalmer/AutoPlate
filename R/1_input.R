@@ -31,7 +31,7 @@ read_plus <- function(filename, filepath) {
 init_cols <- function(assay_df) {
   assay_df$filename <- gsub(".csv","",assay_df$filename)
   assay_df$types <- ""
-  assay_df$subject <- ""
+  assay_df$sample_id <- ""
   assay_df$dilution <- ""
   assay_df$bleed <- ""
   assay_df$inoculate <- ""
@@ -62,29 +62,29 @@ init_types <- function(assay_df) {
   return(assay_df)
 }
 
-#' @title Init subject
+#' @title Init sample ID
 #'
-#' @description Initialise subject (mouse number) for assay dataframe based on input parameters
+#' @description Initialise sample_id (mouse number) for assay dataframe based on input parameters
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param wcols vector, list of column numbers to update for each plate
-#' @param subject character, name to set subject to for specified columns
-#' @return dataframe, containing the initialised subject column
+#' @param sample_id character, name to set sample_id to for specified columns
+#' @return dataframe, containing the initialised sample_id column
 #' @keywords assay
 #' @export
 #' @examples
-#' init_subject()
-init_subject <- function(assay_df, wcols, subject) {
+#' sample()
+init_sample <- function(assay_df, wcols, sample_id) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
     assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
     assay_df$plate_number <- assay_df$rank
   }
-  if (subject != "Antibody") {
-    assay_df$subject <- ifelse(
-      assay_df$wcol %in% wcols, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + subject), assay_df$subject
+  if (sample_id != "Antibody") {
+    assay_df$sample_id <- ifelse(
+      assay_df$wcol %in% wcols, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + sample_id), assay_df$sample_id
     )
   } else {
-    assay_df$subject <- ifelse( assay_df$wcol %in% wcols, subject, assay_df$subject )
+    assay_df$sample_id <- ifelse( assay_df$wcol %in% wcols, sample_id, assay_df$sample_id )
   }
   if (plates_not_numbered) {
     assay_df$plate_number <- assay_df$filename
@@ -149,22 +149,22 @@ update_dilutions <- function(assay_df, dilutions) {
     ))
 }
 
-#' @title Update subjects
+#' @title Update sample_ids
 #'
-#' @description Update subjects in main assay dataframe for a single plate based on the input plate dataframe
+#' @description Update sample_ids in main assay dataframe for a single plate based on the input plate dataframe
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param updated_plate_df dataframe, containing 96-well plate data
 #' @param plate_n integer, plate number to update
-#' @return dataframe, containing the updated subjects
+#' @return dataframe, containing the updated sample_ids
 #' @keywords assay
 #' @export
 #' @examples
-#' update_subjects()
-update_subjects <- function(assay_df, updated_plate_df, plate_n) {
-  updated_subjects <- updated_plate_df[1, ]
-  for (i in seq(1, length(updated_subjects))) {
+#' update_sample_ids()
+update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
+  updated_sample_ids <- updated_plate_df[1, ]
+  for (i in seq(1, length(updated_sample_ids))) {
     assay_df <- assay_df %>%
-      dplyr::mutate(subject = ifelse((plate_number == plate_n) & (wcol == i), updated_subjects[i], subject))
+      dplyr::mutate(sample_id = ifelse((plate_number == plate_n) & (wcol == i), updated_sample_ids[i], sample_id))
   }
   return(assay_df)
 }
@@ -275,14 +275,14 @@ assay_to_plate_df <- function(assay_df, plate_n) {
     dplyr::rename(Well = wrow)
   # Re-order cols
   plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
-  # Get the subjects
-  subjects <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
+  # Get the samples
+  samples <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
     dplyr::filter(wrow == "A") %>%
-    dplyr::select(subject)
-  subject <- c("Subject", subjects$subject)
-  # Reformat the row & col names + add a subject row
-  names(subject) <- names(plate_df)
-  plate_df <- rbind(subject, plate_df)
+    dplyr::select(sample_id)
+  sample_id <- c("sample_id", samples$sample_id)
+  # Reformat the row & col names + add a sample_id row
+  names(sample_id) <- names(plate_df)
+  plate_df <- rbind(sample_id, plate_df)
   row.names(plate_df) <- plate_df$Well
   plate_df[1] <- NULL
   return(plate_df)

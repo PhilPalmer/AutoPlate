@@ -79,14 +79,14 @@ server <- function(input, output, session) {
     create_tooltip("Dilutions will be used to set the corresponding rows in the 96-well plate")
   })
   output$tooltip_plates <- renderText({
-    create_tooltip("Specify the subject (eg \"Mouse 1\") and type (eg \"x\") for each well
+    create_tooltip("Specify the samples (eg \"Mouse 1\") and type (eg \"x\") for each well
         c = cell only control
         m = monoclonal antibody (posotive control)
         v = virus (or pseudotype) only control
         x = serum sample")
   })
   output$tooltip_features <- renderText({
-    create_tooltip("Set the values for new features such as the \"primary\" based on existing features such as the \"subject\" (i.e. mouse number)")
+    create_tooltip("Set the values for new features such as the \"primary\" based on existing features such as the \"sample_id\" (i.e. mouse number)")
   })
   output$tooltip_exclude <- renderText({
     create_tooltip("You may wish to exclude certain wells/plates if they have failed the control for example")
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
     # Define variables
     luminescence_files <- input$luminescence_files
     header <- colnames(read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
-    cols <- c("types", "subject", "dilution", "bleed", "inoculate", "primary", "study")
+    cols <- c("types", "dilution", "bleed", "inoculate", "primary", "study") # sample_id
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
@@ -144,6 +144,12 @@ server <- function(input, output, session) {
     if (plate_n != values[["plate_n"]]) values[["plate_n"]] <- plate_n
     if (is.null(input$plate_data) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
+      # Update deprecated colnames if present
+      oldnames <- c("subject") # c("subject", "inoculate", "primary", "study")
+      newnames <- c("sample_id") # c("sample_id", "treatment", "virus", "experiment_id")
+      if (all(oldnames %in% header)) {
+        assay_df <- assay_df %>% dplyr::rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
+      }
       values[["assay_df"]] <- assay_df
     }
     # Initialise the plate data frame
@@ -159,14 +165,14 @@ server <- function(input, output, session) {
       assay_df <- rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
       # Populate main assay df with types using the default plate layout
       assay_df <- init_types(assay_df)
-      # Populate main assay df with default subject info
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(2,3), subject = 1)
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(4,5), subject = 2)
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(6,7), subject = 3)
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(8,9), subject = 4)
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(10,11), subject = 5)
-      assay_df <- init_subject(assay_df = assay_df, wcols = c(12), subject = "Antibody")
-      assay_df$subject <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$subject)
+      # Populate main assay df with default sample_id info
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(2,3), sample_id = 1)
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(4,5), sample_id = 2)
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(6,7), sample_id = 3)
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(8,9), sample_id = 4)
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(10,11), sample_id = 5)
+      assay_df <- init_sample_id(assay_df = assay_df, wcols = c(12), sample_id = "Antibody")
+      assay_df$sample_id <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$sample_id)
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)
       # Calculate normalised luminescence values
@@ -184,7 +190,7 @@ server <- function(input, output, session) {
     return(assay_df)
   })
 
-  # Update the subject and types of the main assay dataframe based on user input
+  # Update the sample_id and types of the main assay dataframe based on user input
   observeEvent(input$plate_data, {
     req(input$plate_tabs)
     plate_n <- values[["plate_n"]]
@@ -196,8 +202,8 @@ server <- function(input, output, session) {
       tryCatch(
         {
           updated_plate_df <- hot_to_r(input$plate_data)
-          # Update main assay dataframe with subject
-          assay_df <- update_subjects(assay_df, updated_plate_df, plate_n)
+          # Update main assay dataframe with sample_id
+          assay_df <- update_sample_ids(assay_df, updated_plate_df, plate_n)
           # Update main assay dataframe with types
           assay_df <- update_types(assay_df, updated_plate_df, plate_n)
           # Update the neutralisation values
@@ -308,7 +314,7 @@ server <- function(input, output, session) {
 
   # Generate plots for each plate on change of the QC tabs
   observeEvent(input$tabset_qc, {
-    feature <- tolower(input$tabset_qc)
+    feature <- gsub(" ", "_", tolower(input$tabset_qc), fixed = TRUE)
     assay_df <- isolate(values[["assay_df"]])
     plates <- sort(unique(assay_df$plate_number))
     values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)

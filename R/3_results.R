@@ -144,19 +144,19 @@ drc_code <- function(code, drm_string) {
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     ',update_cols_order_code(),'
     # Preprocessing
-    data$subject <- unlist(data$subject)        
+    data$sample_id <- unlist(data$sample_id)        
     model <- drc::drm(', drm_string, ')
     n <- 100
     new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
-    subjects<-unique(data$subject)
-    new_data <- expand.grid(new_dilution, subjects)
-    names(new_data) <- c("dilution", "subject")
-    new_data$inoculate <- data$inoculate[match(new_data$subject, data$subject)]
+    sample_ids<-unique(data$sample_id)
+    new_data <- expand.grid(new_dilution, sample_ids)
+    names(new_data) <- c("dilution", "sample_id")
+    new_data$inoculate <- data$inoculate[match(new_data$sample_id, data$sample_id)]
     new_data$pred <- predict(model, newdata=new_data,)
     facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
 
     # Generate plot
-    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=subject)) +
+    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=sample_id)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
         facet_wrap(facets) +
@@ -194,13 +194,13 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     ',update_cols_order_code(),'
     # Preprocessing
-    data$subject <- as.character(data$subject)
+    data$sample_id <- as.character(data$sample_id)
     model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
-    ied$subject <- gsub("e:|:50", "", row.names(ied))
-    ied$inoculate <- data$inoculate[match(ied$subject, data$subject)]
-    ied$plate_number <- data$plate_number[match(ied$subject, data$subject)]
-    ied$primary <- data$primary[match(ied$subject, data$subject)]
+    ied$sample_id <- gsub("e:|:50", "", row.names(ied))
+    ied$inoculate <- data$inoculate[match(ied$sample_id, data$sample_id)]
+    ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
+    ied$primary <- data$primary[match(ied$sample_id, data$sample_id)]
     facets <- if(length(unique(data$primary))>1) c("primary") else NULL
     control_median <- median(ied[tolower(ied$inoculate) %in% tolower(c("PBS", "negative_control")),]$Estimate)
     # Average Neutralisation
