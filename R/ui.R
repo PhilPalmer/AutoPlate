@@ -15,7 +15,6 @@ library(shinyWidgets)
 ##'
 ##' @noRd
 ui <- dashboardPage(
-  # includeCSS("www/styles.css"),
   dashboardHeader(title = "AutoPlate"),
   dashboardSidebar(
     sidebarMenu(
@@ -27,7 +26,7 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+      includeCSS("www/styles.css"),
       # Prism for syntax highting
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/prism.min.js"),
       tags$link(rel = "stylesheet", type = "text/css",
