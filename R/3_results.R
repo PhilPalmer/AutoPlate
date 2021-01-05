@@ -63,10 +63,10 @@ setup_code <- function(is_drc_plot, is_vc_plot) {
   return(setup_code)
 }
 
-#' @title Update inoculates colours and order code
+#' @title Update treatments colours and order code
 #'
-#' @description Function to return the code to update the colours and ordering of inoculates before plotting
-#' @return character, containing code to update the inoculates colour and order before plotting a results plot
+#' @description Function to return the code to update the colours and ordering of treatments before plotting
+#' @return character, containing code to update the treatments colour and order before plotting a results plot
 #' @keywords colours code
 #' @export
 #' @examples
@@ -74,21 +74,21 @@ setup_code <- function(is_drc_plot, is_vc_plot) {
 update_cols_order_code <- function() {
   '
     # Update order and colours of incoluates
-    inoculates <- unique(data$inoculate)
-    inoculate_cols <- gg_color_hue(length(inoculates),0,360)
+    treatments <- unique(data$treatment)
+    treatment_cols <- gg_color_hue(length(treatments),0,360)
     negative_control <- c("pbs", "negative_control")
-    posotive_control <- unique(data[data$type == "m",]$inoculate)
-    if (any(negative_control %in% tolower(inoculates))) {
-      negative_control_index <- which(tolower(inoculates) %in% negative_control)
-      inoculates <- c(inoculates[negative_control_index],inoculates[-negative_control_index])
-      inoculate_cols[1] <- "grey"
+    posotive_control <- unique(data[data$type == "m",]$treatment)
+    if (any(negative_control %in% tolower(treatments))) {
+      negative_control_index <- which(tolower(treatments) %in% negative_control)
+      treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
+      treatment_cols[1] <- "grey"
     }
     if (!is.na(posotive_control)) {
-      posotive_control_index <- which(inoculates %in% posotive_control)
-      inoculates <- c(inoculates[-posotive_control_index],inoculates[posotive_control_index])
-      inoculate_cols[length(inoculates)] <- "black"
+      posotive_control_index <- which(treatments %in% posotive_control)
+      treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
+      treatment_cols[length(treatments)] <- "black"
     }
-    data$inoculate <- factor(data$inoculate, levels = inoculates)
+    data$treatment <- factor(data$treatment, levels = treatments)
   '
 }
 
@@ -108,14 +108,14 @@ data_exploration_code <- function(code) {
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     ',update_cols_order_code(),'
     # Generate plot
-    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=inoculate)) +
+    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=treatment)) +
       geom_point() +
       geom_smooth(se=F, span=1) +
       facet_wrap(.~primary) +
       ylim(c(-100, 110)) +
       scale_x_continuous(trans="log10") +
       theme_classic() +
-      scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
+      scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ylab("Neutralisation") +
       xlab("Dilution") +
       ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary)))
@@ -151,18 +151,18 @@ drc_code <- function(code, drm_string) {
     sample_ids<-unique(data$sample_id)
     new_data <- expand.grid(new_dilution, sample_ids)
     names(new_data) <- c("dilution", "sample_id")
-    new_data$inoculate <- data$inoculate[match(new_data$sample_id, data$sample_id)]
+    new_data$treatment <- data$treatment[match(new_data$sample_id, data$sample_id)]
     new_data$pred <- predict(model, newdata=new_data,)
-    facets <- if(length(unique(data$primary))>1) c("inoculate","primary") else c("inoculate")
+    facets <- if(length(unique(data$primary))>1) c("treatment","primary") else c("treatment")
 
     # Generate plot
-    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=inoculate, group=sample_id)) +
+    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=treatment, group=sample_id)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
         facet_wrap(facets) +
         scale_x_continuous(trans="log10") +
         theme_classic() +
-        scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
+        scale_colour_manual(breaks=treatments,values=treatment_cols) +
         theme(strip.background = element_blank()) +
         ylab("Neutralisation") +
         xlab("Dilution") +
@@ -198,25 +198,25 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
     model <- drc::drm(', drm_string, ')
     ied <- as.data.frame(ED(model, 50, display=FALSE))
     ied$sample_id <- gsub("e:|:50", "", row.names(ied))
-    ied$inoculate <- data$inoculate[match(ied$sample_id, data$sample_id)]
+    ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
     ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
     ied$primary <- data$primary[match(ied$sample_id, data$sample_id)]
     facets <- if(length(unique(data$primary))>1) c("primary") else NULL
-    control_median <- median(ied[tolower(ied$inoculate) %in% tolower(c("PBS", "negative_control")),]$Estimate)
+    control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
     # Average Neutralisation
-    avied <- summarise(group_by(ied, inoculate), av=median(Estimate))
-    ied_order <- avied$inoculate[order(avied$av)]
+    avied <- summarise(group_by(ied, treatment), av=median(Estimate))
+    ied_order <- avied$treatment[order(avied$av)]
 
     # Generate plot
-    ic50_boxplot <- ggplot2::ggplot(ied, aes(x=inoculate, y=Estimate, colour=inoculate))+
+    ic50_boxplot <- ggplot2::ggplot(ied, aes(x=treatment, y=Estimate, colour=treatment))+
         geom_',plot_type,'() +
         geom_point() +
         facet_wrap(facets) +
         scale_x_discrete(limits=ied_order) +
         ylab("Individual IC50 log10") +
-        xlab("Inoculate") +
+        xlab("Treatment") +
         theme_classic() +
-        scale_colour_manual(breaks=inoculates,values=inoculate_cols) +
+        scale_colour_manual(breaks=treatments,values=treatment_cols) +
         ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$primary))) +
         coord_flip() + 
         geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")

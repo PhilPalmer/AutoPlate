@@ -22,12 +22,12 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
   # Set params for plot based on the feature
-  features <- c("types", "sample_id", "dilution", "primary", "rlu", "neutralisation", "inoculate", "study", "bleed", "exclude")
+  features <- c("types", "sample_id", "dilution", "primary", "rlu", "neutralisation", "treatment", "study", "bleed", "exclude")
   fmt.cells <- c("%.5s", "%.8s", "%.5s", "%.15s", "%.0f", "%.0f", "%.15s", "%.8s", "%.8s", "%.8s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
   col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis else rainbow
-  side <- if (feature %in% c("sample_id", "inoculate", "study", "bleed", "exclude")) 3 else 4
+  side <- if (feature %in% c("sample_id", "treatment", "study", "bleed", "exclude")) 3 else 4
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }

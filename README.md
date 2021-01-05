@@ -27,7 +27,7 @@ Currently the dashboard contains the following tabs and features, which allow yo
 
 - :arrow_right: **1) Input** <img src="www/images/input.png" align="right" width="40%"  />
 
-    Upload the raw plate readouts for your 96 well-plates and specify what each well contained in terms of dilutions, samples, types, bleed, inoculate, primary and study
+    Upload the raw plate readouts for your 96 well-plates and specify what each well contained in terms of dilutions, samples, types, bleed, treatment, primary and study
 
     <br /> <br /> 
     

@@ -147,10 +147,10 @@ ui <- dashboardPage(
                 rHandsontableOutput("bleed_table")
               ),
               tabPanel(
-                "Inoculate",
-                actionButton("go_inoculate", "Submit feature", icon("check-circle")),
-                uiOutput("inoculate"),
-                rHandsontableOutput("inoculate_table")
+                "Treatment",
+                actionButton("go_treatment", "Submit feature", icon("check-circle")),
+                uiOutput("treatment"),
+                rHandsontableOutput("treatment_table")
               ),
               tabPanel(
                 "Primary",
@@ -183,7 +183,7 @@ ui <- dashboardPage(
             tabPanel("Primary"),
             tabPanel("RLU"),
             tabPanel("Neutralisation"),
-            tabPanel("Inoculate"),
+            tabPanel("Treatment"),
             tabPanel("Study"),
             tabPanel("Bleed"),
             tabPanel("Exclude"),

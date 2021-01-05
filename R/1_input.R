@@ -34,7 +34,7 @@ init_cols <- function(assay_df) {
   assay_df$sample_id <- ""
   assay_df$dilution <- ""
   assay_df$bleed <- ""
-  assay_df$inoculate <- ""
+  assay_df$treatment <- ""
   assay_df$primary <- ""
   assay_df$study <- ""
   assay_df$neutralisation <- as.numeric("")

@@ -2,15 +2,15 @@
 % Please edit documentation in R/3_results.R
 \name{update_cols_order_code}
 \alias{update_cols_order_code}
-\title{Update inoculates colours and order code}
+\title{Update treatments colours and order code}
 \usage{
 update_cols_order_code()
 }
 \value{
-character, containing code to update the inoculates colour and order before plotting a results plot
+character, containing code to update the treatments colour and order before plotting a results plot
 }
 \description{
-Function to return the code to update the colours and ordering of inoculates before plotting
+Function to return the code to update the colours and ordering of treatments before plotting
 }
 \examples{
 update_cols_order_code()
