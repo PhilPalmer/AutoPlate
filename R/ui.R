@@ -233,7 +233,8 @@ ui <- dashboardPage(
               ),
               tabPanel(
                 "Dose Response Curve",
-                downloadButton("download_drc", "Download SVG Plot"),
+                div(downloadButton("download_drc", "Download SVG Plot"), class = 'inline control'),
+                div(uiOutput("virus_drc"), class = 'inline control'),
                 br(), br(),
                 tabBox(
                   width = 12,
@@ -243,9 +244,10 @@ ui <- dashboardPage(
               ),
               tabPanel(
                 "IC50 Boxplot",
-                downloadButton("download_ic50", "Download SVG Plot"),
-                br(), br(),
-                switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"),
+                div(downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control'),
+                div(uiOutput("virus_ic50"), class = 'inline control'),
+                div(br(), class = 'inline space'),
+                div(switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
                 tabBox(
                   width = 12,
                   tabPanel("View Plot", plotlyOutput("ic50_boxplot")),

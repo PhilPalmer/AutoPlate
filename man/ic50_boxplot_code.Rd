@@ -4,7 +4,7 @@
 \alias{ic50_boxplot_code}
 \title{IC50 boxplot code}
 \usage{
-ic50_boxplot_code(code, drm_string, ic50_is_boxplot)
+ic50_boxplot_code(code, drm_string, ic50_is_boxplot, virus)
 }
 \arguments{
 \item{code}{character, code that's required, either "all" for setup and plot code or "plot" for just plot code}
@@ -12,6 +12,8 @@ ic50_boxplot_code(code, drm_string, ic50_is_boxplot)
 \item{drm_string}{character, specifying the code the dose response model}
 
 \item{ic50_is_boxplot}{bool, specify plot type, true for boxplot, false for scatter plot}
+
+\item{virus}{character, specifying the virus to plot}
 }
 \value{
 character, containing the code required for the IC50 plot results code

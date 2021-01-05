@@ -132,16 +132,17 @@ data_exploration_code <- function(code) {
 #' @description Function to return the DRC plot results plot code
 #' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @param drm_string character, specifying the code the dose response model
+#' @param virus character, specifying the virus to plot
 #' @return character, containing the code required for the DRC plot results code
 #' @keywords plot code
 #' @export
 #' @examples
 #' drc_code()
-drc_code <- function(code, drm_string) {
+drc_code <- function(code, drm_string, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot <- paste0('
     # Filter out unwanted types and excluded data
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == "',virus,'")
     ',update_cols_order_code(),'
     # Preprocessing
     data$sample_id <- unlist(data$sample_id)        
@@ -181,17 +182,18 @@ drc_code <- function(code, drm_string) {
 #' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @param drm_string character, specifying the code the dose response model
 #' @param ic50_is_boxplot bool, specify plot type, true for boxplot, false for scatter plot 
+#' @param virus character, specifying the virus to plot
 #' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
 #' @export
 #' @examples
 #' ic50_boxplot_code()
-ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
+ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
   plot <- paste0('
     # Filter out unwanted types and excluded data
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == "',virus,'")
     ',update_cols_order_code(),'
     # Preprocessing
     data$sample_id <- as.character(data$sample_id)

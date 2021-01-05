@@ -4,12 +4,14 @@
 \alias{drc_code}
 \title{DRC code}
 \usage{
-drc_code(code, drm_string)
+drc_code(code, drm_string, virus)
 }
 \arguments{
 \item{code}{character, code that's required, either "all" for setup and plot code or "plot" for just plot code}
 
 \item{drm_string}{character, specifying the code the dose response model}
+
+\item{virus}{character, specifying the virus to plot}
 }
 \value{
 character, containing the code required for the DRC plot results code

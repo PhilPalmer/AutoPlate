@@ -397,10 +397,10 @@ server <- function(input, output, session) {
     prism_code_block(code = data_exploration_code("all"), language = "r")
   })
   output$drc_code <- renderUI({
-    prism_code_block(code = drc_code("all",input$drm_string), language = "r")
+    prism_code_block(code = drc_code("all",input$drm_string,input$virus_drc), language = "r")
   })
   output$ic50_boxplot_code <- renderUI({
-    prism_code_block(code = ic50_boxplot_code("all",input$drm_string,input$ic50_is_boxplot), language = "r")
+    prism_code_block(code = ic50_boxplot_code("all",input$drm_string,input$ic50_is_boxplot,input$virus_ic50), language = "r")
   })
   output$cv_boxplot_code <- renderUI({
     prism_code_block(code = cv_boxplot_code("all"), language = "r")
@@ -424,6 +424,19 @@ server <- function(input, output, session) {
     content = function(file) ggsave(file, plot = values[["cv_boxplot"]], width = 10)
   )
 
+  # Create dropdown to select virus for DRC & IC50 plots
+  # TODO: refactor create_feature_dropdown?
+  output$virus_drc <- renderUI({
+    req(input$plate_data)
+    assay_df <- isolate(values[["assay_df"]])
+    selectInput("virus_drc", "Select virus to plot", unique(assay_df$virus))
+  })
+  output$virus_ic50 <- renderUI({
+    req(input$plate_data)
+    assay_df <- isolate(values[["assay_df"]])
+    selectInput("virus_ic50", "Select virus to plot", unique(assay_df$virus))
+  })
+
   # Generate and render results plots
   output$data_exploration <- renderPlotly({
     req(input$luminescence_files)
@@ -436,7 +449,7 @@ server <- function(input, output, session) {
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-        eval(parse(text=drc_code("plot",input$drm_string)))
+        eval(parse(text=drc_code("plot",input$drm_string,input$virus_drc)))
         values[["drc"]] <- drc_plot
       }, error = function(error_message) {
         print(error_message)
@@ -447,7 +460,7 @@ server <- function(input, output, session) {
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-      eval(parse(text=ic50_boxplot_code("plot",input$drm_string,input$ic50_is_boxplot)))
+      eval(parse(text=ic50_boxplot_code("plot",input$drm_string,input$ic50_is_boxplot,input$virus_ic50)))
       values[["ic50_boxplot"]] <- ic50_boxplot
       }, error = function(error_message) {
         print(error_message)

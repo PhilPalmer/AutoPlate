@@ -5,3 +5,13 @@
     font-size: 1.5em;
     color: #5cb85c;
 }
+.inline {
+  display: inline-block;
+  vertical-align:top;
+}
+.control {
+  width: 300px;
+}
+.space {
+  width: 150px;
+}
