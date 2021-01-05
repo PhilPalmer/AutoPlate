@@ -86,7 +86,7 @@ server <- function(input, output, session) {
         x = serum sample")
   })
   output$tooltip_features <- renderText({
-    create_tooltip("Set the values for new features such as the \"primary\" based on existing features such as the \"sample_id\" (i.e. mouse number)")
+    create_tooltip("Set the values for new features such as the \"virus\" based on existing features such as the \"sample_id\" (i.e. mouse number)")
   })
   output$tooltip_exclude <- renderText({
     create_tooltip("You may wish to exclude certain wells/plates if they have failed the control for example")
@@ -135,7 +135,7 @@ server <- function(input, output, session) {
     # Define variables
     luminescence_files <- input$luminescence_files
     header <- colnames(read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
-    cols <- c("types", "dilution", "bleed", "primary", "study") # sample_id, inoculate
+    cols <- c("types", "dilution", "bleed", "study") # sample_id, inoculate, primary
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
@@ -145,8 +145,8 @@ server <- function(input, output, session) {
     if (is.null(input$plate_data) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
-      oldnames <- c("subject", "inoculate") # c("subject", "inoculate", "primary", "study")
-      newnames <- c("sample_id", "treatment") # c("sample_id", "treatment", "virus", "experiment_id")
+      oldnames <- c("subject", "inoculate", "primary") # c("subject", "inoculate", "primary", "study")
+      newnames <- c("sample_id", "treatment", "virus") # c("sample_id", "treatment", "virus", "experiment_id")
       if (all(oldnames %in% header)) {
         assay_df <- assay_df %>% dplyr::rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
       }
@@ -254,22 +254,22 @@ server <- function(input, output, session) {
     }
   })
 
-  # Create dropdown for features: bleed, treatment, primary & study
+  # Create dropdown for features: bleed, treatment, virus & study
   output$bleed <- renderUI(create_feature_dropdown("bleed", input, values))
   output$treatment <- renderUI(create_feature_dropdown("treatment", input, values))
-  output$primary <- renderUI(create_feature_dropdown("primary", input, values))
+  output$virus <- renderUI(create_feature_dropdown("virus", input, values))
   output$study <- renderUI(create_feature_dropdown("study", input, values))
 
-  # Create table for features: bleed, treatment, primary & study
+  # Create table for features: bleed, treatment, virus & study
   output$bleed_table <- renderRHandsontable(create_feature_table("bleed", input, values))
   output$treatment_table <- renderRHandsontable(create_feature_table("treatment", input, values))
-  output$primary_table <- renderRHandsontable(create_feature_table("primary", input, values))
+  output$virus_table <- renderRHandsontable(create_feature_table("virus", input, values))
   output$study_table <- renderRHandsontable(create_feature_table("study", input, values))
 
-  # Update the main assay df with user input for features: bleed, treatment, primary & study
+  # Update the main assay df with user input for features: bleed, treatment, virus & study
   observeEvent(input$go_bleed, update_feature("bleed", input, values))
   observeEvent(input$go_treatment, update_feature("treatment", input, values))
-  observeEvent(input$go_primary, update_feature("primary", input, values))
+  observeEvent(input$go_virus, update_feature("virus", input, values))
   observeEvent(input$go_study, update_feature("study", input, values))
 
   #######

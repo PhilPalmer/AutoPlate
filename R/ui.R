@@ -153,10 +153,10 @@ ui <- dashboardPage(
                 rHandsontableOutput("treatment_table")
               ),
               tabPanel(
-                "Primary",
-                actionButton("go_primary", "Submit feature", icon("check-circle")),
-                uiOutput("primary"),
-                rHandsontableOutput("primary_table")
+                "Virus",
+                actionButton("go_virus", "Submit feature", icon("check-circle")),
+                uiOutput("virus"),
+                rHandsontableOutput("virus_table")
               ),
               tabPanel(
                 "Study",
@@ -180,7 +180,7 @@ ui <- dashboardPage(
             tabPanel("Types"),
             tabPanel("Sample ID"),
             tabPanel("Dilution"),
-            tabPanel("Primary"),
+            tabPanel("Virus"),
             tabPanel("RLU"),
             tabPanel("Neutralisation"),
             tabPanel("Treatment"),

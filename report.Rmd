@@ -27,7 +27,7 @@ library(plotly)
 ```{r}
 platelist_file <- "pmn_platelist.csv"
 assay_df <- read.csv(platelist_file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
-title <- paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$primary))
+title <- paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus))
 title
 ```
 
@@ -86,7 +86,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
   # Set params for plot based on the feature
-  features <- c("types", "sample_id", "dilution", "primary", "rlu", "neutralisation", "treatment", "study", "bleed", "exclude")
+  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "study", "bleed", "exclude")
   fmt.cells <- c("%.5s", "%.5s", "%.5s", "%.5s", "%.0f", "%.0f", "%.5s", "%.5s", "%.5s", "%.5s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
@@ -96,7 +96,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
 
-features <- c("Types", "Sample ID", "Dilution", "Primary", "RLU", "Neutralisation", "Treatment", "Study", "Bleed", "Exclude")
+features <- c("Types", "Sample ID", "Dilution", "Virus", "RLU", "Neutralisation", "Treatment", "Study", "Bleed", "Exclude")
 
 for (feature in features) {
   for (plate in plates) {
@@ -136,7 +136,7 @@ data <- dplyr::filter(data, types %in% c("x", "m"))
 data_exploration_plot <- ggplot2::ggplot(data, aes(x = dilution, y = neutralisation, colour = treatment)) +
   geom_point() +
   geom_smooth(se = F, span = 1) +
-  facet_wrap(. ~ primary) +
+  facet_wrap(. ~ virus) +
   ylim(c(-100, 110)) +
   scale_x_continuous(trans = "log10") +
   theme_classic() +
@@ -164,7 +164,7 @@ new_data <- expand.grid(new_dilution, sample_ids)
 names(new_data) <- c("dilution", "sample_id")
 new_data$treatment <- data$treatment[match(new_data$sample_id, data$sample_id)]
 new_data$pred <- predict(model, newdata = new_data, )
-facets <- if(length(unique(data$primary))>1) c("treatment","primary") else c("treatment")
+facets <- if(length(unique(data$virus))>1) c("treatment","virus") else c("treatment")
 
 drc_plot <- ggplot2::ggplot(new_data, aes(x = dilution, y = pred, colour = treatment, group = sample_id)) +
   geom_line() +
@@ -185,8 +185,8 @@ ied <- as.data.frame(ED(model, 50, display = FALSE))
 ied$sample_id <- gsub("e:|:50", "", row.names(ied))
 ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
 ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
-ied$primary <- data$primary[match(ied$sample_id, data$sample_id)]
-facets <- if(length(unique(data$primary))>1) c("primary") else NULL
+ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
+facets <- if(length(unique(data$virus))>1) c("virus") else NULL
 control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
 # Average Neutralisation
 avied <- summarise(group_by(ied, treatment), av = median(Estimate))
