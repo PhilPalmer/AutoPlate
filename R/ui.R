@@ -159,10 +159,10 @@ ui <- dashboardPage(
                 rHandsontableOutput("virus_table")
               ),
               tabPanel(
-                "Study",
-                actionButton("go_study", "Submit feature", icon("check-circle")),
-                uiOutput("study"),
-                rHandsontableOutput("study_table")
+                "Experiment ID",
+                actionButton("go_experiment_id", "Submit feature", icon("check-circle")),
+                uiOutput("experiment_id"),
+                rHandsontableOutput("experiment_id_table")
               )
             )
           )
@@ -184,7 +184,7 @@ ui <- dashboardPage(
             tabPanel("RLU"),
             tabPanel("Neutralisation"),
             tabPanel("Treatment"),
-            tabPanel("Study"),
+            tabPanel("Experiment ID"),
             tabPanel("Bleed"),
             tabPanel("Exclude"),
             tabPanel("Types Boxplot", plotlyOutput("types_boxplot"))

@@ -135,7 +135,7 @@ server <- function(input, output, session) {
     # Define variables
     luminescence_files <- input$luminescence_files
     header <- colnames(read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
-    cols <- c("types", "dilution", "bleed", "study") # sample_id, inoculate, primary
+    cols <- c("types", "dilution", "bleed")
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
@@ -145,8 +145,8 @@ server <- function(input, output, session) {
     if (is.null(input$plate_data) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
-      oldnames <- c("subject", "inoculate", "primary") # c("subject", "inoculate", "primary", "study")
-      newnames <- c("sample_id", "treatment", "virus") # c("sample_id", "treatment", "virus", "experiment_id")
+      oldnames <- c("subject", "inoculate", "primary", "study")
+      newnames <- c("sample_id", "treatment", "virus", "experiment_id")
       if (all(oldnames %in% header)) {
         assay_df <- assay_df %>% dplyr::rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
       }
@@ -254,23 +254,23 @@ server <- function(input, output, session) {
     }
   })
 
-  # Create dropdown for features: bleed, treatment, virus & study
+  # Create dropdown for features: bleed, treatment, virus & experiment_id
   output$bleed <- renderUI(create_feature_dropdown("bleed", input, values))
   output$treatment <- renderUI(create_feature_dropdown("treatment", input, values))
   output$virus <- renderUI(create_feature_dropdown("virus", input, values))
-  output$study <- renderUI(create_feature_dropdown("study", input, values))
+  output$experiment_id <- renderUI(create_feature_dropdown("experiment_id", input, values))
 
-  # Create table for features: bleed, treatment, virus & study
+  # Create table for features: bleed, treatment, virus & experiment_id
   output$bleed_table <- renderRHandsontable(create_feature_table("bleed", input, values))
   output$treatment_table <- renderRHandsontable(create_feature_table("treatment", input, values))
   output$virus_table <- renderRHandsontable(create_feature_table("virus", input, values))
-  output$study_table <- renderRHandsontable(create_feature_table("study", input, values))
+  output$experiment_id_table <- renderRHandsontable(create_feature_table("experiment_id", input, values))
 
-  # Update the main assay df with user input for features: bleed, treatment, virus & study
+  # Update the main assay df with user input for features: bleed, treatment, virus & experiment_id
   observeEvent(input$go_bleed, update_feature("bleed", input, values))
   observeEvent(input$go_treatment, update_feature("treatment", input, values))
   observeEvent(input$go_virus, update_feature("virus", input, values))
-  observeEvent(input$go_study, update_feature("study", input, values))
+  observeEvent(input$go_experiment_id, update_feature("experiment_id", input, values))
 
   #######
   # 2) QC

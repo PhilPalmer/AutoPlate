@@ -27,7 +27,7 @@ library(plotly)
 ```{r}
 platelist_file <- "pmn_platelist.csv"
 assay_df <- read.csv(platelist_file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
-title <- paste(unique(assay_df$study), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus))
+title <- paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus))
 title
 ```
 
@@ -86,17 +86,17 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
   # Set params for plot based on the feature
-  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "study", "bleed", "exclude")
+  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "experiment_id", "bleed", "exclude")
   fmt.cells <- c("%.5s", "%.5s", "%.5s", "%.5s", "%.0f", "%.0f", "%.5s", "%.5s", "%.5s", "%.5s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
   col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis else rainbow
-  side <- if (feature %in% c("sample_id", "treatment", "study", "bleed", "exclude")) 3 else 4
+  side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
 
-features <- c("Types", "Sample ID", "Dilution", "Virus", "RLU", "Neutralisation", "Treatment", "Study", "Bleed", "Exclude")
+features <- c("Types", "Sample ID", "Dilution", "Virus", "RLU", "Neutralisation", "Treatment", "Experiment ID", "Bleed", "Exclude")
 
 for (feature in features) {
   for (plate in plates) {

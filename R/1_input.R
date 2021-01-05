@@ -36,7 +36,7 @@ init_cols <- function(assay_df) {
   assay_df$bleed <- ""
   assay_df$treatment <- ""
   assay_df$virus <- ""
-  assay_df$study <- ""
+  assay_df$experiment_id <- ""
   assay_df$neutralisation <- as.numeric("")
   assay_df$exclude <- FALSE
   return(assay_df)

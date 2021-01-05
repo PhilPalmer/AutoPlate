@@ -118,7 +118,7 @@ data_exploration_code <- function(code) {
       scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ylab("Neutralisation") +
       xlab("Dilution") +
-      ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+      ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
     data_exploration_plotly <- plotly::ggplotly(data_exploration_plot)
     data_exploration_plotly
   ')
@@ -166,7 +166,7 @@ drc_code <- function(code, drm_string) {
         theme(strip.background = element_blank()) +
         ylab("Neutralisation") +
         xlab("Dilution") +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
     drc_plotly <- plotly::ggplotly(drc_plot)
     drc_plotly
     ')
@@ -217,7 +217,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot) {
         xlab("Treatment") +
         theme_classic() +
         scale_colour_manual(breaks=treatments,values=treatment_cols) +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
+        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
         coord_flip() + 
         geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
     ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
@@ -255,7 +255,7 @@ cv_boxplot_code <- function(code) {
         ylab("Log10 raw luminescence value") +
         xlab("Cell only or Virus only") +
         theme_classic() +
-        ggtitle(paste(unique(data$study), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
     cv_boxplotly <- plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
     cv_boxplotly
     '
