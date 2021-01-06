@@ -154,13 +154,12 @@ drc_code <- function(code, drm_string, virus) {
     names(new_data) <- c("dilution", "sample_id")
     new_data$treatment <- data$treatment[match(new_data$sample_id, data$sample_id)]
     new_data$pred <- predict(model, newdata=new_data,)
-    facets <- if(length(unique(data$virus))>1) c("treatment","virus") else c("treatment")
 
     # Generate plot
     drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=treatment, group=sample_id)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
-        facet_wrap(facets) +
+        facet_wrap(.~treatment)
         scale_x_continuous(trans="log10") +
         theme_classic() +
         scale_colour_manual(breaks=treatments,values=treatment_cols) +
@@ -203,7 +202,6 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
     ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
     ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
-    facets <- if(length(unique(data$virus))>1) c("virus") else NULL
     control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
     # Average Neutralisation
     avied <- summarise(group_by(ied, treatment), av=median(Estimate))
@@ -213,7 +211,6 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     ic50_boxplot <- ggplot2::ggplot(ied, aes(x=treatment, y=Estimate, colour=treatment))+
         geom_',plot_type,'() +
         geom_point() +
-        facet_wrap(facets) +
         scale_x_discrete(limits=ied_order) +
         ylab("Individual IC50 log10") +
         xlab("Treatment") +
