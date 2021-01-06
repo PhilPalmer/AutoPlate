@@ -186,10 +186,9 @@ plot_drc <- function(data,virus_to_plot,drm_model) {
 }
 
 # Produce a seperate plot for each virus
-for (virus_to_plot in unique(data$virus)) {
-  drc_plot <- plot_drc(data,virus_to_plot,params$drm_model)
-  plot(drc_plot)
-}
+htmltools::tagList(lapply(unique(data$virus), function(virus_to_plot) { 
+  plotly::ggplotly(plot_drc(data,virus_to_plot,params$drm_model)) 
+}))
 ```
 
 ## IC50 Boxplot
