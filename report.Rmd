@@ -153,8 +153,13 @@ update_cols_order <- function(data) {
 ## Data Exploration
 
 ```{r}
+# Preprocessing
 data <- dplyr::filter(data, types %in% c("x", "m"))
 
+# Update order and colours of treatments
+attach(update_cols_order(data), warn.conflicts=FALSE)
+
+# Generate plot
 data_exploration_plot <- ggplot2::ggplot(data, aes(x = dilution, y = neutralisation, colour = treatment)) +
   geom_point() +
   geom_smooth(se = F, span = 1) +
@@ -162,6 +167,7 @@ data_exploration_plot <- ggplot2::ggplot(data, aes(x = dilution, y = neutralisat
   ylim(c(-100, 110)) +
   scale_x_continuous(trans = "log10") +
   theme_classic() +
+  scale_colour_manual(breaks=treatments,values=treatment_cols) +
   ylab("Neutralisation") +
   xlab("Dilution") +
   ggtitle(title)
