@@ -20,6 +20,7 @@ library(drc)
 library(rmarkdown)
 library(knitr)
 library(plotly)
+library(metafolio)
 ```
 
 ## Title
@@ -126,6 +127,29 @@ plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
 
 # Results
 
+## Update order and colour of treatments
+
+```{r}
+update_cols_order <- function(data) {
+  treatments <- unique(data$treatment)
+  treatment_cols <- gg_color_hue(length(treatments),0,360)
+  negative_control <- c("pbs", "negative_control")
+  posotive_control <- unique(data[data$type == "m",]$treatment)
+  if (any(negative_control %in% tolower(treatments))) {
+    negative_control_index <- which(tolower(treatments) %in% negative_control)
+    treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
+    treatment_cols[1] <- "grey"
+  }
+  if (!is.na(posotive_control)) {
+    posotive_control_index <- which(treatments %in% posotive_control)
+    treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
+    treatment_cols[length(treatments)] <- "black"
+  }
+  data$treatment <- factor(data$treatment, levels = treatments)
+  return(list(data=data, treatment_cols=treatment_cols,treatments=treatments))
+}
+```
+
 ## Data Exploration
 
 ```{r}
@@ -158,6 +182,9 @@ plot_drc <- function(data,virus_to_plot,drm_model) {
   # Filter to keep only one virus
   data <- dplyr::filter(data, virus == virus_to_plot)
 
+  # Update order and colours of treatments
+  attach(update_cols_order(data), warn.conflicts=FALSE)
+
   # Preprocessing
   data$sample_id <- unlist(data$sample_id)
   model <- eval(parse(text = paste("drc::drm(", drm_model, ")")))
@@ -177,6 +204,7 @@ plot_drc <- function(data,virus_to_plot,drm_model) {
     facet_wrap(facets) +
     scale_x_continuous(trans = "log10") +
     theme_classic() +
+    scale_colour_manual(breaks=treatments,values=treatment_cols) +
     theme(strip.background = element_blank()) +
     ylab("Neutralisation") +
     xlab("Dilution") +
