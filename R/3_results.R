@@ -153,10 +153,10 @@ drc_code <- function(code, drm_string, virus) {
     new_data <- expand.grid(new_dilution, sample_ids)
     names(new_data) <- c("dilution", "sample_id")
     new_data$treatment <- data$treatment[match(new_data$sample_id, data$sample_id)]
-    new_data$pred <- predict(model, newdata=new_data,)
+    new_data$neutralisation <- predict(model, newdata=new_data,)
 
     # Generate plot
-    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=pred, colour=treatment, group=sample_id)) +
+    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
         facet_wrap(.~treatment)
