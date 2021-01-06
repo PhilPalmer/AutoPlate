@@ -73,7 +73,7 @@ setup_code <- function(is_drc_plot, is_vc_plot) {
 #' update_cols_order_code()
 update_cols_order_code <- function() {
   '
-    # Update order and colours of incoluates
+    # Update order and colours of treatments
     treatments <- unique(data$treatment)
     treatment_cols <- gg_color_hue(length(treatments),0,360)
     negative_control <- c("pbs", "negative_control")
