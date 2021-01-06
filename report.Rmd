@@ -219,34 +219,59 @@ htmltools::tagList(lapply(unique(data$virus), function(virus_to_plot) {
 }))
 ```
 
-## IC50 Boxplot
+## Individual Effective Dose (IED) Table(s)
+
+```{r, results='asis'}
+plot_ic50 <- function(data,virus_to_plot,drm_model) {
+  # Filter to keep only one virus
+  data <- dplyr::filter(data, virus == virus_to_plot)
+
+  # Update order and colours of treatments
+  attach(update_cols_order(data), warn.conflicts=FALSE)
+
+  # Preprocessing
+  data$sample_id <- as.character(data$sample_id)
+  model <- eval(parse(text = paste("drc::drm(", drm_model, ")")))
+  ied <- as.data.frame(ED(model, 50, display = FALSE))
+  ied$sample_id <- gsub("e:|:50", "", row.names(ied))
+  ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
+  ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
+  ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
+  facets <- if(length(unique(data$virus))>1) c("virus") else NULL
+  control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
+  # Average Neutralisation
+  avied <- summarise(group_by(ied, treatment), av = median(Estimate))
+  ied_order <- avied$treatment[order(avied$av)]
+
+  # Generate plot
+  ic50_boxplot <- ggplot2::ggplot(ied, aes(x = treatment, y = Estimate, colour = treatment)) +
+    geom_boxplot() +
+    geom_point() +
+    facet_wrap(facets) +
+    scale_x_discrete(limits = ied_order) +
+    ylab("Individual IC50 log10") +
+    xlab("Treatment") +
+    theme_classic() +
+    scale_colour_manual(breaks=treatments,values=treatment_cols) +
+    ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
+    coord_flip() +
+    geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
+  return(list(ic50_boxplot=ic50_boxplot, ied=ied))
+}
+
+# Generate ied tables and ic50 boxplots
+ic50_boxplots <- htmltools::tagList()
+for (virus_to_plot in unique(data$virus)) {
+  suppressWarnings(ic50_boxplot <- plot_ic50(data,virus_to_plot,params$drm_model))
+  ic50_boxplots[[virus_to_plot]] <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
+  print(knitr::kable(ic50_boxplot$ied))
+}
+```
+
+## IC50 Boxplot(s)
 
 ```{r}
-ied <- as.data.frame(ED(model, 50, display = FALSE))
-ied$sample_id <- gsub("e:|:50", "", row.names(ied))
-ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
-ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
-ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
-facets <- if(length(unique(data$virus))>1) c("virus") else NULL
-control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
-# Average Neutralisation
-avied <- summarise(group_by(ied, treatment), av = median(Estimate))
-ied_order <- avied$treatment[order(avied$av)]
-
-knitr::kable(ied)
-
-ic50_boxplot <- ggplot2::ggplot(ied, aes(x = treatment, y = Estimate, colour = treatment)) +
-  geom_boxplot() +
-  geom_point() +
-  facet_wrap(facets) +
-  scale_x_discrete(limits = ied_order) +
-  ylab("Individual IC50 log10") +
-  xlab("Treatment") +
-  theme_classic() +
-  ggtitle(title) +
-  coord_flip() +
-  geom_hline(yintercept=c(control_median), linetype="dotted", )
-plotly::ggplotly(ic50_boxplot)
+ic50_boxplots
 ```
 
 ## Virus + Cell Boxplot
