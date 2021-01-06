@@ -177,7 +177,6 @@ plotly::ggplotly(data_exploration_plot)
 ## DRM model
 
 ```{r}
-model <- eval(parse(text = paste("drc::drm(", params$drm_model, ")")))
 params$drm_model
 ```
 
