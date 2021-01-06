@@ -76,7 +76,6 @@ av_lum_df <- do.call(rbind, Map(data.frame,
 knitr::kable(av_lum_df)
 ```
 
-
 ## Heatmaps for The 96 Well Plate(s)
 
 ```{r}
@@ -126,7 +125,6 @@ plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
 ```
 
 # Results
-
 
 ## Data Exploration
 
@@ -180,6 +178,7 @@ plotly::ggplotly(drc_plot)
 ```
 
 ## IC50 Boxplot
+
 ```{r}
 ied <- as.data.frame(ED(model, 50, display = FALSE))
 ied$sample_id <- gsub("e:|:50", "", row.names(ied))
@@ -209,6 +208,7 @@ plotly::ggplotly(ic50_boxplot)
 ```
 
 ## Virus + Cell Boxplot
+
 ```{r}
 boxplot_data <- dplyr::filter(boxplot_data, types %in% c("cell", "virus"))
 
