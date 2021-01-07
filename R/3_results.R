@@ -159,7 +159,7 @@ drc_code <- function(code, drm_string, virus) {
     drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
         geom_line() +
         geom_point(data=data, aes(y=neutralisation)) +
-        facet_wrap(.~treatment)
+        facet_wrap("treatment") +
         scale_x_continuous(trans="log10") +
         theme_classic() +
         scale_colour_manual(breaks=treatments,values=treatment_cols) +
