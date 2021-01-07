@@ -123,7 +123,7 @@ server <- function(input, output, session) {
   # Use example data on click of button
   observeEvent(input$example_data, {
     values[["luminescence_files"]] <- structure(list(name = "example_H1N1_data_pmn_platelist.csv", 
-      size = NA, type = "text/csv", datapath = "data/pmn_platelist_H1N1_example_data.csv.csv"), 
+      size = NA, type = "text/csv", datapath = "data/pmn_platelist_H1N1_example_data.csv"), 
       class = "data.frame", row.names = c(NA, -1L))
   })
   # Use newest dataset uploaded by the user
