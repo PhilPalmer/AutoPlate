@@ -1,0 +1,97 @@
+machine_id,sequence_id,wrow,wcol,scan_position,tag,rlu,rlu.rq,timestamp,filename,plate_number,types,sample_id,dilution,bleed,treatment,virus,experiment_id,neutralisation,exclude
+1234567,0,A, 1,NA,NA, 4746000,ValidSlopeSaturation,NA,NA, 1,v,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,  12.40403943,FALSE
+1234567,0,A, 2,NA,NA, 3906000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  27.90908873,FALSE
+1234567,0,A, 3,NA,NA, 3809000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  29.69955275,FALSE
+1234567,0,A, 4,NA,NA, 4282000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  20.96873333,FALSE
+1234567,0,A, 5,NA,NA, 5383000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   0.64604372,FALSE
+1234567,0,A, 6,NA,NA, 3994000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  26.28475023,FALSE
+1234567,0,A, 7,NA,NA, 5236000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,   40,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   3.35942735,FALSE
+1234567,0,A, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,A, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,A,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,A,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,A,12,NA,NA,     480,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8),  500,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  99.99870791,FALSE
+1234567,0,B, 1,NA,NA, 5631000,ValidSlopeSaturation,NA,NA, 1,v,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,  -3.93163750,FALSE
+1234567,0,B, 2,NA,NA, 5145000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   5.03914102,FALSE
+1234567,0,B, 3,NA,NA, 5841000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -7.80789982,FALSE
+1234567,0,B, 4,NA,NA, 5264000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   2.84259237,FALSE
+1234567,0,B, 5,NA,NA, 5564000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -2.69492523,FALSE
+1234567,0,B, 6,NA,NA, 5406000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   0.22150070,FALSE
+1234567,0,B, 7,NA,NA, 6087000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,   80,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -12.34866426,FALSE
+1234567,0,B, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,B, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,B,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,B,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,B,12,NA,NA,    1380,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8), 1000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  99.98209536,FALSE
+1234567,0,C, 1,NA,NA, 5018000,ValidSlopeSaturation,NA,NA, 1,v,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,   7.38335681,FALSE
+1234567,0,C, 2,NA,NA, 5254000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   3.02717629,FALSE
+1234567,0,C, 3,NA,NA, 5944000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -9.70911420,FALSE
+1234567,0,C, 4,NA,NA, 4839000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  10.68740898,FALSE
+1234567,0,C, 5,NA,NA, 5499000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -1.49512975,FALSE
+1234567,0,C, 6,NA,NA, 5799000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -7.03264736,FALSE
+1234567,0,C, 7,NA,NA, 5410000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  160,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   0.14766714,FALSE
+1234567,0,C, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,C, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,C,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,C,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,C,12,NA,NA,    1010,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8), 2000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  99.98892496,FALSE
+1234567,0,D, 1,NA,NA, 5418000,ValidSlopeSaturation,NA,NA, 1,v,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,   0.00000000,FALSE
+1234567,0,D, 2,NA,NA, 5202000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,   3.98701268,FALSE
+1234567,0,D, 3,NA,NA, 5730000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -5.75901831,FALSE
+1234567,0,D, 4,NA,NA, 6804000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -25.58333133,FALSE
+1234567,0,D, 5,NA,NA, 6248000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -15.32046537,FALSE
+1234567,0,D, 6,NA,NA, 5860000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -8.15860927,FALSE
+1234567,0,D, 7,NA,NA, 6005000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  320,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -10.83507611,FALSE
+1234567,0,D, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,D, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,D,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,D,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,D,12,NA,NA,   79350,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8), 4000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  98.54289453,FALSE
+1234567,0,E, 1,NA,NA, 5621000,ValidSlopeSaturation,NA,NA, 1,v,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,  -3.74705358,FALSE
+1234567,0,E, 2,NA,NA, 5826000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -7.53102394,FALSE
+1234567,0,E, 3,NA,NA, 5777000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -6.62656273,FALSE
+1234567,0,E, 4,NA,NA, 5763000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -6.36814525,FALSE
+1234567,0,E, 5,NA,NA, 5744000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -6.01743580,FALSE
+1234567,0,E, 6,NA,NA, 5852000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -8.01094213,FALSE
+1234567,0,E, 7,NA,NA, 6204000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3,  640,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -14.50829612,FALSE
+1234567,0,E, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,E, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,E,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,E,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,E,12,NA,NA,  318300,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8), 8000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  94.13226176,FALSE
+1234567,0,F, 1,NA,NA,     590,ValidSlopeSaturation,NA,NA, 1,c,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,  99.99667749,FALSE
+1234567,0,F, 2,NA,NA, 6335000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -16.92634548,FALSE
+1234567,0,F, 3,NA,NA, 5625000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -3.82088715,FALSE
+1234567,0,F, 4,NA,NA, 5548000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -2.39959096,FALSE
+1234567,0,F, 5,NA,NA, 6468000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -19.38131162,FALSE
+1234567,0,F, 6,NA,NA, 6873000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -26.85696038,FALSE
+1234567,0,F, 7,NA,NA, 6323000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 1280,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -16.70484477,FALSE
+1234567,0,F, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,F, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,F,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,F,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,F,12,NA,NA,  798900,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8),16000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  85.26115856,FALSE
+1234567,0,G, 1,NA,NA,     320,ValidSlopeSaturation,NA,NA, 1,c,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001, 100.00166126,FALSE
+1234567,0,G, 2,NA,NA, 6263000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -15.59734125,FALSE
+1234567,0,G, 3,NA,NA, 6427000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -18.62451754,FALSE
+1234567,0,G, 4,NA,NA, 6542000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -20.74723263,FALSE
+1234567,0,G, 5,NA,NA, 6226000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -14.91438075,FALSE
+1234567,0,G, 6,NA,NA, 6224000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -14.87746396,FALSE
+1234567,0,G, 7,NA,NA, 6557000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 2560,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -21.02410851,FALSE
+1234567,0,G, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,G, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,G,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,G,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,G,12,NA,NA, 1262000,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8),32000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  76.71307722,FALSE
+1234567,0,H, 1,NA,NA,     410,ValidSlopeSaturation,NA,NA, 1,c,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001, 100.00000000,FALSE
+1234567,0,H, 2,NA,NA, 5818000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -7.38335681,FALSE
+1234567,0,H, 3,NA,NA, 5719000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 1, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -5.55597600,FALSE
+1234567,0,H, 4,NA,NA, 6123000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -13.01316637,FALSE
+1234567,0,H, 5,NA,NA, 5672000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 2, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -4.68843157,FALSE
+1234567,0,H, 6,NA,NA, 6630000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001, -22.37157112,FALSE
+1234567,0,H, 7,NA,NA, 5577000,ValidSlopeSaturation,NA,NA, 1,x,Mouse 3, 5120,terminal,PBS,A/swine/Guangxi/1/2013 (H1N1),EX001,  -2.93488433,FALSE
+1234567,0,H, 8,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,H, 9,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,H,10,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,H,11,NA,NA,NA,ValidSlopeSaturation,NA,NA, 1,,,NA,terminal,NA,A/swine/Guangxi/1/2013 (H1N1),EX001,NA,TRUE
+1234567,0,H,12,NA,NA, 1954000,ValidSlopeSaturation,NA,NA, 1,m,mAb (4F8),64000,terminal,mAb (4F8),A/swine/Guangxi/1/2013 (H1N1),EX001,  63.93986994,FALSE
