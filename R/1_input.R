@@ -210,7 +210,7 @@ update_types <- function(assay_df, updated_plate_df, plate_n) {
 #' @examples
 #' create_feature_dropdown()
 create_feature_dropdown <- function(new_feature, input, values) {
-  req(input$plate_data)
+  req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])
   selectInput(new_feature, "Select existing feature", names(assay_df))
 }

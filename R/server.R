@@ -126,9 +126,11 @@ server <- function(input, output, session) {
       size = NA, type = "text/csv", datapath = "data/pmn_platelist_H1N1_example_data.csv"), 
       class = "data.frame", row.names = c(NA, -1L))
   })
-  # Use newest dataset uploaded by the user
+  # Reload everything if the user uploads a new dataset
   observeEvent(input$luminescence_files, {
     values[["luminescence_files"]] <- input$luminescence_files
+    values[["plate_data"]] <- NULL
+    values[["assay_df"]] <- assay_df()
   })
 
   # Create a tab for each uploaded plate
@@ -156,7 +158,7 @@ server <- function(input, output, session) {
     if (is.null(values[["plate_n"]])) values[["plate_n"]] <- plate_n
     # Record the plate number - we'll switch back to this later to prevent the plate tab changing for the user when they update the plate data 
     if (plate_n != values[["plate_n"]]) values[["plate_n"]] <- plate_n
-    if (is.null(input$plate_data) & all(cols %in% header)) {
+    if (is.null(values[["plate_data"]]) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
       oldnames <- c("subject", "inoculate", "primary", "study")
@@ -167,7 +169,7 @@ server <- function(input, output, session) {
       values[["assay_df"]] <- assay_df
     }
     # Initialise the plate data frame
-    if (is.null(input$plate_data) & !all(cols %in% header)) {
+    if (is.null(values[["plate_data"]]) & !all(cols %in% header)) {
       assay_df <-
         apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
@@ -207,6 +209,7 @@ server <- function(input, output, session) {
   # Update the sample_id and types of the main assay dataframe based on user input
   observeEvent(input$plate_data, {
     req(input$plate_tabs)
+    values[["plate_data"]] <- input$plate_data
     plate_n <- values[["plate_n"]]
     assay_df <- values[["assay_df"]]
     # Check if the `changes$changes` is `NULL` to prevent bug #3
@@ -441,12 +444,12 @@ server <- function(input, output, session) {
   # Create dropdown to select virus for DRC & IC50 plots
   # TODO: refactor create_feature_dropdown?
   output$virus_drc <- renderUI({
-    req(input$plate_data)
+    req(values[["plate_data"]])
     assay_df <- isolate(values[["assay_df"]])
     selectInput("virus_drc", "Select virus to plot", unique(assay_df$virus))
   })
   output$virus_ic50 <- renderUI({
-    req(input$plate_data)
+    req(values[["plate_data"]])
     assay_df <- isolate(values[["assay_df"]])
     selectInput("virus_ic50", "Select virus to plot", unique(assay_df$virus))
   })
