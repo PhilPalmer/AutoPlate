@@ -100,7 +100,7 @@ server <- function(input, output, session) {
 
   # Create messages to display to user
   output$message_input_files <- renderUI({
-    if (is.null(input$luminescence_files)) {
+    if (is.null(values[["luminescence_files"]])) {
       box(HTML(paste0(
         "<h4>Start here!</h4><p>Upload your CSV files first to use the app, which meet the following criteria:<p>
             <ul>
@@ -109,7 +109,10 @@ server <- function(input, output, session) {
                 <li>(Recommended) the file names end with the plate number, such as \"n1.csv\" for plate 1, 
                     for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
             </ul>
-        </p>"
+        </p>
+        <h5>OR</h5>
+        ",
+        actionButton("example_data", "Try with example data")
       )), width = 12, background = "yellow")
     }
   })
@@ -117,9 +120,20 @@ server <- function(input, output, session) {
     HTML("<p>Dose Response Model: specify the model for the dose response curve as per the <a href='https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/drm'>DRM function</a></p>")
   })
 
+  # Use example data on click of button
+  observeEvent(input$example_data, {
+    values[["luminescence_files"]] <- structure(list(name = "example_H1N1_data_pmn_platelist.csv", 
+      size = NA, type = "text/csv", datapath = "data/pmn_platelist_H1N1_example_data.csv.csv"), 
+      class = "data.frame", row.names = c(NA, -1L))
+  })
+  # Use newest dataset uploaded by the user
+  observeEvent(input$luminescence_files, {
+    values[["luminescence_files"]] <- input$luminescence_files
+  })
+
   # Create a tab for each uploaded plate
   output$plate_tabs <- renderUI({
-    if (is.null(input$luminescence_files)) {
+    if (is.null(values[["luminescence_files"]])) {
       plates <- "NA - Please upload your CSV file(s) to display plates"
     } else {
       assay_df <- values[["assay_df"]]
@@ -131,9 +145,9 @@ server <- function(input, output, session) {
 
   # Create main dataframe for assay data
   assay_df <- reactive({
-    req(input$luminescence_files, input$plate_tabs)
+    req(values[["luminescence_files"]], input$plate_tabs)
     # Define variables
-    luminescence_files <- input$luminescence_files
+    luminescence_files <- values[["luminescence_files"]]
     header <- colnames(read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
     cols <- c("types", "dilution", "bleed")
     # Get the current plate number from the plate tab
@@ -220,7 +234,7 @@ server <- function(input, output, session) {
 
   # Convert the luminescence rawdata -> (96) well plate format for the current plate tab
   plate_df <- reactive({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
     plate_df <- assay_to_plate_df(assay_df, plate_n)
@@ -298,7 +312,7 @@ server <- function(input, output, session) {
 
   # Update main assay dataframe with excluded plates
   observeEvent(input$exclude_wells, {
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     assay_df <- values[["assay_df"]]
     assay_df$exclude <- FALSE
     assay_df <- exclude_wells(assay_df, input$exclude_wells)
@@ -339,7 +353,7 @@ server <- function(input, output, session) {
 
   # Generate types boxplot
    output$types_boxplot <- renderPlotly({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     assay_df <- values[["assay_df"]]
     types_boxplot <- init_types_boxplot(assay_df)
     plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
@@ -439,13 +453,13 @@ server <- function(input, output, session) {
 
   # Generate and render results plots
   output$data_exploration <- renderPlotly({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     eval(parse(text=data_exploration_code("plot")))
     values[["data_exploration"]] <- data_exploration_plot
   })
   output$drc <- renderPlotly({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
@@ -456,7 +470,7 @@ server <- function(input, output, session) {
     })
   })
   output$ic50_boxplot <- renderPlotly({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
@@ -467,7 +481,7 @@ server <- function(input, output, session) {
     })
   })
   output$cv_boxplot <- renderPlotly({
-    req(input$luminescence_files)
+    req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     eval(parse(text=cv_boxplot_code("plot"))) 
     values[["cv_boxplot"]] <- cv_boxplot
