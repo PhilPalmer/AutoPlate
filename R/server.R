@@ -134,7 +134,8 @@ server <- function(input, output, session) {
     values[["luminescence_files"]] <- input$luminescence_files
     values[["plate_data"]] <- NULL
     values[["assay_df"]] <- assay_df()
-    values[["plate_data"]] <- plate_df()
+    # TODO: fix and uncomment this - add check to see if plate_data already exists?
+    # values[["plate_data"]] <- plate_df()
   })
 
   # Create dropdown to select feature for plate data table
