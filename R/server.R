@@ -229,15 +229,15 @@ server <- function(input, output, session) {
       # Catch errors because when plate 1 is not uploaded loading input$plate_data will initially throw an error
       tryCatch(
         {
-          updated_plate_df <- hot_to_r(input$plate_data)
-          # Update main assay dataframe with sample_id
-          assay_df <- update_sample_ids(assay_df, updated_plate_df, plate_n)
+          # updated_plate_df <- hot_to_r(input$plate_data)
+          # # Update main assay dataframe with sample_id
+          # assay_df <- update_sample_ids(assay_df, updated_plate_df, plate_n)
           # Update main assay dataframe with types
-          assay_df <- update_types(assay_df, updated_plate_df, plate_n)
-          # Update the neutralisation values
-          assay_df <- calc_neut(assay_df)
-          updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
-          values[["assay_df"]] <- assay_df
+          # assay_df <- update_types(assay_df, updated_plate_df, plate_n)
+          # # Update the neutralisation values
+          # assay_df <- calc_neut(assay_df)
+          # updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
+          # values[["assay_df"]] <- assay_df
         },
         error = function(error_message) {
           print(error_message)
@@ -251,7 +251,7 @@ server <- function(input, output, session) {
     req(values[["luminescence_files"]])
     plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
-    plate_df <- assay_to_plate_df(assay_df, plate_n)
+    plate_df <- assay_to_plate_df(assay_df, plate_n, input$plate_feature)
     return(plate_df)
   })
   # Render plate data table

@@ -263,27 +263,17 @@ update_feature <- function(new_feature, input, values) {
 #' @description Convert full assay dataframe to 96-well plate format for a specified plate number
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param plate_n integer, plate number to generate dataframe for
+#' @param feature feature to generate the plate data format for eg `types`
 #' @return dataframe, plate dataframe in 96-well plate format
 #' @keywords assay
 #' @export
 #' @examples
 #' assay_to_plate_df()
-assay_to_plate_df <- function(assay_df, plate_n) {
-  plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
-    dplyr::select(wrow, wcol, types) %>%
-    tidyr::spread(key = wcol, value = types) %>%
-    dplyr::rename(Well = wrow)
-  # Re-order cols
-  plate_df <- plate_df[c("Well", sort(as.numeric(names(plate_df))))]
-  # Get the samples
-  samples <- isolate(assay_df[assay_df$plate_number == plate_n, ]) %>%
-    dplyr::filter(wrow == "A") %>%
-    dplyr::select(sample_id)
-  sample_id <- c("sample_id", samples$sample_id)
-  # Reformat the row & col names + add a sample_id row
-  names(sample_id) <- names(plate_df)
-  plate_df <- rbind(sample_id, plate_df)
-  row.names(plate_df) <- plate_df$Well
-  plate_df[1] <- NULL
+assay_to_plate_df <- function(assay_df, plate_n, feature) {
+  # TODO: update sample names
+  # TODO: update documentation
+  plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
+  plate_df <- as.data.frame(matrix(plate_df[[feature]], byrow=T, ncol=12, nrow=8))
+  row.names(plate_df) <- LETTERS[1:length(row.names(plate_df))]
   return(plate_df)
 }
