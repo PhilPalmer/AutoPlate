@@ -127,6 +127,7 @@ ui <- dashboardPage(
             title = "96-Well Plate Data*",
             width = 12,
             uiOutput(outputId = "tooltip_plates"),
+            div(uiOutput("plate_feature"), class = 'inline control'),
             uiOutput("plate_tabs"),
             rHandsontableOutput("plate_data")
           ),

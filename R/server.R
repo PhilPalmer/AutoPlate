@@ -137,6 +137,13 @@ server <- function(input, output, session) {
     values[["plate_data"]] <- plate_df()
   })
 
+  # Create dropdown to select feature for plate data table
+  output$plate_feature <- renderUI({
+    req(values[["assay_df"]])
+    assay_df <- isolate(values[["assay_df"]])
+    selectInput("plate_feature", "Select feature", names(assay_df), "types")
+  })
+
   # Create a tab for each uploaded plate
   output$plate_tabs <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
