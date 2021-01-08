@@ -171,7 +171,7 @@ server <- function(input, output, session) {
       }
       values[["assay_df"]] <- assay_df
     }
-    # Initialise the plate data frame
+    # Initialise the main assay dataframe from the users uploaded luminescence files
     if (is.null(values[["plate_data"]]) & !all(cols %in% header)) {
       assay_df <-
         apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
