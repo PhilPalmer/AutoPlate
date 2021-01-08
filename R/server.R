@@ -170,6 +170,15 @@ server <- function(input, output, session) {
     if (is.null(values[["plate_n"]])) values[["plate_n"]] <- plate_n
     # Record the plate number - we'll switch back to this later to prevent the plate tab changing for the user when they update the plate data 
     if (plate_n != values[["plate_n"]]) values[["plate_n"]] <- plate_n
+    # Try catch because `input$plate_feature` will initially be null causing an error
+    tryCatch(
+      {
+        feature <- input$plate_feature
+        if (is.null(values[["feature"]])) values[["feature"]] <- feature
+        if (feature != values[["feature"]] & !is.null(feature)) values[["feature"]] <- feature
+      },
+      error = function(error_message) { print(error_message) }
+    )
     if (is.null(values[["plate_data"]]) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
@@ -235,7 +244,10 @@ server <- function(input, output, session) {
           assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, row=changes[[1]][[1]], col=changes[[1]][[2]], new_value=changes[[1]][[4]])
           # Update the neutralisation values
           assay_df <- calc_neut(assay_df)
+          # Update the plate tab and feature dropdown to the previous value 
+          # Otherwise it would be changed back to the default when updating the main assay dataframe 
           updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
+          updateSelectInput(session, "plate_feature", selected = values[["feature"]])
           values[["assay_df"]] <- assay_df
         },
         error = function(error_message) {
