@@ -134,6 +134,7 @@ server <- function(input, output, session) {
     values[["luminescence_files"]] <- input$luminescence_files
     values[["plate_data"]] <- NULL
     values[["assay_df"]] <- assay_df()
+    values[["plate_data"]] <- plate_df()
   })
 
   # Create a tab for each uploaded plate
