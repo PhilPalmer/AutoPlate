@@ -224,21 +224,19 @@ server <- function(input, output, session) {
     values[["plate_data"]] <- input$plate_data
     plate_n <- values[["plate_n"]]
     assay_df <- values[["assay_df"]]
+    changes <- input$plate_data$changes$changes
     # Check if the `changes$changes` is `NULL` to prevent bug #3
     # See more info here: https://github.com/PhilPalmer/AutoPlate/issues/3
     if (!(is.null(input$plate_data$changes$changes))) {
       # Catch errors because when plate 1 is not uploaded loading input$plate_data will initially throw an error
       tryCatch(
         {
-          # updated_plate_df <- hot_to_r(input$plate_data)
-          # # Update main assay dataframe with sample_id
-          # assay_df <- update_sample_ids(assay_df, updated_plate_df, plate_n)
-          # Update main assay dataframe with types
-          # assay_df <- update_types(assay_df, updated_plate_df, plate_n)
-          # # Update the neutralisation values
-          # assay_df <- calc_neut(assay_df)
-          # updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
-          # values[["assay_df"]] <- assay_df
+          # Update main assay dataframe with updated values for selected feature
+          assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, row=changes[[1]][[1]], col=changes[[1]][[2]], new_value=changes[[1]][[4]])
+          # Update the neutralisation values
+          assay_df <- calc_neut(assay_df)
+          updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
+          values[["assay_df"]] <- assay_df
         },
         error = function(error_message) {
           print(error_message)
@@ -257,7 +255,7 @@ server <- function(input, output, session) {
   })
   # Render plate data table
   output$plate_data <- renderRHandsontable({
-    rhandsontable(plate_df(), stretchH = "all", useTypes = TRUE)
+    rhandsontable(plate_df(), stretchH = "all", useTypes = FALSE)
   })
 
   # Make dilutions table

@@ -180,21 +180,11 @@ update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
 #' @export
 #' @examples
 #' update_types()
-update_types <- function(assay_df, updated_plate_df, plate_n) {
-  updated_types <- tail(updated_plate_df, -1)
-  for (col in seq(1, length(updated_types))) {
-    full_col <- updated_types[, col]
-    for (i in seq(1, length(full_col))) {
-      row <- row.names(updated_types)[i]
-      updated_type <- updated_types[row, col]
-      current_type <- dplyr::filter(assay_df, (plate_number == plate_n) & (wcol == col) & (wrow == row))["types"]
-      if (current_type != updated_type) {
-        print(paste0("For plate ", plate_n, ", well ", row, col, ", updating type ", current_type, " -> ", updated_type))
-        assay_df <- assay_df %>%
-          dplyr::mutate(types = ifelse((plate_number == plate_n) & (wcol == col) & (wrow == row), updated_types[row, col], types))
-      }
-    }
-  }
+update_feature_plate <- function(assay_df, feature, plate_n, row, col, new_value) {
+  row <- LETTERS[row+1]
+  col <- col + 1
+  print(paste0("For plate ", plate_n, ", well ", row, col, ", updating ", feature, " to ", new_value))
+  assay_df[[feature]][assay_df$plate_number == plate_n & assay_df$wcol == col & assay_df$wrow == row] = new_value
   return(assay_df)
 }
 
