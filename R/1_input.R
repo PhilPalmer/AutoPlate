@@ -187,8 +187,15 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
     col = change[[2]] + 1
     old_value = change[[3]]
     new_value = change[[4]]
-    print(paste0("For plate ", plate_n, ", well ", row, col, ", updating ", feature, " from '", old_value, "' -> '", new_value, "'"))
-    assay_df[[feature]][assay_df$plate_number == plate_n & assay_df$wcol == col & assay_df$wrow == row] = new_value
+    if (plate_n == "all") {
+      plates_text <- "For all plates "
+      condition <- TRUE
+    } else {
+      plates_text <- paste("For plate", plate_n)
+      condition <- assay_df$plate_number == plate_n
+    }
+    print(paste0(plates_text, ", well ", row, col, ", updating ", feature, " from '", old_value, "' -> '", new_value, "'"))
+    assay_df[[feature]][condition & assay_df$wcol == col & assay_df$wrow == row] = new_value
   }
   return(assay_df)
 }
@@ -265,7 +272,7 @@ update_feature <- function(new_feature, input, values) {
 #' @examples
 #' assay_to_plate_df()
 assay_to_plate_df <- function(assay_df, plate_n, feature) {
-  # TODO: update sample names
+  # TODO: update sample names?
   # TODO: update documentation
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
   plate_df <- as.data.frame(matrix(plate_df[[feature]], byrow=T, ncol=12, nrow=8))

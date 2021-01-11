@@ -152,8 +152,34 @@ server <- function(input, output, session) {
       assay_df <- values[["assay_df"]]
       plates <- sort(unique(isolate(assay_df$plate_number)))
     }
-    plate_tabs <- lapply(paste("Plate", plates), tabPanel)
+    plates <- c("Template", paste("Plate", plates))
+    plate_tabs <- lapply(plates, tabPanel)
     do.call(tabsetPanel, c(plate_tabs, id = "plate_tabs"))
+  })
+
+  # Create template dataframe
+  template_df <- reactive({
+    req(values[["assay_df"]])
+    if (is.null(values[["template_df"]])) {
+      template_df <- values[["assay_df"]]
+      # Get just the first plate
+      template_df <- template_df[template_df$plate_number == unique(template_df$plate_number)[1],]
+      # Initialise columns
+      template_df$plate_number <- "template"
+      template_df$virus <- NA
+      template_df$experiment_id <- NA
+      template_df$filename <- NA
+      template_df$rlu <- NA
+      template_df$neutralisation <- NA
+      template_df$exclude <- FALSE
+      # TODO: Initialise types/samples/concentrations?
+      # Save template_df reactive values
+      values[["template_df"]] <- template_df
+    } else {
+      # Load existing template_df
+      template_df <- values[["template_df"]]
+    }
+    return(template_df)
   })
 
   # Create main dataframe for assay data
@@ -232,6 +258,7 @@ server <- function(input, output, session) {
     values[["plate_data"]] <- input$plate_data
     plate_n <- values[["plate_n"]]
     assay_df <- values[["assay_df"]]
+    template_df <- values[["template_df"]]
     changes <- input$plate_data$changes$changes
     # Check if the `changes$changes` is `NULL` to prevent bug #3
     # See more info here: https://github.com/PhilPalmer/AutoPlate/issues/3
@@ -240,7 +267,15 @@ server <- function(input, output, session) {
       tryCatch(
         {
           # Update main assay dataframe with updated values for selected feature
-          assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, changes)
+          if (plate_n == "Template") {
+            # Update all plates
+            assay_df <- update_feature_plate(assay_df, input$plate_feature, "all", changes)
+            # Update the template
+            template_df <- update_feature_plate(template_df, input$plate_feature, tolower(plate_n), changes)
+            values[["template_df"]] <- template_df
+          } else {
+            assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, changes)
+          }
           # Update the neutralisation values
           assay_df <- calc_neut(assay_df)
           # Update the plate tab and feature dropdown to the previous value 
@@ -261,7 +296,12 @@ server <- function(input, output, session) {
     req(values[["luminescence_files"]])
     plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
-    plate_df <- assay_to_plate_df(assay_df, plate_n, input$plate_feature)
+    if (plate_n == "Template") {
+      template_df <- template_df()
+      plate_df <- assay_to_plate_df(template_df, tolower(plate_n), input$plate_feature)
+    } else {
+      plate_df <- assay_to_plate_df(assay_df, plate_n, input$plate_feature)
+    }
     return(plate_df)
   })
   # Render plate data table
