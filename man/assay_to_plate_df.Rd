@@ -4,12 +4,14 @@
 \alias{assay_to_plate_df}
 \title{Assay to plate dataframe}
 \usage{
-assay_to_plate_df(assay_df, plate_n)
+assay_to_plate_df(assay_df, plate_n, feature)
 }
 \arguments{
 \item{assay_df}{dataframe, containing biological assay data from plate reader}
 
 \item{plate_n}{integer, plate number to generate dataframe for}
+
+\item{feature}{feature to generate the plate data format for eg \code{types}}
 }
 \value{
 dataframe, plate dataframe in 96-well plate format
