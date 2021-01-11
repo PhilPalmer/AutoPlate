@@ -163,7 +163,7 @@ server <- function(input, output, session) {
     if (is.null(values[["template_df"]])) {
       template_df <- values[["assay_df"]]
       # Get just the first plate
-      template_df <- template_df[template_df$plate_number == unique(template_df$plate_number)[1],]
+      template_df <- template_df[template_df$plate_number == unique(sort(template_df$plate_number))[1],]
       # Initialise columns
       template_df$plate_number <- "template"
       template_df$virus <- NA
