@@ -175,16 +175,21 @@ update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param updated_plate_df dataframe, containing 96-well plate data
 #' @param plate_n integer, plate number to update
-#' @return dataframe, containing the updated types
+#' @param changes vector, containg sub vectors each corresponding to a change, which contain 0-index based: c(row, col, old_val, new_val)
+#' @return dataframe, containing the updated feature
 #' @keywords assay
 #' @export
 #' @examples
-#' update_types()
-update_feature_plate <- function(assay_df, feature, plate_n, row, col, new_value) {
-  row <- LETTERS[row+1]
-  col <- col + 1
-  print(paste0("For plate ", plate_n, ", well ", row, col, ", updating ", feature, " to ", new_value))
-  assay_df[[feature]][assay_df$plate_number == plate_n & assay_df$wcol == col & assay_df$wrow == row] = new_value
+#' update_feature_plate()
+update_feature_plate <- function(assay_df, feature, plate_n, changes) {
+  for (change in changes) {
+    row = LETTERS[ change[[1]] + 1 ]
+    col = change[[2]] + 1
+    old_value = change[[3]]
+    new_value = change[[4]]
+    print(paste0("For plate ", plate_n, ", well ", row, col, ", updating ", feature, " from '", old_value, "' -> '", new_value, "'"))
+    assay_df[[feature]][assay_df$plate_number == plate_n & assay_df$wcol == col & assay_df$wrow == row] = new_value
+  }
   return(assay_df)
 }
 

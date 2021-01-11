@@ -240,7 +240,7 @@ server <- function(input, output, session) {
       tryCatch(
         {
           # Update main assay dataframe with updated values for selected feature
-          assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, row=changes[[1]][[1]], col=changes[[1]][[2]], new_value=changes[[1]][[4]])
+          assay_df <- update_feature_plate(assay_df, input$plate_feature, plate_n, changes)
           # Update the neutralisation values
           assay_df <- calc_neut(assay_df)
           # Update the plate tab and feature dropdown to the previous value 
