@@ -193,17 +193,11 @@ server <- function(input, output, session) {
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
     if (is.null(values[["plate_n"]])) values[["plate_n"]] <- plate_n
-    # Record the plate number - we'll switch back to this later to prevent the plate tab changing for the user when they update the plate data 
+    # Record the plate number & feature - we'll switch back to these later to prevent the plate tab changing for the user when they update the plate data 
     if (plate_n != values[["plate_n"]]) values[["plate_n"]] <- plate_n
-    # Try catch because `input$plate_feature` will initially be null causing an error
-    tryCatch(
-      {
-        feature <- input$plate_feature
-        if (is.null(values[["feature"]])) values[["feature"]] <- feature
-        if (feature != values[["feature"]] & !is.null(feature)) values[["feature"]] <- feature
-      },
-      error = function(error_message) { print(error_message) }
-    )
+    feature <- input$plate_feature
+    if (is.null(feature)) values[["plate_feature"]] <- "types"
+    if (feature != values[["plate_feature"]] && !is.null(feature)) values[["plate_feature"]] <- feature
     if (is.null(values[["plate_data"]]) & all(cols %in% header)) {
       assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
@@ -296,11 +290,12 @@ server <- function(input, output, session) {
     req(values[["luminescence_files"]])
     plate_n <- values[["plate_n"]]
     assay_df <- assay_df()
+    feature <- values[["plate_feature"]]
     if (plate_n == "Template") {
       template_df <- template_df()
-      plate_df <- assay_to_plate_df(template_df, tolower(plate_n), input$plate_feature)
+      plate_df <- assay_to_plate_df(template_df, tolower(plate_n), feature)
     } else {
-      plate_df <- assay_to_plate_df(assay_df, plate_n, input$plate_feature)
+      plate_df <- assay_to_plate_df(assay_df, plate_n, feature)
     }
     return(plate_df)
   })
