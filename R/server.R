@@ -275,7 +275,7 @@ server <- function(input, output, session) {
           # Update the plate tab and feature dropdown to the previous value 
           # Otherwise it would be changed back to the default when updating the main assay dataframe 
           updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
-          updateSelectInput(session, "plate_feature", selected = values[["feature"]])
+          updateSelectInput(session, "plate_feature", selected = values[["plate_feature"]])
           values[["assay_df"]] <- assay_df
         },
         error = function(error_message) {
