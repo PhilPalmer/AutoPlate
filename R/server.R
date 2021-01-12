@@ -145,26 +145,22 @@ server <- function(input, output, session) {
   })
 
   # Create a tab for each uploaded plate
-  # values[["plate_count"]] counts the number of times the plates have been generated 
-  # this is used to determine the selected plate
+  # The selected plate will be set to the first plate when the data is first uploaded
   output$plate_tabs <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
       plates <- "NA - Please upload your CSV file(s) to display plates"
-      values[["plate_count"]] <- 0
-      selected_plate <- plates[1]
+      values[["selected_plate"]] <- plates[1]
     } else {
       assay_df <- values[["assay_df"]]
       values[["plate_count"]] <- isolate(values[["plate_count"]]) + 1
       plates <- sort(unique(isolate(assay_df$plate_number)))
       plates <- c("Template", paste("Plate", plates))
-    }
-    if (values[["plate_count"]] == 1) {
-      selected_plate <- plates[2]
-    } else {
-      selected_plate <- input$plate_tabs
+      if (startsWith(isolate(values[["selected_plate"]]),"NA ")) {
+        values[["selected_plate"]] <- plates[2]
+      } else { values[["selected_plate"]] <- input$plate_tabs }
     }
     plate_tabs <- lapply(plates, tabPanel)
-    do.call(tabsetPanel, c(plate_tabs, id = "plate_tabs", selected = selected_plate))
+    do.call(tabsetPanel, c(plate_tabs, id = "plate_tabs", selected = values[["selected_plate"]]))
   })
 
   # Create template dataframe
