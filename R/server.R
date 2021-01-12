@@ -165,13 +165,9 @@ server <- function(input, output, session) {
       # Get just the first plate
       template_df <- template_df[template_df$plate_number == unique(sort(template_df$plate_number))[1],]
       # Initialise columns
+      cols <- setdiff(colnames(template_df), c("wcol", "wrow"))
+      template_df[cols] <- NA
       template_df$plate_number <- "template"
-      template_df$virus <- NA
-      template_df$experiment_id <- NA
-      template_df$filename <- NA
-      template_df$rlu <- NA
-      template_df$neutralisation <- NA
-      template_df$exclude <- FALSE
       # TODO: Initialise types/samples/concentrations?
       # Save template_df reactive values
       values[["template_df"]] <- template_df
