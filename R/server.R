@@ -396,7 +396,9 @@ server <- function(input, output, session) {
     lapply(values[["heatmap_input"]]$plates, function(i) {
       output[[paste("plot", i, sep = "")]] <- renderPlot({
         assay_df <- isolate(values[["assay_df"]])
-        plot_heatmap(i, assay_df, values[["heatmap_input"]]$feature, input$tabset_qc)
+        if (!(feature %in% c("average luminescence values","types_boxplot"))) {
+          plot_heatmap(i, assay_df, values[["heatmap_input"]]$feature, input$tabset_qc)
+        }
       })
     })
   })
