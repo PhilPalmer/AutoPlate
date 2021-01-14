@@ -155,7 +155,7 @@ server <- function(input, output, session) {
       values[["plate_count"]] <- isolate(values[["plate_count"]]) + 1
       plates <- sort(unique(isolate(assay_df$plate_number)))
       plates <- c("Template", paste("Plate", plates))
-      if (startsWith(isolate(values[["selected_plate"]]),"NA ")) {
+      if (startsWith(toString(isolate(values[["selected_plate"]])),"NA ")) {
         values[["selected_plate"]] <- plates[2]
       } else { values[["selected_plate"]] <- input$plate_tabs }
     }
