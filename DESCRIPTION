@@ -25,4 +25,7 @@ Imports:
     svglite,
     plotly,
     shinyWidgets,
-    metafolio
+    metafolio,
+    processx
+Suggests: 
+    testthat
