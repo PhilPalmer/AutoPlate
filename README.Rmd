@@ -28,6 +28,12 @@ You can install the released version of autoplate from [CRAN](https://CRAN.R-pro
 install.packages("autoplate")
 ```
 
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("PhilPalmer/assay-analyser")
+```
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
