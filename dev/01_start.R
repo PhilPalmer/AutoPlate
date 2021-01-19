@@ -30,9 +30,9 @@ golem::set_golem_options()
 ## See ?usethis for more information
 usethis::use_mit_license( name = "Phil Palmer" )  # You can set another license here
 usethis::use_readme_rmd( open = FALSE )
-usethis::use_code_of_conduct()
+# usethis::use_code_of_conduct()
 usethis::use_lifecycle_badge( "Experimental" )
-usethis::use_news_md( open = FALSE )
+# usethis::use_news_md( open = FALSE )
 
 ## Use git ----
 usethis::use_git()
