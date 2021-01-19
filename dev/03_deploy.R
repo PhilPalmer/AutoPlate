@@ -22,9 +22,9 @@ rhub::check_for_cran()
 
 ## RStudio ----
 ## If you want to deploy on RStudio related platforms
-golem::add_rstudioconnect_file()
+# golem::add_rstudioconnect_file()
 golem::add_shinyappsio_file()
-golem::add_shinyserver_file()
+# golem::add_shinyserver_file()
 
 ## Docker ----
 ## If you want to deploy via a generic Dockerfile
