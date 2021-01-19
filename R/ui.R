@@ -4,6 +4,7 @@
 # The user-interface of the AutoPlate application
 #################################################
 
+library(shiny)
 library(shinydashboard)
 library(rhandsontable)
 library(plotly)
