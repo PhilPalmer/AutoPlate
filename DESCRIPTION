@@ -1,12 +1,8 @@
 Package: autoplate
 Title: AutoPlate
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "Phil",
-           family = "Palmer",
-           role = c("aut", "cre"),
-           email = "pp502@cam.ac.uk")
-Description: AutoPlate is an R Shiny web application (and UI) that helps you automate the analysis of biological assays conducted on 96-well plates
+Authors@R: person('Phil', 'Palmer', email = 'pp502@cam.ac.uk', role = c('cre', 'aut'))
+Description: AutoPlate is an R Shiny web application (and UI) that helps you automate the analysis of biological assays conducted on 96-well plates.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
