@@ -50,8 +50,8 @@ golem::remove_favicon()
 golem::use_favicon("inst/app/www/favicon.png") # path = "path/to/ico". Can be an online file.
 
 ## Add helper functions ----
-golem::use_utils_ui()
-golem::use_utils_server()
+# golem::use_utils_ui()
+# golem::use_utils_server()
 
 # You're now set! ----
 
