@@ -17,9 +17,9 @@ library(shinyWidgets)
 library(metafolio)
 
 # Import helper scripts
-source("R/1_input.R")
-source("R/2_qc.R")
-source("R/3_results.R")
+source("R/fct_1_input.R")
+source("R/fct_2_qc.R")
+source("R/fct_3_results.R")
 source("R/server.R")
 source("R/ui.R")
 # devtools::load_all()
