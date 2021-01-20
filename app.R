@@ -24,4 +24,4 @@ source("R/app_server.R")
 source("R/app_ui.R")
 # devtools::load_all()
 
-app = shiny::shinyApp(ui = ui, server = server)
+app = shiny::shinyApp(ui = app_ui, server = app_server)

@@ -4,12 +4,13 @@
 # The server-side of the AutoPlate application
 ##############################################
 
-##' Server main function
-##'
-##' @param input,output,session Internal parameters for {shiny}.
-##'
-##' @noRd
-server <- function(input, output, session) {
+#' The application server-side
+#' 
+#' @param input,output,session Internal parameters for {shiny}. 
+#'     DO NOT REMOVE.
+#' @import shiny
+#' @noRd
+app_server <- function( input, output, session ) {
 
   ##################
   # Define variables
