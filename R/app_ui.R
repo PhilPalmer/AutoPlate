@@ -114,7 +114,7 @@ app_ui <- function(request) {
                 title = "Concentrations/dilutions*",
                 width = 6,
                 uiOutput(outputId = "tooltip_dilutions"),
-                rHandsontableOutput("dilutions")
+                rhandsontable::rHandsontableOutput("dilutions")
               ),
               box(
                 title = "96-Well Plate Data*",
@@ -122,7 +122,7 @@ app_ui <- function(request) {
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
                 uiOutput("plate_tabs"),
-                rHandsontableOutput("plate_data")
+                rhandsontable::rHandsontableOutput("plate_data")
               ),
               box(
                 title = "Other features*",
@@ -137,25 +137,25 @@ app_ui <- function(request) {
                     "Bleed",
                     actionButton("go_bleed", "Submit feature", icon("check-circle")),
                     uiOutput("bleed"),
-                    rHandsontableOutput("bleed_table")
+                    rhandsontable::rHandsontableOutput("bleed_table")
                   ),
                   tabPanel(
                     "Treatment",
                     actionButton("go_treatment", "Submit feature", icon("check-circle")),
                     uiOutput("treatment"),
-                    rHandsontableOutput("treatment_table")
+                    rhandsontable::rHandsontableOutput("treatment_table")
                   ),
                   tabPanel(
                     "Virus",
                     actionButton("go_virus", "Submit feature", icon("check-circle")),
                     uiOutput("virus"),
-                    rHandsontableOutput("virus_table")
+                    rhandsontable::rHandsontableOutput("virus_table")
                   ),
                   tabPanel(
                     "Experiment ID",
                     actionButton("go_experiment_id", "Submit feature", icon("check-circle")),
                     uiOutput("experiment_id"),
-                    rHandsontableOutput("experiment_id_table")
+                    rhandsontable::rHandsontableOutput("experiment_id_table")
                   )
                 )
               )
@@ -241,7 +241,7 @@ app_ui <- function(request) {
                     div(downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control'),
                     div(uiOutput("virus_ic50"), class = 'inline control'),
                     div(br(), class = 'inline space'),
-                    div(switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
+                    div(shinyWidgets::switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
                     tabBox(
                       width = 12,
                       tabPanel("View Plot", plotlyOutput("ic50_boxplot")),

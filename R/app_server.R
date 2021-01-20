@@ -303,7 +303,7 @@ app_server <- function( input, output, session ) {
     return(plate_df)
   })
   # Render plate data table
-  output$plate_data <- renderRHandsontable({
+  output$plate_data <- rhandsontable::renderRHandsontable({
     rhandsontable(plate_df(), stretchH = "all", useTypes = FALSE)
   })
 
@@ -322,7 +322,7 @@ app_server <- function( input, output, session ) {
     values[["dilutions"]] <- dilutions
   })
   # Render dilutions table
-  output$dilutions <- renderRHandsontable({
+  output$dilutions <- rhandsontable::renderRHandsontable({
     dilutions <- values[["dilutions"]]
     row.names(dilutions) <- LETTERS[1:dim(dilutions)[1]]
     if (!is.null(dilutions)) {
@@ -337,10 +337,10 @@ app_server <- function( input, output, session ) {
   output$experiment_id <- renderUI(create_feature_dropdown("experiment_id", input, values))
 
   # Create table for features: bleed, treatment, virus & experiment_id
-  output$bleed_table <- renderRHandsontable(create_feature_table("bleed", input, values))
-  output$treatment_table <- renderRHandsontable(create_feature_table("treatment", input, values))
-  output$virus_table <- renderRHandsontable(create_feature_table("virus", input, values))
-  output$experiment_id_table <- renderRHandsontable(create_feature_table("experiment_id", input, values))
+  output$bleed_table <- rhandsontable::renderRHandsontable(create_feature_table("bleed", input, values))
+  output$treatment_table <- rhandsontable::renderRHandsontable(create_feature_table("treatment", input, values))
+  output$virus_table <- rhandsontable::renderRHandsontable(create_feature_table("virus", input, values))
+  output$experiment_id_table <- rhandsontable::renderRHandsontable(create_feature_table("experiment_id", input, values))
 
   # Update the main assay df with user input for features: bleed, treatment, virus & experiment_id
   observeEvent(input$go_bleed, update_feature("bleed", input, values))
