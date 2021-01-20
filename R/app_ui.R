@@ -286,7 +286,7 @@ app_ui <- function(request) {
 golem_add_external_resources <- function(){
   
   golem::add_resource_path(
-    'www', 'inst/app/www'
+     'www', system.file('app/www', package = 'autoplate')
   )
  
   tags$head(
