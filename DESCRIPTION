@@ -28,5 +28,6 @@ Imports:
     metafolio,
     processx
 Suggests: 
-    testthat
+    testthat,
+    covr
 VignetteBuilder: knitr
