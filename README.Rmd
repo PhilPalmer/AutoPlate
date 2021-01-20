@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test coverage](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/main/graph/badge.svg)](https://codecov.io/gh/PhilPalmer/AutoPlate?branch=main)
+[![R build status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
 The goal of autoplate is to ...
