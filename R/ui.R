@@ -27,7 +27,7 @@ ui <- dashboardPage(
   ),
   dashboardBody(
     tags$head(
-      includeCSS("www/styles.css"),
+      includeCSS("inst/app/www/styles.css"),
       # Prism for syntax highting
       tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/prism.min.js"),
       tags$link(rel = "stylesheet", type = "text/css",
