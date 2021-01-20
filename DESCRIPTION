@@ -28,7 +28,8 @@ Imports:
     metafolio,
     processx,
     golem,
-    config
+    config,
+    pkgload
 Suggests: 
     testthat,
     covr

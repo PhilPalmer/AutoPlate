@@ -1,27 +1,9 @@
 #!/usr/bin/env Rscript
 
-library(shiny)
-library(shinydashboard)
-library(rhandsontable)
-library(tidyr)
-library(dplyr)
-library(plot.matrix)
-library(viridis)
-library(ggplot2)
-library(drc)
-library(rmarkdown)
-library(knitr)
-library(svglite)
-library(plotly)
-library(shinyWidgets)
-library(metafolio)
+# Launch the ShinyApp (Do not remove this comment)
+# To deploy, run: rsconnect::deployApp(appTitle="AutoPlate")
+# Or use the blue button on top of this file
 
-# Import helper scripts
-source("R/fct_1_input.R")
-source("R/fct_2_qc.R")
-source("R/fct_3_results.R")
-source("R/app_server.R")
-source("R/app_ui.R")
-# devtools::load_all()
-
-app = shiny::shinyApp(ui = app_ui, server = app_server)
+pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
+options( "golem.app.prod" = TRUE)
+autoplate::run_app() # add parameters here (if any)
