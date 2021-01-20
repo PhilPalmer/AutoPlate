@@ -21,19 +21,19 @@ app_ui <- function(request) {
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # List the first level UI elements here 
-    dashboardPage(
-      dashboardHeader(title = "AutoPlate"),
-      dashboardSidebar(
-        sidebarMenu(
-          menuItem("Home", tabName = "home", icon = icon("home")),
-          menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
-          menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
-          menuItem("3) Results", tabName = "results", icon = icon("chart-line"))
+    shinydashboard::dashboardPage(
+      shinydashboard::dashboardHeader(title = "AutoPlate"),
+      shinydashboard::dashboardSidebar(
+        shinydashboard::sidebarMenu(
+          shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
+          shinydashboard::menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
+          shinydashboard::menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
+          shinydashboard::menuItem("3) Results", tabName = "results", icon = icon("chart-line"))
         )
       ),
-      dashboardBody(
-        tabItems(
-          tabItem(
+      shinydashboard::dashboardBody(
+        shinydashboard::tabItems(
+          shinydashboard::tabItem(
             tabName = "home",
             shiny::tagList(
               shiny::fluidRow(
@@ -99,7 +99,7 @@ app_ui <- function(request) {
               )
             )
           ),
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "input",
             fluidRow(
               box(
@@ -167,7 +167,7 @@ app_ui <- function(request) {
               )
             )
           ),
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "qc",
             fluidRow(
               tabBox(
@@ -208,7 +208,7 @@ app_ui <- function(request) {
               )
             )
           ),
-          tabItem(
+          shinydashboard::tabItem(
             tabName = "results",
             fluidRow(
               box(
@@ -291,7 +291,6 @@ golem_add_external_resources <- function(){
  
   tags$head(
     favicon(ext = 'png'),
-    includeCSS("inst/app/www/styles.css"),
     bundle_resources(
       path = app_sys('inst/app/www'),
       app_title = 'autoplate'
