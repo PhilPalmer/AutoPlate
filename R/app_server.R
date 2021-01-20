@@ -16,7 +16,7 @@ app_server <- function( input, output, session ) {
   # Define variables
   ##################
   values <- reactiveValues()
-  report_filepath <- "report.Rmd"
+  report_filepath <- "inst/app/www/report.Rmd"
   dilutions_filepath <- "data/dilutions.csv"
   dilutions <- read.csv(dilutions_filepath,
     header = TRUE,
