@@ -53,7 +53,7 @@ init_cols <- function(assay_df) {
 #' init_types()
 init_types <- function(assay_df) {
   assay_df <- assay_df %>%
-    dplyr::mutate(types = case_when(
+    dplyr::mutate(types = dplyr::case_when(
       wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
       wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
       wcol %in% seq(2, 11) ~ "x",
@@ -129,7 +129,7 @@ calc_neut <- function(assay_df) {
 #' update_dilutions()
 update_dilutions <- function(assay_df, dilutions) {
   assay_df %>%
-    dplyr::mutate(dilution = case_when(
+    dplyr::mutate(dilution = dplyr::case_when(
       wrow == "A" & types == "x" ~ dilutions[1, 1],
       wrow == "B" & types == "x" ~ dilutions[2, 1],
       wrow == "C" & types == "x" ~ dilutions[3, 1],

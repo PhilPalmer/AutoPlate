@@ -204,7 +204,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
     control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
     # Average Neutralisation
-    avied <- summarise(group_by(ied, treatment), av=median(Estimate))
+    avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(Estimate))
     ied_order <- avied$treatment[order(avied$av)]
 
     # Generate plot

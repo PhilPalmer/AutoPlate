@@ -487,19 +487,19 @@ app_server <- function( input, output, session ) {
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
-    content = function(file) ggsave(file, plot = values[["data_exploration"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["data_exploration"]], width = 10)
   )
   output$download_drc <- downloadHandler(
     filename = "drc.svg",
-    content = function(file) ggsave(file, plot = values[["drc"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["drc"]], width = 10)
   )
   output$download_ic50 <- downloadHandler(
     filename = "ic50_boxplot.svg",
-    content = function(file) ggsave(file, plot = values[["ic50_boxplot"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["ic50_boxplot"]], width = 10)
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
-    content = function(file) ggsave(file, plot = values[["cv_boxplot"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10)
   )
 
   # Create dropdown to select virus for DRC & IC50 plots
