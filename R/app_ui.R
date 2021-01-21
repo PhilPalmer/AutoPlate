@@ -11,7 +11,7 @@
 #' @import shiny
 #' @noRd
 app_ui <- function(request) {
-  tagList(
+  shiny::tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # List the first level UI elements here 
@@ -96,7 +96,7 @@ app_ui <- function(request) {
           shinydashboard::tabItem(
             tabName = "input",
             fluidRow(
-              box(
+              shinydashboard::box(
                 title = "Luminescence files*",
                 width = 6,
                 uiOutput(outputId = "message_input_files"),
@@ -110,13 +110,13 @@ app_ui <- function(request) {
                   )
                 )
               ),
-              box(
+              shinydashboard::box(
                 title = "Concentrations/dilutions*",
                 width = 6,
                 uiOutput(outputId = "tooltip_dilutions"),
                 rhandsontable::rHandsontableOutput("dilutions")
               ),
-              box(
+              shinydashboard::box(
                 title = "96-Well Plate Data*",
                 width = 12,
                 uiOutput(outputId = "tooltip_plates"),
@@ -124,11 +124,11 @@ app_ui <- function(request) {
                 uiOutput("plate_tabs"),
                 rhandsontable::rHandsontableOutput("plate_data")
               ),
-              box(
+              shinydashboard::box(
                 title = "Other features*",
                 width = 12,
                 uiOutput(outputId = "tooltip_features"),
-                tabBox(
+                shinydashboard::tabBox(
                   title = "",
                   width = 8,
                   # The id lets us use input$tabset_features on the server to find the current tab
@@ -164,7 +164,7 @@ app_ui <- function(request) {
           shinydashboard::tabItem(
             tabName = "qc",
             fluidRow(
-              tabBox(
+              shinydashboard::tabBox(
                 title = "",
                 width = 12,
                 # The id lets us use input$tabset_qc on the server to find the current tab
@@ -180,9 +180,9 @@ app_ui <- function(request) {
                 tabPanel("Experiment ID"),
                 tabPanel("Bleed"),
                 tabPanel("Exclude"),
-                tabPanel("Types Boxplot", plotlyOutput("types_boxplot"))
+                tabPanel("Types Boxplot", plotly::plotlyOutput("types_boxplot"))
               ),
-              box(
+              shinydashboard::box(
                 width = 12,
                 uiOutput(outputId = "tooltip_exclude"),
                 textInput("exclude_wells",
@@ -205,13 +205,13 @@ app_ui <- function(request) {
           shinydashboard::tabItem(
             tabName = "results",
             fluidRow(
-              box(
+              shinydashboard::box(
                 width = 12,
                 uiOutput(outputId = "tooltip_download_report"),
                 downloadButton("download_report", "Download HTML Report"),
                 br(), br(),
                 textInput("drm_string", uiOutput(outputId = "message_drm_string"), value = "formula=neutralisation~dilution, curveid=sample_id, fct=LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)", width = "100%"),
-                tabBox(
+                shinydashboard::tabBox(
                   width = 12,
                   # The id lets us use input$tabset_results on the server to find the current tab
                   id = "tabset_results",
@@ -219,9 +219,9 @@ app_ui <- function(request) {
                     "Data Exploration",
                     downloadButton("download_data_exploration", "Download SVG Plot"),
                     br(), br(),
-                    tabBox(
+                    shinydashboard::tabBox(
                       width = 12,
-                      tabPanel("View Plot", plotlyOutput("data_exploration")),
+                      tabPanel("View Plot", plotly::plotlyOutput("data_exploration")),
                       tabPanel("View code", uiOutput("data_exploration_code"))
                     )
                   ),
@@ -230,9 +230,9 @@ app_ui <- function(request) {
                     div(downloadButton("download_drc", "Download SVG Plot"), class = 'inline control'),
                     div(uiOutput("virus_drc"), class = 'inline control'),
                     br(), br(),
-                    tabBox(
+                    shinydashboard::tabBox(
                       width = 12,
-                      tabPanel("View Plot", plotlyOutput("drc")),
+                      tabPanel("View Plot", plotly::plotlyOutput("drc")),
                       tabPanel("View code", uiOutput("drc_code"))
                     )
                   ),
@@ -242,9 +242,9 @@ app_ui <- function(request) {
                     div(uiOutput("virus_ic50"), class = 'inline control'),
                     div(br(), class = 'inline space'),
                     div(shinyWidgets::switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
-                    tabBox(
+                    shinydashboard::tabBox(
                       width = 12,
-                      tabPanel("View Plot", plotlyOutput("ic50_boxplot")),
+                      tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
                       tabPanel("View code", uiOutput("ic50_boxplot_code"))
                     )
                   ),
@@ -252,9 +252,9 @@ app_ui <- function(request) {
                     "Virus + Cell Boxplot",
                     downloadButton("download_cv_boxplot", "Download SVG Plot"),
                     br(), br(),
-                    tabBox(
+                    shinydashboard::tabBox(
                       width = 12,
-                      tabPanel("View Plot", plotlyOutput("cv_boxplot")),
+                      tabPanel("View Plot", plotly::plotlyOutput("cv_boxplot")),
                       tabPanel("View code", uiOutput("cv_boxplot_code"))
                     )
                   )
