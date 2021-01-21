@@ -34,3 +34,5 @@ Suggests:
     testthat,
     covr
 VignetteBuilder: knitr
+Depends: 
+    magrittr
