@@ -26,7 +26,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   fmt.cells <- c("%.5s", "%.8s", "%.5s", "%.15s", "%.0f", "%.0f", "%.15s", "%.8s", "%.8s", "%.8s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
-  col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis else rainbow
+  col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis::viridis else rainbow
   side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
@@ -132,12 +132,12 @@ init_types_boxplot <- function(assay_df) {
     dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
     dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
   assay_df$plate_number <- as.factor(assay_df$plate_number)
-  types_boxplot <- ggplot2::ggplot(assay_df, aes(x = plate_number, y = rlu, colour = types)) +
-    geom_boxplot() +
-    geom_point(position=position_dodge(0.75)) +
-    ylab("Raw luminescence value") +
-    xlab("Plate number") +
-    theme_classic() +
-    ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+  types_boxplot <- ggplot2::ggplot(assay_df, ggplot2::aes(x = plate_number, y = rlu, colour = types)) +
+    ggplot2::geom_boxplot() +
+    ggplot2::geom_point(position=ggplot2::position_dodge(0.75)) +
+    ggplot2::ylab("Raw luminescence value") +
+    ggplot2::xlab("Plate number") +
+    ggplot2::theme_classic() +
+    ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
   return(types_boxplot)
 }

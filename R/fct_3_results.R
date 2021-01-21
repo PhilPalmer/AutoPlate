@@ -75,7 +75,7 @@ update_cols_order_code <- function() {
   '
     # Update order and colours of treatments
     treatments <- unique(data$treatment)
-    treatment_cols <- gg_color_hue(length(treatments),0,360)
+    treatment_cols <- metafolio::gg_color_hue(length(treatments),0,360)
     negative_control <- c("pbs", "negative_control")
     posotive_control <- unique(data[data$type == "m",]$treatment)
     if (any(negative_control %in% tolower(treatments))) {
@@ -108,17 +108,17 @@ data_exploration_code <- function(code) {
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     ',update_cols_order_code(),'
     # Generate plot
-    data_exploration_plot <- ggplot2::ggplot(data, aes(x=dilution, y=neutralisation, colour=treatment)) +
-      geom_point() +
-      geom_smooth(se=F, span=1) +
-      facet_wrap(.~virus) +
-      ylim(c(-100, 110)) +
-      scale_x_continuous(trans="log10") +
-      theme_classic() +
-      scale_colour_manual(breaks=treatments,values=treatment_cols) +
-      ylab("Neutralisation") +
-      xlab("Dilution") +
-      ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+    data_exploration_plot <- ggplot2::ggplot(data, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment)) +
+      ggplot2::geom_point() +
+      ggplot2::geom_smooth(se=F, span=1) +
+      ggplot2::facet_wrap(.~virus) +
+      ggplot2::ylim(c(-100, 110)) +
+      ggplot2::scale_x_continuous(trans="log10") +
+      ggplot2::theme_classic() +
+      ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+      ggplot2::ylab("Neutralisation") +
+      ggplot2::xlab("Dilution") +
+      ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
     data_exploration_plotly <- plotly::ggplotly(data_exploration_plot)
     data_exploration_plotly
   ')
@@ -156,17 +156,17 @@ drc_code <- function(code, drm_string, virus) {
     new_data$neutralisation <- predict(model, newdata=new_data,)
 
     # Generate plot
-    drc_plot <- ggplot2::ggplot(new_data, aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
-        geom_line() +
-        geom_point(data=data, aes(y=neutralisation)) +
-        facet_wrap("treatment") +
-        scale_x_continuous(trans="log10") +
-        theme_classic() +
-        scale_colour_manual(breaks=treatments,values=treatment_cols) +
-        theme(strip.background = element_blank()) +
-        ylab("Neutralisation") +
-        xlab("Dilution") +
-        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+    drc_plot <- ggplot2::ggplot(new_data, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
+        ggplot2::geom_line() +
+        ggplot2::geom_point(data=data, ggplot2::aes(y=neutralisation)) +
+        ggplot2::facet_wrap("treatment") +
+        ggplot2::scale_x_continuous(trans="log10") +
+        ggplot2::theme_classic() +
+        ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+        ggplot2::theme(strip.background = ggplot2::element_blank()) +
+        ggplot2::ylab("Neutralisation") +
+        ggplot2::xlab("Dilution") +
+        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
     drc_plotly <- plotly::ggplotly(drc_plot)
     drc_plotly
     ')
@@ -197,7 +197,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     # Preprocessing
     data$sample_id <- as.character(data$sample_id)
     model <- drc::drm(', drm_string, ')
-    ied <- as.data.frame(ED(model, 50, display=FALSE))
+    ied <- as.data.frame(drc::ED(model, 50, display=FALSE))
     ied$sample_id <- gsub("e:|:50", "", row.names(ied))
     ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
     ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
@@ -208,17 +208,17 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     ied_order <- avied$treatment[order(avied$av)]
 
     # Generate plot
-    ic50_boxplot <- ggplot2::ggplot(ied, aes(x=treatment, y=Estimate, colour=treatment))+
-        geom_',plot_type,'() +
-        geom_point() +
-        scale_x_discrete(limits=ied_order) +
-        ylab("Individual IC50 log10") +
-        xlab("Treatment") +
-        theme_classic() +
-        scale_colour_manual(breaks=treatments,values=treatment_cols) +
-        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
-        coord_flip() + 
-        geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
+    ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=Estimate, colour=treatment))+
+        ggplot2::geom_',plot_type,'() +
+        ggplot2::geom_point() +
+        ggplot2::scale_x_discrete(limits=ied_order) +
+        ggplot2::ylab("Individual IC50 log10") +
+        ggplot2::xlab("Treatment") +
+        ggplot2::theme_classic() +
+        ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
+        ggplot2::coord_flip() + 
+        ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
     ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
     ic50_boxplotly
   ')
@@ -247,15 +247,15 @@ cv_boxplot_code <- function(code) {
     data$plate_number <- as.factor(data$plate_number)
 
     # Generate plot
-    cv_boxplot <- ggplot2::ggplot(data, aes(x=types, y=rlu, colour=plate_number)) +
-        geom_boxplot() +
-        geom_point(position=position_dodge(0.75)) +
-        scale_y_continuous(trans="log10") +
-        ylab("Log10 raw luminescence value") +
-        xlab("Cell only or Virus only") +
-        theme_classic() +
-        ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
-    cv_boxplotly <- plotly::ggplotly(cv_boxplot) %>% layout(boxmode = "group")
+    cv_boxplot <- ggplot2::ggplot(data, ggplot2::aes(x=types, y=rlu, colour=plate_number)) +
+        ggplot2::geom_boxplot() +
+        ggplot2::geom_point(position=ggplot2::position_dodge(0.75)) +
+        ggplot2::scale_y_continuous(trans="log10") +
+        ggplot2::ylab("Log10 raw luminescence value") +
+        ggplot2::xlab("Cell only or Virus only") +
+        ggplot2::theme_classic() +
+        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
+    cv_boxplotly <- plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
     cv_boxplotly
     '
   if (code == "plot") code_text <- plot

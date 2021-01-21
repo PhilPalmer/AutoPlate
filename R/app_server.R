@@ -102,7 +102,7 @@ app_server <- function( input, output, session ) {
   # Create messages to display to user
   output$message_input_files <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
-      box(HTML(paste0(
+      shinydashboard::box(HTML(paste0(
         "<h4>Start here!</h4><p>Upload your CSV files first to use the app, which meet the following criteria:<p>
             <ul>
                 <li>Each file must contain the following columns: 
@@ -241,7 +241,7 @@ app_server <- function( input, output, session ) {
     # Update main assay dataframe with new dilutions
     if (!is.null(input$dilutions)) {
       assay_df <- values[["assay_df"]]
-      dilutions <- hot_to_r(input$dilutions)
+      dilutions <- rhandsontable::hot_to_r(input$dilutions)
       assay_df <- update_dilutions(assay_df, dilutions)
       values[["assay_df"]] <- assay_df
     }
@@ -304,14 +304,14 @@ app_server <- function( input, output, session ) {
   })
   # Render plate data table
   output$plate_data <- rhandsontable::renderRHandsontable({
-    rhandsontable(plate_df(), stretchH = "all", useTypes = FALSE)
+    rhandsontable::rhandsontable(plate_df(), stretchH = "all", useTypes = FALSE)
   })
 
   # Make dilutions table
   observe({
     if (!is.null(input[["dilutions"]])) {
       values[["previous"]] <- isolate(values[["dilutions"]])
-      dilutions <- hot_to_r(input[["dilutions"]])
+      dilutions <- rhandsontable::hot_to_r(input[["dilutions"]])
     } else {
       if (is.null(values[["dilutions"]])) {
         dilutions <- dilutions
@@ -326,7 +326,7 @@ app_server <- function( input, output, session ) {
     dilutions <- values[["dilutions"]]
     row.names(dilutions) <- LETTERS[1:dim(dilutions)[1]]
     if (!is.null(dilutions)) {
-      rhandsontable(dilutions, stretchH = "all")
+      rhandsontable::rhandsontable(dilutions, stretchH = "all")
     }
   })
 
@@ -416,11 +416,11 @@ app_server <- function( input, output, session ) {
   })
 
   # Generate types boxplot
-   output$types_boxplot <- renderPlotly({
+   output$types_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     assay_df <- values[["assay_df"]]
     types_boxplot <- init_types_boxplot(assay_df)
-    plotly::ggplotly(types_boxplot) %>% layout(boxmode = "group")
+    plotly::ggplotly(types_boxplot) %>% plotly::layout(boxmode = "group")
   })
 
   ############
@@ -516,13 +516,13 @@ app_server <- function( input, output, session ) {
   })
 
   # Generate and render results plots
-  output$data_exploration <- renderPlotly({
+  output$data_exploration <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     eval(parse(text=data_exploration_code("plot")))
     values[["data_exploration"]] <- data_exploration_plot
   })
-  output$drc <- renderPlotly({
+  output$drc <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
@@ -533,7 +533,7 @@ app_server <- function( input, output, session ) {
         print(error_message)
     })
   })
-  output$ic50_boxplot <- renderPlotly({
+  output$ic50_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
@@ -544,7 +544,7 @@ app_server <- function( input, output, session ) {
         print(error_message)
     })
   })
-  output$cv_boxplot <- renderPlotly({
+  output$cv_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     eval(parse(text=cv_boxplot_code("plot"))) 

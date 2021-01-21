@@ -236,7 +236,7 @@ create_feature_table <- function(new_feature, input, values) {
   new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow = length(feature_levels), byrow = T))
   names(new_feature_df) <- input[[new_feature]]
   new_feature_df[[new_feature]] <- as.character(NA)
-  rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
+  rhandsontable::rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
 }
 
 #' @title Update feature
@@ -255,7 +255,7 @@ update_feature <- function(new_feature, input, values) {
   req(new_feature_table)
   existing_feature <- input[[new_feature]]
   assay_df <- values[["assay_df"]]
-  mappings_table <- hot_to_r(isolate(input[[new_feature_table]]))
+  mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
   assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
   values[["assay_df"]] <- assay_df
 }
