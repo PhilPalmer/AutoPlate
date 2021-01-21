@@ -37,7 +37,7 @@ app_ui <- function(request) {
                     shinydashboard::box(
                       width = 12, status = "primary",
                       shiny::div(shiny::img(
-                        src = "www/images/virus.svg",
+                        src = "www/favicon.png",
                         width = 300, id = "logo"
                       ),
                       style = "text-align:left; float:right;"
