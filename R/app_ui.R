@@ -287,7 +287,7 @@ golem_add_external_resources <- function(){
     favicon(ext = 'png'),
     bundle_resources(
       path = app_sys('inst/app/www'),
-      app_title = 'autoplate'
+      app_title = 'AutoPlate'
     ),
     # Prism for syntax highting
     tags$script(src = "https://cdnjs.cloudflare.com/ajax/libs/prism/1.8.4/prism.min.js"),
