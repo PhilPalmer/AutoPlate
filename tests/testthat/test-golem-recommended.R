@@ -15,6 +15,7 @@ test_that("app server", {
 # Configure this test to fit your need
 test_that(
   "app launches",{
+    skip_if_not(interactive())
     skip_on_cran()
     skip_on_travis()
     skip_on_appveyor()
