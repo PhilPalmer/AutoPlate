@@ -17,7 +17,7 @@ app_server <- function( input, output, session ) {
   ##################
   values <- reactiveValues()
   report_filepath <- "inst/app/www/report.Rmd"
-  dilutions_filepath <- "data/dilutions.csv"
+  dilutions_filepath <- "data-raw/dilutions.csv"
   dilutions <- utils::read.csv(dilutions_filepath,
     header = TRUE,
     stringsAsFactors = FALSE,
