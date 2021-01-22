@@ -17,8 +17,5 @@ dataframe, main assay with updated values in the exclude column based on the exc
 \description{
 Exclude values in dataframe based on exclusion criteria
 }
-\examples{
-exclude_wells()
-}
 \keyword{exclude}
 \keyword{wells}

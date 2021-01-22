@@ -12,8 +12,6 @@
 #' @return A HTML block with relevant langugage code tags
 #' @keywords HTML code
 #' @export
-#' @examples
-#' prism_add_tags()
 prism_add_tags <- function(code, language = "r") {
   paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
 }
@@ -26,8 +24,6 @@ prism_add_tags <- function(code, language = "r") {
 #' @return A HTML block with syntax highlighting
 #' @keywords HTML code Prism
 #' @export
-#' @examples
-#' prism_code_block()
 prism_code_block <- function(code, language = "r") {
   tagList(
     HTML(prism_add_tags(code, language = language)),
@@ -43,8 +39,6 @@ prism_code_block <- function(code, language = "r") {
 #' @return character, containing the code required to setup a results plot
 #' @keywords setup code
 #' @export
-#' @examples
-#' setup_code()
 setup_code <- function(is_drc_plot, is_vc_plot) {
   libraries <- '
     # Load libraries
@@ -69,8 +63,6 @@ setup_code <- function(is_drc_plot, is_vc_plot) {
 #' @return character, containing code to update the treatments colour and order before plotting a results plot
 #' @keywords colours code
 #' @export
-#' @examples
-#' update_cols_order_code()
 update_cols_order_code <- function() {
   '
     # Update order and colours of treatments
@@ -99,8 +91,6 @@ update_cols_order_code <- function() {
 #' @return character, containing the code required for the data exploration plot results code
 #' @keywords plot code
 #' @export
-#' @examples
-#' data_exploration_code()
 data_exploration_code <- function(code) {
   setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = FALSE)
   plot <- paste0('
@@ -136,8 +126,6 @@ data_exploration_code <- function(code) {
 #' @return character, containing the code required for the DRC plot results code
 #' @keywords plot code
 #' @export
-#' @examples
-#' drc_code()
 drc_code <- function(code, drm_string, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot <- paste0('
@@ -185,8 +173,6 @@ drc_code <- function(code, drm_string, virus) {
 #' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
 #' @export
-#' @examples
-#' ic50_boxplot_code()
 ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
@@ -235,8 +221,6 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
 #' @return character, containing the code required for the cell virus boxplot results code
 #' @keywords plot code
 #' @export
-#' @examples
-#' cv_boxplot_code()
 cv_boxplot_code <- function(code) {
   setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = TRUE)
   plot <- '

@@ -15,7 +15,4 @@ dataframe, containing the initialised type column
 \description{
 Initialise types (c,m,v,x) for assay dataframe based on template 96-well plate format
 }
-\examples{
-init_types()
-}
 \keyword{assay}

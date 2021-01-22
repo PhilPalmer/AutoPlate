@@ -21,8 +21,5 @@ character, containing the code required for the IC50 plot results code
 \description{
 Function to return the IC50 plot results plot code
 }
-\examples{
-ic50_boxplot_code()
-}
 \keyword{code}
 \keyword{plot}

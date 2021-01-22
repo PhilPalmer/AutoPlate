@@ -21,8 +21,5 @@ heatmap plot
 \description{
 Generate a heatmap plot in 96-well plate format for a feature from the assay dataframe
 }
-\examples{
-plot_heatmap()
-}
 \keyword{heatmap}
 \keyword{plot}

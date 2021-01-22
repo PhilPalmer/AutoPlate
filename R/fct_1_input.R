@@ -12,8 +12,6 @@
 #' @return dataframe, generated from the input CSV containing the filenames
 #' @keywords read input CSV files
 #' @export
-#' @examples
-#' read_plus()
 read_plus <- function(filename, filepath) {
   read.csv(filepath) %>%
     dplyr::mutate(filename = filename)
@@ -26,8 +24,6 @@ read_plus <- function(filename, filepath) {
 #' @return dataframe, containing the initialised columns
 #' @keywords assay
 #' @export
-#' @examples
-#' init_cols()
 init_cols <- function(assay_df) {
   assay_df$filename <- gsub(".csv","",assay_df$filename)
   assay_df$types <- ""
@@ -49,8 +45,6 @@ init_cols <- function(assay_df) {
 #' @return dataframe, containing the initialised type column
 #' @keywords assay
 #' @export
-#' @examples
-#' init_types()
 init_types <- function(assay_df) {
   assay_df <- assay_df %>%
     dplyr::mutate(types = dplyr::case_when(
@@ -71,8 +65,6 @@ init_types <- function(assay_df) {
 #' @return dataframe, containing the initialised sample_id column
 #' @keywords assay
 #' @export
-#' @examples
-#' sample()
 init_sample <- function(assay_df, wcols, sample_id) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
@@ -100,8 +92,6 @@ init_sample <- function(assay_df, wcols, sample_id) {
 #' @return dataframe, containing the initialised neutralisation column
 #' @keywords assay
 #' @export
-#' @examples
-#' calc_neut()
 calc_neut <- function(assay_df) {
   plates <- unique(assay_df$plate_number)
   for (plate_n in plates) {
@@ -125,8 +115,6 @@ calc_neut <- function(assay_df) {
 #' @return dataframe, containing the updated dilutions
 #' @keywords assay
 #' @export
-#' @examples
-#' update_dilutions()
 update_dilutions <- function(assay_df, dilutions) {
   assay_df %>%
     dplyr::mutate(dilution = dplyr::case_when(
@@ -158,8 +146,6 @@ update_dilutions <- function(assay_df, dilutions) {
 #' @return dataframe, containing the updated sample_ids
 #' @keywords assay
 #' @export
-#' @examples
-#' update_sample_ids()
 update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
   updated_sample_ids <- updated_plate_df[1, ]
   for (i in seq(1, length(updated_sample_ids))) {
@@ -179,8 +165,6 @@ update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
 #' @return dataframe, containing the updated feature
 #' @keywords assay
 #' @export
-#' @examples
-#' update_feature_plate()
 update_feature_plate <- function(assay_df, feature, plate_n, changes) {
   for (change in changes) {
     row = LETTERS[ change[[1]] + 1 ]
@@ -209,8 +193,6 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
 #' @return dropdown of existing columns that can be used to define the `new_feature`
 #' @keywords assay
 #' @export
-#' @examples
-#' create_feature_dropdown()
 create_feature_dropdown <- function(new_feature, input, values) {
   req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])
@@ -226,8 +208,6 @@ create_feature_dropdown <- function(new_feature, input, values) {
 #' @return rhandsontable interactive table of levles for selected feature/table in dataframe
 #' @keywords assay
 #' @export
-#' @examples
-#' create_feature_table()
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- values[["assay_df"]]
@@ -248,8 +228,6 @@ create_feature_table <- function(new_feature, input, values) {
 #' @return null, automatically updates the main assay dataframe within the reactive values
 #' @keywords assay
 #' @export
-#' @examples
-#' update_feature()
 update_feature <- function(new_feature, input, values) {
   new_feature_table <- paste0(new_feature, "_table")
   req(new_feature_table)
@@ -269,8 +247,6 @@ update_feature <- function(new_feature, input, values) {
 #' @return dataframe, plate dataframe in 96-well plate format
 #' @keywords assay
 #' @export
-#' @examples
-#' assay_to_plate_df()
 assay_to_plate_df <- function(assay_df, plate_n, feature) {
   # TODO: update sample names?
   # TODO: update documentation

@@ -15,7 +15,4 @@ dataframe, containing the initialised columns
 \description{
 Initialise columns for assay dataframe
 }
-\examples{
-init_cols()
-}
 \keyword{assay}

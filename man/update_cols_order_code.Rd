@@ -12,8 +12,5 @@ character, containing code to update the treatments colour and order before plot
 \description{
 Function to return the code to update the colours and ordering of treatments before plotting
 }
-\examples{
-update_cols_order_code()
-}
 \keyword{code}
 \keyword{colours}

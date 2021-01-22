@@ -17,8 +17,5 @@ A HTML block with relevant langugage code tags
 \description{
 Add code HTML tags to a HTML block input
 }
-\examples{
-prism_add_tags()
-}
 \keyword{HTML}
 \keyword{code}

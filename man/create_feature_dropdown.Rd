@@ -19,7 +19,4 @@ dropdown of existing columns that can be used to define the \code{new_feature}
 \description{
 Create feature dropdown that can be used to select an existing column from a dataframe
 }
-\examples{
-create_feature_dropdown()
-}
 \keyword{assay}

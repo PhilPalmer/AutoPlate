@@ -17,9 +17,6 @@ A HTML block with syntax highlighting
 \description{
 Add syntax highlighting to a HTML code block with Prism
 }
-\examples{
-prism_code_block()
-}
 \keyword{HTML}
 \keyword{Prism}
 \keyword{code}

@@ -15,7 +15,4 @@ dataframe, containing the initialised neutralisation column
 \description{
 Calculate neutralisation using the RLU values and normalisation with the virus and cell only controls
 }
-\examples{
-calc_neut()
-}
 \keyword{assay}

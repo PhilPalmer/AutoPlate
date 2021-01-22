@@ -14,8 +14,6 @@
 #' @return heatmap plot
 #' @keywords plot heatmap
 #' @export
-#' @examples
-#' plot_heatmap()
 plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
   feature_list <- unlist(plate_df[[feature]], use.names = FALSE)
@@ -40,8 +38,6 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
 #' @return dataframe, main assay with updated values in the exclude column based on the exclusion criteria
 #' @keywords exclude wells
 #' @export
-#' @examples
-#' exclude_wells()
 exclude_wells <- function(assay_df, exclusion_string) {
   exclusion_string <- gsub(" ", "", exclusion_string)
   wells_to_exclude <- lapply(strsplit(exclusion_string, ","), function(x) strsplit(x, ":"))[[1]]
@@ -97,8 +93,6 @@ exclude_wells <- function(assay_df, exclusion_string) {
 #' @return dataframe, containing average luminescence data for each plate
 #' @keywords average luminescence dataframe
 #' @export
-#' @examples
-#' init_av_lum_df()
 init_av_lum_df <- function(assay_df) {
   plates <- sort(unique(assay_df$plate_number))
   av_cell_lum <- lapply(plates, function(plate_n) mean(dplyr::filter(assay_df, (plate_number == plate_n) & (types == "c"))$rlu))
@@ -122,8 +116,6 @@ init_av_lum_df <- function(assay_df) {
 #' @return boxplot containing types data for each of the different plates 
 #' @keywords types boxplot
 #' @export
-#' @examples
-#' init_types_boxplot()
 init_types_boxplot <- function(assay_df) {
   assay_df <- assay_df %>%
     dplyr::filter(exclude == FALSE) %>%

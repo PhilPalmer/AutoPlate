@@ -15,8 +15,5 @@ boxplot containing types data for each of the different plates
 \description{
 Generate types boxplot
 }
-\examples{
-init_types_boxplot()
-}
 \keyword{boxplot}
 \keyword{types}

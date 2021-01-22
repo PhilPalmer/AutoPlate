@@ -17,9 +17,6 @@ dataframe, generated from the input CSV containing the filenames
 \description{
 Read CSV file appending the filename as an additional column in the dataframe
 }
-\examples{
-read_plus()
-}
 \keyword{CSV}
 \keyword{files}
 \keyword{input}

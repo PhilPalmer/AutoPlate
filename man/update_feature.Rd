@@ -19,7 +19,4 @@ null, automatically updates the main assay dataframe within the reactive values
 \description{
 For a given feature update the values in the main assay dataframe reactive values based on the input from the feature table
 }
-\examples{
-update_feature()
-}
 \keyword{assay}

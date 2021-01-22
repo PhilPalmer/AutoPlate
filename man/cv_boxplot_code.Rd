@@ -17,8 +17,5 @@ character, containing the code required for the cell virus boxplot results code
 \description{
 Function to return the cell virus boxplot results plot code
 }
-\examples{
-cv_boxplot_code()
-}
 \keyword{code}
 \keyword{plot}

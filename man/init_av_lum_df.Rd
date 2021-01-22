@@ -15,9 +15,6 @@ dataframe, containing average luminescence data for each plate
 \description{
 Initialise average luminescence dataframe
 }
-\examples{
-init_av_lum_df()
-}
 \keyword{average}
 \keyword{dataframe}
 \keyword{luminescence}

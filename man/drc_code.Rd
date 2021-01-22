@@ -19,8 +19,5 @@ character, containing the code required for the DRC plot results code
 \description{
 Function to return the DRC plot results plot code
 }
-\examples{
-drc_code()
-}
 \keyword{code}
 \keyword{plot}

@@ -19,7 +19,4 @@ dataframe, containing the initialised sample_id column
 \description{
 Initialise sample_id (mouse number) for assay dataframe based on input parameters
 }
-\examples{
-sample()
-}
 \keyword{assay}

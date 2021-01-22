@@ -19,7 +19,4 @@ rhandsontable interactive table of levles for selected feature/table in datafram
 \description{
 Create feature table that can be used to display existing levels for a selected column in a dataframe
 }
-\examples{
-create_feature_table()
-}
 \keyword{assay}

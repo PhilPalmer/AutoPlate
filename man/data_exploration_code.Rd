@@ -15,8 +15,5 @@ character, containing the code required for the data exploration plot results co
 \description{
 Function to return the setup code for the data exploration results plot
 }
-\examples{
-data_exploration_code()
-}
 \keyword{code}
 \keyword{plot}

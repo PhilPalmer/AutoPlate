@@ -19,7 +19,4 @@ dataframe, plate dataframe in 96-well plate format
 \description{
 Convert full assay dataframe to 96-well plate format for a specified plate number
 }
-\examples{
-assay_to_plate_df()
-}
 \keyword{assay}

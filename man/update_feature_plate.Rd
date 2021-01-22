@@ -21,7 +21,4 @@ dataframe, containing the updated feature
 \description{
 Update types in main assay dataframe for a single plate based on the input plate dataframe
 }
-\examples{
-update_feature_plate()
-}
 \keyword{assay}

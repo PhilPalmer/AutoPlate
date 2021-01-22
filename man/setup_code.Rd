@@ -17,8 +17,5 @@ character, containing the code required to setup a results plot
 \description{
 Function to return the setup code for a results plot
 }
-\examples{
-setup_code()
-}
 \keyword{code}
 \keyword{setup}

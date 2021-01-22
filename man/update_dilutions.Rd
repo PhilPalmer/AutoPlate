@@ -17,7 +17,4 @@ dataframe, containing the updated dilutions
 \description{
 Update dilutions in main assay dataframe based on the input dilutions dataframe
 }
-\examples{
-update_dilutions()
-}
 \keyword{assay}

@@ -19,7 +19,4 @@ dataframe, containing the updated sample_ids
 \description{
 Update sample_ids in main assay dataframe for a single plate based on the input plate dataframe
 }
-\examples{
-update_sample_ids()
-}
 \keyword{assay}
