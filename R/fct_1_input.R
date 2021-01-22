@@ -165,7 +165,7 @@ update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
 #'
 #' @description Update types in main assay dataframe for a single plate based on the input plate dataframe
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param updated_plate_df dataframe, containing 96-well plate data
+#' @param feature character, containing column to update in assay dataframe
 #' @param plate_n integer, plate number to update
 #' @param changes vector, containg sub vectors each corresponding to a change, which contain 0-index based: c(row, col, old_val, new_val)
 #' @return dataframe, containing the updated feature

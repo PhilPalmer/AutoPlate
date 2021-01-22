@@ -9,11 +9,11 @@ update_feature_plate(assay_df, feature, plate_n, changes)
 \arguments{
 \item{assay_df}{dataframe, containing biological assay data from plate reader}
 
+\item{feature}{character, containing column to update in assay dataframe}
+
 \item{plate_n}{integer, plate number to update}
 
 \item{changes}{vector, containg sub vectors each corresponding to a change, which contain 0-index based: c(row, col, old_val, new_val)}
-
-\item{updated_plate_df}{dataframe, containing 96-well plate data}
 }
 \value{
 dataframe, containing the updated feature

@@ -219,7 +219,6 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
 #'
 #' @description Function to return the cell virus boxplot results plot code
 #' @param code character, that's required, either "all" for setup and plot code or "plot" for just plot code
-#' @param drm_string character, specifying the code the dose response model
 #' @return character, containing the code required for the cell virus boxplot results code
 #' @keywords plot code
 #' @export

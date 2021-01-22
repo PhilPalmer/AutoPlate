@@ -8,8 +8,6 @@ cv_boxplot_code(code)
 }
 \arguments{
 \item{code}{character, that's required, either "all" for setup and plot code or "plot" for just plot code}
-
-\item{drm_string}{character, specifying the code the dose response model}
 }
 \value{
 character, containing the code required for the cell virus boxplot results code
