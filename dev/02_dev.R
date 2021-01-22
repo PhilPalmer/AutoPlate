@@ -30,7 +30,11 @@ usethis::use_package("svglite")
 usethis::use_package("plotly")
 usethis::use_package("shinyWidgets")
 usethis::use_package("metafolio")
-usethis::use_package("magrittr", "depends")
+usethis::use_package("magrittr")
+usethis::use_package("grDevices")
+usethis::use_package("graphics")
+usethis::use_package("stats")
+usethis::use_package("utils")
 
 ## Add modules ----
 ## Create a module infrastructure in R/

@@ -13,6 +13,8 @@
 #' @param title character, title to be used for the plot title along with the plate number
 #' @return heatmap plot
 #' @keywords plot heatmap
+#' @importFrom grDevices rainbow
+#' @importFrom graphics plot
 #' @export
 plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
@@ -37,6 +39,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
 #' @param exclusion_string character, comma-seperated string containing exclusion criteria
 #' @return dataframe, main assay with updated values in the exclude column based on the exclusion criteria
 #' @keywords exclude wells
+#' @importFrom magrittr %>%
 #' @export
 exclude_wells <- function(assay_df, exclusion_string) {
   exclusion_string <- gsub(" ", "", exclusion_string)
@@ -115,6 +118,7 @@ init_av_lum_df <- function(assay_df) {
 #' @param assay_df dataframe, main assay dataframe
 #' @return boxplot containing types data for each of the different plates 
 #' @keywords types boxplot
+#' @importFrom magrittr %>%
 #' @export
 init_types_boxplot <- function(assay_df) {
   assay_df <- assay_df %>%

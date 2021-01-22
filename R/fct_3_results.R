@@ -38,6 +38,7 @@ prism_code_block <- function(code, language = "r") {
 #' @param is_vc_plot bool, value to specify if the plot requires the metafolio library
 #' @return character, containing the code required to setup a results plot
 #' @keywords setup code
+#' @importFrom utils read.csv
 #' @export
 setup_code <- function(is_drc_plot, is_vc_plot) {
   libraries <- '
@@ -172,6 +173,7 @@ drc_code <- function(code, drm_string, virus) {
 #' @param virus character, specifying the virus to plot
 #' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
+#' @importFrom stats median
 #' @export
 ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)

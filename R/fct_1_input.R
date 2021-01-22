@@ -11,6 +11,8 @@
 #' @param filepath character, path to the CSV file
 #' @return dataframe, generated from the input CSV containing the filenames
 #' @keywords read input CSV files
+#' @importFrom magrittr %>%
+#' @importFrom utils read.csv
 #' @export
 read_plus <- function(filename, filepath) {
   read.csv(filepath) %>%
@@ -64,6 +66,7 @@ init_types <- function(assay_df) {
 #' @param sample_id character, name to set sample_id to for specified columns
 #' @return dataframe, containing the initialised sample_id column
 #' @keywords assay
+#' @importFrom magrittr %>%
 #' @export
 init_sample <- function(assay_df, wcols, sample_id) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
@@ -91,6 +94,7 @@ init_sample <- function(assay_df, wcols, sample_id) {
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @return dataframe, containing the initialised neutralisation column
 #' @keywords assay
+#' @importFrom stats median
 #' @export
 calc_neut <- function(assay_df) {
   plates <- unique(assay_df$plate_number)
@@ -114,6 +118,7 @@ calc_neut <- function(assay_df) {
 #' @param dilutions dataframe, containing two columns for serum and control dilutions
 #' @return dataframe, containing the updated dilutions
 #' @keywords assay
+#' @importFrom magrittr %>%
 #' @export
 update_dilutions <- function(assay_df, dilutions) {
   assay_df %>%
@@ -145,6 +150,7 @@ update_dilutions <- function(assay_df, dilutions) {
 #' @param plate_n integer, plate number to update
 #' @return dataframe, containing the updated sample_ids
 #' @keywords assay
+#' @importFrom magrittr %>%
 #' @export
 update_sample_ids <- function(assay_df, updated_plate_df, plate_n) {
   updated_sample_ids <- updated_plate_df[1, ]

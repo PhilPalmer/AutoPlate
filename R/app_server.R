@@ -18,7 +18,7 @@ app_server <- function( input, output, session ) {
   values <- reactiveValues()
   report_filepath <- "inst/app/www/report.Rmd"
   dilutions_filepath <- "data/dilutions.csv"
-  dilutions <- read.csv(dilutions_filepath,
+  dilutions <- utils::read.csv(dilutions_filepath,
     header = TRUE,
     stringsAsFactors = FALSE,
     check.names = FALSE
@@ -190,7 +190,7 @@ app_server <- function( input, output, session ) {
     req(values[["luminescence_files"]], input$plate_tabs)
     # Define variables
     luminescence_files <- values[["luminescence_files"]]
-    header <- colnames(read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
+    header <- colnames(utils::read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
     cols <- c("types", "dilution", "bleed")
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
@@ -202,7 +202,7 @@ app_server <- function( input, output, session ) {
     if (is.null(feature)) values[["plate_feature"]] <- "types"
     if (feature != values[["plate_feature"]] && !is.null(feature)) values[["plate_feature"]] <- feature
     if (is.null(values[["plate_data"]]) & all(cols %in% header)) {
-      assay_df <- read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
+      assay_df <- utils::read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
       oldnames <- c("subject", "inoculate", "primary", "study")
       newnames <- c("sample_id", "treatment", "virus", "experiment_id")
@@ -361,7 +361,7 @@ app_server <- function( input, output, session ) {
     content = function(file) {
       assay_df <- assay_df()
       assay_df <- assay_df[order(assay_df$plate_number),]
-      write.table(apply(assay_df, 2, as.character),
+      utils::write.table(apply(assay_df, 2, as.character),
         file = file,
         append = FALSE,
         quote = FALSE,
@@ -441,7 +441,7 @@ app_server <- function( input, output, session ) {
           shiny::incProgress(1 / 10)
           Sys.sleep(3)
           shiny::incProgress(5 / 10)
-          write.table(apply(assay_df(), 2, as.character),
+          utils::write.table(apply(assay_df(), 2, as.character),
             file = file.path(tempdir(), "pmn_platelist.csv"),
             append = FALSE,
             quote = FALSE,
