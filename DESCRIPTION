@@ -35,4 +35,5 @@ Suggests:
     covr
 VignetteBuilder: knitr
 Depends: 
-    magrittr
+    magrittr,
+    R (>= 2.10)
