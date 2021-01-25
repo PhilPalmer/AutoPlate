@@ -70,6 +70,7 @@ devtools::build_vignettes()
 
 # Add code coverage
 usethis::use_coverage()
+usethis::use_github_action("test-coverage")
 
 ## Code coverage ----
 ## (You'll need GitHub there)
