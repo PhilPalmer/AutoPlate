@@ -113,7 +113,7 @@ app_server <- function( input, output, session ) {
         </p>
         <h5>OR</h5>
         <button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/r-package/data/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
+          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/golem/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
         </button>
         "
         # TODO: update example data link to `main` branch once merged
@@ -127,7 +127,7 @@ app_server <- function( input, output, session ) {
   # Use example data on click of button
   observeEvent(input$example_data, {
     values[["luminescence_files"]] <- structure(list(name = "example_H1N1_data_pmn_platelist.csv", 
-      size = NA, type = "text/csv", datapath = "data/pmn_platelist_H1N1_example_data.csv"), 
+      size = NA, type = "text/csv", datapath = "data-raw/pmn_platelist_H1N1_example_data.csv"), 
       class = "data.frame", row.names = c(NA, -1L))
   })
   # Reload everything if the user uploads a new dataset
