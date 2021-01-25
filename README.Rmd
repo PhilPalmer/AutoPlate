@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 ![R](https://img.shields.io/badge/R-v3.6.3+-blue?style=flat-square)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![Codecov test coverage](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/main/graph/badge.svg)](https://codecov.io/gh/PhilPalmer/AutoPlate?branch=main)
+[![Codecov test coverage](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/golem/graph/badge.svg)](https://codecov.io/gh/PhilPalmer/AutoPlate?branch=golem)
 [![R build status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
@@ -62,6 +62,21 @@ Currently the dashboard contains the following tabs and features, which allow yo
     
     <br /> <br />
 
+### Run your own version of the web application
+
+1. Get the source code from GitHub:
+```bash
+git clone https://github.com/PhilPalmer/AutoPlate.git
+cd AutoPlate
+```
+
+2. See [`app.R`](app.R) for how you can run you own version of the app yourself locally
+
+Once you've loaded the library you can run AutoPlate like so:
+```bash
+RScript app.R
+```
+
 ## Using the R library
 
 ### Installation
@@ -81,39 +96,21 @@ library(autoplate)
 pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
 ```
 
-### Example 1 - Run the app yourself
-
-1. Get the source code from GitHub:
-```bash
-git clone https://github.com/PhilPalmer/AutoPlate.git
-cd AutoPlate
-```
-
-2. See [`app.R`](app.R) for how you can run you own version of the app yourself locally
-
-Once you've loaded the library you can run AutoPlate like so:
-```bash
-RScript app.R
-```
-
-### Example 2 - Run your own analysis in R
+### Running your own analysis in R
 
 AutoPlate was primarily built as a web app but most of the functionality can also be run within R. We're currently working on improving this functioanlity as it may be useful if you want to customise an analysis.
 
 Here is a basic example of how to plot a dose response curve from the data exported from AutoPlate:
 
-Load your dataset and define the dose-response model (DRM):
+Load your dataset, define the dose-response model (DRM) and the virus to plot:
 
 ```{r, echo = TRUE}
-# Define DRM
-drm_string <- 'formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)'
-# Load example pMN platelist data
-  # platelist_file <- "pmn_platelist.csv"
-  # data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+# platelist_file <- "pmn_platelist.csv"
+# data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
 data("pmn_platelist_H1N1_example_data")
 data <- pmn_platelist_H1N1_example_data
-# Set virus to plot
-virus <- data$virus[1]
+drm_string <- 'formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)'
+virus <- unique(data$virus)[1]
 ```
 
 Generate dose-response curve plot:

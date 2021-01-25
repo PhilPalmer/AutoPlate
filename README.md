@@ -9,7 +9,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 [![Codecov test
-coverage](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/main/graph/badge.svg)](https://codecov.io/gh/PhilPalmer/AutoPlate?branch=main)
+coverage](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/golem/graph/badge.svg)](https://codecov.io/gh/PhilPalmer/AutoPlate?branch=golem)
 [![R build
 status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
@@ -29,11 +29,9 @@ dose-response curves can be fit. In the future, other assays such as
 ELLA, ELISA, HIA or even any custom assay may be supported. Let us know
 if there’s an assay that you would like us to support\!
 
-You can use AutoPlate in two ways: 1. [**Web
-application**](#check-out-the-web-application) - this is the easiest way
-to run AutoPlate\! 2. [**R library**](#using-the-r-library) - you can
-either run the app yourself or just use the functions you need for your
-own analysis\!
+You can use AutoPlate in two ways: 
+1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate\!
+2. [**R library**](#using-the-r-library) - you can either run the app yourself or just use the functions you need for your own analysis\!
 
 ## Check out the web application
 
@@ -76,26 +74,7 @@ allow you to run an analysis in three simple steps:
     
     <br /> <br />
 
-## Using the R library
-
-### Installation
-
-You can install the latest released version of autoplate from
-[GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("PhilPalmer/AutoPlate")
-```
-
-``` r
-library(autoplate)
-```
-
-    #> Loading autoplate
-    #> Loading required package: magrittr
-
-### Example 1 - Run the app yourself
+### Run your own version of the web application
 
 1.  Get the source code from GitHub:
 
@@ -115,7 +94,26 @@ Once you’ve loaded the library you can run AutoPlate like so:
 RScript app.R
 ```
 
-### Example 2 - Run your own analysis in R
+## Using the R library
+
+### Installation
+
+You can install the latest released version of autoplate from
+[GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("PhilPalmer/AutoPlate")
+```
+
+``` r
+library(autoplate)
+```
+
+    #> Loading autoplate
+    #> Loading required package: magrittr
+
+### Running your own analysis in R
 
 AutoPlate was primarily built as a web app but most of the functionality
 can also be run within R. We’re currently working on improving this
@@ -124,18 +122,16 @@ functioanlity as it may be useful if you want to customise an analysis.
 Here is a basic example of how to plot a dose response curve from the
 data exported from AutoPlate:
 
-Load your dataset and define the dose-response model (DRM):
+Load your dataset, define the dose-response model (DRM) and the virus to
+plot:
 
 ``` r
-# Define DRM
-drm_string <- 'formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)'
-# Load example pMN platelist data
-  # platelist_file <- "pmn_platelist.csv"
-  # data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+# platelist_file <- "pmn_platelist.csv"
+# data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
 data("pmn_platelist_H1N1_example_data")
 data <- pmn_platelist_H1N1_example_data
-# Set virus to plot
-virus <- data$virus[1]
+drm_string <- 'formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)'
+virus <- unique(data$virus)[1]
 ```
 
 Generate dose-response curve plot:
@@ -154,7 +150,7 @@ print(drc_plot)
 
 ## Credit
 
-This app was built by \[@PhilPalmer\](<https://github.com/PhilPalmer>)
+This app was built by [@PhilPalmer](<https://github.com/PhilPalmer>)
 while at the University of Cambridge [Lab of Viral
 Zoonotics](https://www.lvz.vet.cam.ac.uk/)
 
