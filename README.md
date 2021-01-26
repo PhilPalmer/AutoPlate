@@ -30,7 +30,7 @@ if there’s an assay that you would like us to support\!
 
 You can use AutoPlate in two ways: 
 1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate\!
-2. [**R library**](#using-the-r-library) - you can either run the app yourself or just use the functions you need for your own analysis\!
+2. [**R library**](#using-the-r-library) - you can just use the functions you need for your own analysis\!
 
 ## Check out the web application
 
