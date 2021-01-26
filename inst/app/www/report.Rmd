@@ -86,7 +86,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis::viridis else rainbow
   side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
   # Generate heatmap plot
-  graphics::plot((vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
+  graphics::plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
 
 features <- c("Types", "Sample ID", "Dilution", "Virus", "RLU", "Neutralisation", "Treatment", "Experiment ID", "Bleed", "Exclude")
