@@ -42,11 +42,17 @@ prism_code_block <- function(code, language = "r") {
 #' @export
 setup_code <- function(is_drc_plot, is_vc_plot) {
   libraries <- '
+    # Install libraries
+    install.packages("devtools")
+    devtools::install_github("PhilPalmer/AutoPlate")
+
     # Load libraries
+    library(autoplate)
     library(dplyr)
     library(ggplot2)
     library(plotly)
   '
+  # TODO: remove unecessary input params
   if (is_drc_plot) libraries <- paste0(libraries,"\tlibrary(drc)\n")
   if (!is_vc_plot) libraries <- paste0(libraries,"\tlibrary(metafolio)\n")
   input_file <- '
@@ -118,6 +124,41 @@ data_exploration_code <- function(code) {
   return(code_text)
 }
 
+#' @title Plot DRC
+#'
+#' @description Function to generate a dose-response curve (DRC) plot from assay data frame
+#' @param assay_df dataframe, main assay dataframe
+#' @param drm character or DRM object, the dose response model
+#' @return plot, dose-response curve plot ggplot2 object 
+#' @keywords plot drc
+#' @export
+plot_drc <- function(assay_df, drm) {
+  # Preprocessing
+  # update_cols_order() # TODO: update this function too
+  assay_df$sample_id <- unlist(assay_df$sample_id)        
+  n <- 100
+  new_dilution <- exp(seq(log(min(assay_df$dilution)), log(max(assay_df$dilution)), length.out=n))
+  sample_ids<-unique(assay_df$sample_id)
+  new_assay_df <- expand.grid(new_dilution, sample_ids)
+  names(new_assay_df) <- c("dilution", "sample_id")
+  new_assay_df$treatment <- assay_df$treatment[match(new_assay_df$sample_id, assay_df$sample_id)]
+  new_assay_df$neutralisation <- predict(drm, newdata=new_assay_df,)
+
+  # Generate plot
+  drc_plot <- ggplot2::ggplot(new_assay_df, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
+      ggplot2::geom_line() +
+      ggplot2::geom_point(data=assay_df, ggplot2::aes(y=neutralisation)) +
+      ggplot2::facet_wrap("treatment") +  
+      ggplot2::scale_x_continuous(trans="log10") +
+      ggplot2::theme_classic() +
+      # ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+      ggplot2::theme(strip.background = ggplot2::element_blank()) +
+      ggplot2::ylab("Neutralisation") +
+      ggplot2::xlab("Dilution") +
+      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+  return(drc_plot)
+}
+
 #' @title DRC code
 #'
 #' @description Function to return the DRC plot results plot code
@@ -130,34 +171,14 @@ data_exploration_code <- function(code) {
 drc_code <- function(code, drm_string, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot <- paste0('
-    # Filter out unwanted types and excluded data
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == "',virus,'")
-    ',update_cols_order_code(),'
     # Preprocessing
-    data$sample_id <- unlist(data$sample_id)        
-    model <- drc::drm(', drm_string, ')
-    n <- 100
-    new_dilution <- exp(seq(log(min(data$dilution)), log(max(data$dilution)), length.out=n))
-    sample_ids<-unique(data$sample_id)
-    new_data <- expand.grid(new_dilution, sample_ids)
-    names(new_data) <- c("dilution", "sample_id")
-    new_data$treatment <- data$treatment[match(new_data$sample_id, data$sample_id)]
-    new_data$neutralisation <- predict(model, newdata=new_data,)
+    virus_to_plot <- "',virus,'"
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+    model <- drc::drm(',drm_string,')
 
     # Generate plot
-    drc_plot <- ggplot2::ggplot(new_data, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
-        ggplot2::geom_line() +
-        ggplot2::geom_point(data=data, ggplot2::aes(y=neutralisation)) +
-        ggplot2::facet_wrap("treatment") +
-        ggplot2::scale_x_continuous(trans="log10") +
-        ggplot2::theme_classic() +
-        ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-        ggplot2::theme(strip.background = ggplot2::element_blank()) +
-        ggplot2::ylab("Neutralisation") +
-        ggplot2::xlab("Dilution") +
-        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
-    drc_plotly <- plotly::ggplotly(drc_plot)
-    drc_plotly
+    drc_plot <- plot_drc(data, model)
+    plotly::ggplotly(drc_plot)
     ')
     if (code == "plot") code_text <- plot
     if (code == "all") code_text <- paste0(setup,plot)
