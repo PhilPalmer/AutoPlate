@@ -91,6 +91,33 @@ update_cols_order_code <- function() {
   '
 }
 
+#' @title Update treatments colours and order
+#'
+#' @description Function to return to update the colours and ordering of treatments before plotting
+#' @param assay_df dataframe, main assay dataframe
+#' @return list, containing a modified assay dataframe, a list of treatment colours and a list of the treatments
+#' @keywords colours code
+#' @importFrom metafolio gg_color_hue
+#' @export
+update_cols_order <- function(assay_df) {
+  treatments <- unique(assay_df$treatment)
+  treatment_cols <- metafolio::gg_color_hue(length(treatments),0,360)
+  negative_control <- c("pbs", "negative_control")
+  posotive_control <- unique(assay_df[assay_df$type == "m",]$treatment)
+  if (any(negative_control %in% tolower(treatments))) {
+    negative_control_index <- which(tolower(treatments) %in% negative_control)
+    treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
+    treatment_cols[1] <- "grey"
+  }
+  if (!is.na(posotive_control)) {
+    posotive_control_index <- which(treatments %in% posotive_control)
+    treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
+    treatment_cols[length(treatments)] <- "black"
+  }
+  assay_df$treatment <- factor(assay_df$treatment, levels = treatments)
+  return(list(assay_df=assay_df, treatment_cols=treatment_cols,treatments=treatments))
+}
+
 #' @title Data exploration code
 #'
 #' @description Function to return the setup code for the data exploration results plot
@@ -134,7 +161,7 @@ data_exploration_code <- function(code) {
 #' @export
 plot_drc <- function(assay_df, drm) {
   # Preprocessing
-  # update_cols_order() # TODO: update this function too
+  attach(update_cols_order(assay_df), warn.conflicts=FALSE)
   assay_df$sample_id <- unlist(assay_df$sample_id)        
   n <- 100
   new_dilution <- exp(seq(log(min(assay_df$dilution)), log(max(assay_df$dilution)), length.out=n))
@@ -151,7 +178,7 @@ plot_drc <- function(assay_df, drm) {
       ggplot2::facet_wrap("treatment") +  
       ggplot2::scale_x_continuous(trans="log10") +
       ggplot2::theme_classic() +
-      # ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+      ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::theme(strip.background = ggplot2::element_blank()) +
       ggplot2::ylab("Neutralisation") +
       ggplot2::xlab("Dilution") +
