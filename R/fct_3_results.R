@@ -206,10 +206,10 @@ drc_code <- function(code, drm_string, virus) {
     # Generate plot
     drc_plot <- plot_drc(data, model)
     plotly::ggplotly(drc_plot)
-    ')
-    if (code == "plot") code_text <- plot
-    if (code == "all") code_text <- paste0(setup,plot)
-    return(code_text)
+  ')
+  if (code == "plot") code_text <- plot
+  if (code == "all") code_text <- paste0(setup,plot)
+  return(code_text)
 }
 
 #' @title Plot IC50 boxplot
