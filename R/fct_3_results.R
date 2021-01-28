@@ -118,6 +118,31 @@ update_cols_order <- function(assay_df) {
   return(list(assay_df=assay_df, treatment_cols=treatment_cols,treatments=treatments))
 }
 
+#' @title Plot data exploration
+#'
+#' @description Function to generate a data exploration plot from assay data frame
+#' @param assay_df dataframe, main assay dataframe
+#' @return plot, data exploration plot ggplot2 object 
+#' @keywords data exploration plot
+#' @export
+plot_data_exploration <- function(assay_df) {
+  # Preprocessing
+  attach(update_cols_order(assay_df), warn.conflicts=FALSE)
+  # Generate plot
+  data_exploration_plot <- ggplot2::ggplot(assay_df, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment)) +
+    ggplot2::geom_point() +
+    ggplot2::geom_smooth(se=F, span=1) +
+    ggplot2::facet_wrap(.~virus) +
+    ggplot2::ylim(c(-100, 110)) +
+    ggplot2::scale_x_continuous(trans="log10") +
+    ggplot2::theme_classic() +
+    ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+    ggplot2::ylab("Neutralisation") +
+    ggplot2::xlab("Dilution") +
+    ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+  return(data_exploration_plot)
+}
+
 #' @title Data exploration code
 #'
 #' @description Function to return the setup code for the data exploration results plot
@@ -128,23 +153,12 @@ update_cols_order <- function(assay_df) {
 data_exploration_code <- function(code) {
   setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = FALSE)
   plot <- paste0('
-    # Filter out unwanted types and excluded data
+    # Preprocessing
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    ',update_cols_order_code(),'
+    
     # Generate plot
-    data_exploration_plot <- ggplot2::ggplot(data, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment)) +
-      ggplot2::geom_point() +
-      ggplot2::geom_smooth(se=F, span=1) +
-      ggplot2::facet_wrap(.~virus) +
-      ggplot2::ylim(c(-100, 110)) +
-      ggplot2::scale_x_continuous(trans="log10") +
-      ggplot2::theme_classic() +
-      ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-      ggplot2::ylab("Neutralisation") +
-      ggplot2::xlab("Dilution") +
-      ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
-    data_exploration_plotly <- plotly::ggplotly(data_exploration_plot)
-    data_exploration_plotly
+    data_exploration_plot <- plot_data_exploration(data)
+    plotly::ggplotly(data_exploration_plot)
   ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
