@@ -549,6 +549,6 @@ app_server <- function( input, output, session ) {
     data <- values[["assay_df"]]
     eval(parse(text=cv_boxplot_code("plot"))) 
     values[["cv_boxplot"]] <- cv_boxplot
-    cv_boxplotly
+    plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
   })
 }

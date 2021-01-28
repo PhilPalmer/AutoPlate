@@ -281,7 +281,30 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   return(code_text)
 }
 
-#' @title Cell virus boxplot code
+#' @title Plot cell-virus boxplot
+#'
+#' @description Function to generate a cell-virus boxplot plot from assay data frame
+#' @param assay_df dataframe, main assay dataframe
+#' @return plot, cell-virus boxplot ggplot2 object 
+#' @keywords boxplot cell virus
+#' @export
+plot_cv_boxplot <- function(assay_df) {
+  # Preprocessing
+  assay_df$plate_number <- as.factor(assay_df$plate_number)
+
+  # Generate plot
+  cv_boxplot <- ggplot2::ggplot(assay_df, ggplot2::aes(x=types, y=rlu, colour=plate_number)) +
+      ggplot2::geom_boxplot() +
+      ggplot2::geom_point(position=ggplot2::position_dodge(0.75)) +
+      ggplot2::scale_y_continuous(trans="log10") +
+      ggplot2::ylab("Log10 raw luminescence value") +
+      ggplot2::xlab("Cell only or Virus only") +
+      ggplot2::theme_classic() +
+      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+  return(cv_boxplot)
+}
+
+#' @title Cell-virus boxplot code
 #'
 #' @description Function to return the cell virus boxplot results plot code
 #' @param code character, that's required, either "all" for setup and plot code or "plot" for just plot code
@@ -293,21 +316,12 @@ cv_boxplot_code <- function(code) {
   plot <- '
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
-        dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
-        dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
-    data$plate_number <- as.factor(data$plate_number)
+      dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+      dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
 
     # Generate plot
-    cv_boxplot <- ggplot2::ggplot(data, ggplot2::aes(x=types, y=rlu, colour=plate_number)) +
-        ggplot2::geom_boxplot() +
-        ggplot2::geom_point(position=ggplot2::position_dodge(0.75)) +
-        ggplot2::scale_y_continuous(trans="log10") +
-        ggplot2::ylab("Log10 raw luminescence value") +
-        ggplot2::xlab("Cell only or Virus only") +
-        ggplot2::theme_classic() +
-        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus)))
-    cv_boxplotly <- plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
-    cv_boxplotly
+    cv_boxplot <- plot_cv_boxplot(data)
+    plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
     '
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
