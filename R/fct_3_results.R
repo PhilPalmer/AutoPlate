@@ -212,6 +212,46 @@ drc_code <- function(code, drm_string, virus) {
     return(code_text)
 }
 
+#' @title Plot IC50 boxplot
+#'
+#' @description Function to gneerate IC50 plot from input main assay dataframe and dose-response model (DRM)
+#' @param assay_df dataframe, main assay dataframe
+#' @param drm DRM object, the dose response model
+#' @param plot_type character, either "boxplot" (default) or "jitter"
+#' @return plot, dose-response curve plot ggplot2 object 
+#' @keywords plot code
+#' @importFrom stats median
+#' @export
+plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
+  # Preprocessing
+  attach(update_cols_order(assay_df), warn.conflicts=FALSE)
+  assay_df$sample_id <- as.character(assay_df$sample_id)
+  ied <- as.data.frame(drc::ED(drm, 50, display=FALSE))
+  ied$sample_id <- gsub("e:|:50", "", row.names(ied))
+  ied$treatment <- assay_df$treatment[match(ied$sample_id, assay_df$sample_id)]
+  ied$plate_number <- assay_df$plate_number[match(ied$sample_id, assay_df$sample_id)]
+  ied$virus <- assay_df$virus[match(ied$sample_id, assay_df$sample_id)]
+  control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
+  # Average Neutralisation
+  avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(Estimate))
+  ied_order <- avied$treatment[order(avied$av)]
+  plot_type <- if(plot_type == tolower("boxplot")) ggplot2::geom_boxplot() else ggplot2::geom_jitter()
+
+  # Generate plot
+  ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=Estimate, colour=treatment))+
+      plot_type +
+      ggplot2::geom_point() +
+      ggplot2::scale_x_discrete(limits=ied_order) +
+      ggplot2::ylab("Individual IC50 log10") +
+      ggplot2::xlab("Treatment") +
+      ggplot2::theme_classic() +
+      ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
+      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus))) +
+      ggplot2::coord_flip() + 
+      ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
+  return(ic50_boxplot)
+}
+
 #' @title IC50 boxplot code
 #'
 #' @description Function to return the IC50 plot results plot code
@@ -227,36 +267,14 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
   plot <- paste0('
-    # Filter out unwanted types and excluded data
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == "',virus,'")
-    ',update_cols_order_code(),'
     # Preprocessing
-    data$sample_id <- as.character(data$sample_id)
-    model <- drc::drm(', drm_string, ')
-    ied <- as.data.frame(drc::ED(model, 50, display=FALSE))
-    ied$sample_id <- gsub("e:|:50", "", row.names(ied))
-    ied$treatment <- data$treatment[match(ied$sample_id, data$sample_id)]
-    ied$plate_number <- data$plate_number[match(ied$sample_id, data$sample_id)]
-    ied$virus <- data$virus[match(ied$sample_id, data$sample_id)]
-    control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
-    # Average Neutralisation
-    avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(Estimate))
-    ied_order <- avied$treatment[order(avied$av)]
+    virus_to_plot <- "',virus,'"
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+    model <- drc::drm(',drm_string,')
 
     # Generate plot
-    ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=Estimate, colour=treatment))+
-        ggplot2::geom_',plot_type,'() +
-        ggplot2::geom_point() +
-        ggplot2::scale_x_discrete(limits=ied_order) +
-        ggplot2::ylab("Individual IC50 log10") +
-        ggplot2::xlab("Treatment") +
-        ggplot2::theme_classic() +
-        ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-        ggplot2::ggtitle(paste(unique(data$experiment_id), "- Bleed", unique(data$bleed), "- Virus", unique(data$virus))) +
-        ggplot2::coord_flip() + 
-        ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
-    ic50_boxplotly <- plotly::ggplotly(ic50_boxplot)
-    ic50_boxplotly
+    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")
+    plotly::ggplotly(ic50_boxplot)
   ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
