@@ -155,7 +155,7 @@ data_exploration_code <- function(code) {
 #'
 #' @description Function to generate a dose-response curve (DRC) plot from assay data frame
 #' @param assay_df dataframe, main assay dataframe
-#' @param drm character or DRM object, the dose response model
+#' @param drm DRM object, the dose response model
 #' @return plot, dose-response curve plot ggplot2 object 
 #' @keywords plot drc
 #' @export
@@ -188,7 +188,7 @@ plot_drc <- function(assay_df, drm) {
 
 #' @title DRC code
 #'
-#' @description Function to return the DRC plot results plot code
+#' @description Function to generate an IC50 boxplot plot from assay data frame
 #' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @param drm_string character, specifying the code the dose response model
 #' @param virus character, specifying the virus to plot
