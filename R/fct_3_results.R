@@ -34,34 +34,23 @@ prism_code_block <- function(code, language = "r") {
 #' @title Setup code
 #'
 #' @description Function to return the setup code for a results plot
-#' @param is_drc_plot bool, value to specify if the plot requires the drc library
-#' @param is_vc_plot bool, value to specify if the plot requires the metafolio library
 #' @return character, containing the code required to setup a results plot
 #' @keywords setup code
 #' @importFrom utils read.csv
 #' @export
-setup_code <- function(is_drc_plot, is_vc_plot) {
-  libraries <- '
+setup_code <- function() {
+  '
     # Install libraries
     install.packages("devtools")
-    devtools::install_github("PhilPalmer/AutoPlate")
+    devtools::install_github("PhilPalmer/AutoPlate", dependencies = TRUE)
 
-    # Load libraries
+    # Load library
     library(autoplate)
-    library(dplyr)
-    library(ggplot2)
-    library(plotly)
-  '
-  # TODO: remove unecessary input params
-  if (is_drc_plot) libraries <- paste0(libraries,"\tlibrary(drc)\n")
-  if (!is_vc_plot) libraries <- paste0(libraries,"\tlibrary(metafolio)\n")
-  input_file <- '
+
     # Load input file - make sure your input file path is correct!
     platelist_file <- "pmn_platelist.csv"
     data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
   '
-  setup_code <- paste0(libraries,input_file)
-  return(setup_code)
 }
 
 #' @title Update treatments colours and order code
@@ -151,7 +140,7 @@ plot_data_exploration <- function(assay_df) {
 #' @keywords plot code
 #' @export
 data_exploration_code <- function(code) {
-  setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = FALSE)
+  setup <- setup_code()
   plot <- paste0('
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
@@ -210,7 +199,7 @@ plot_drc <- function(assay_df, drm) {
 #' @keywords plot code
 #' @export
 drc_code <- function(code, drm_string, virus) {
-  setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
+  setup <- setup_code()
   plot <- paste0('
     # Preprocessing
     virus_to_plot <- "',virus,'"
@@ -278,7 +267,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
 #' @importFrom stats median
 #' @export
 ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
-  setup <- setup_code(is_drc_plot = TRUE, is_vc_plot = FALSE)
+  setup <- setup_code()
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
   plot <- paste0('
     # Preprocessing
@@ -326,7 +315,7 @@ plot_cv_boxplot <- function(assay_df) {
 #' @keywords plot code
 #' @export
 cv_boxplot_code <- function(code) {
-  setup <- setup_code(is_drc_plot = FALSE, is_vc_plot = TRUE)
+  setup <- setup_code()
   plot <- '
     # Preprocessing
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
