@@ -115,28 +115,63 @@ library(autoplate)
 ### Running your own analysis in R
 
 AutoPlate was primarily built as a web app but most of the functionality
-can also be run within R. We’re currently working on improving this
-functioanlity as it may be useful if you want to customise an analysis.
+can also be run within R, which may be useful if you want to customise
+an analysis.
 
 Here is a basic example of how to plot a dose response curve from the
 data exported from AutoPlate:
 
-Load your dataset, define the dose-response model (DRM) and the virus to
-plot:
+1)  Load your dataset
+
+<!-- end list -->
 
 ``` r
-# platelist_file <- "pmn_platelist.csv"
-# data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+# Load an example dataset
 data("pmn_platelist_H1N1_example_data")
 data <- pmn_platelist_H1N1_example_data
-drm_string <- 'formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)'
-virus <- unique(data$virus)[1]
+
+# OR
+
+# Load your own dataset - make sure your file path is correct!
+platelist_file <- "data-raw/pmn_platelist_H1N1_example_data.csv"
+data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
 ```
 
-Generate dose-response curve plot:
+2)  Define the virus you want to plot
+
+<!-- end list -->
 
 ``` r
-invisible(eval(parse(text=drc_code("plot",drm_string,virus))))
+virus_to_plot <- unique(data$virus)[1]
+print(virus_to_plot)
+#> [1] "A/swine/Guangxi/1/2013 (H1N1)"
+```
+
+3)  Preprocess your dataset to keep only the non-excluded, `types` and
+    `virus` of interest:
+
+<!-- end list -->
+
+``` r
+ data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+```
+
+4)  Fit your dose-response model (DRM) using the DRC package:
+
+<!-- end list -->
+
+``` r
+model <- drc::drm(formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0))
+```
+
+5)  Plot your dose-response curve with AutoPlate and ggplot2 (Optional:
+    make it intereactive with Plotly\!)
+
+<!-- end list -->
+
+``` r
+drc_plot <- autoplate::plot_drc(data, model)
+drc_plotly <- plotly::ggplotly(drc_plot)
 #> Warning: `group_by_()` is deprecated as of dplyr 0.7.0.
 #> Please use `group_by()` instead.
 #> See vignette('programming') for more help
@@ -149,7 +184,7 @@ print(drc_plot)
 
 ## Credit
 
-This app was built by [@PhilPalmer](<https://github.com/PhilPalmer>)
+This app was built by [@PhilPalmer](https://github.com/PhilPalmer)
 while at the University of Cambridge [Lab of Viral
 Zoonotics](https://www.lvz.vet.cam.ac.uk/)
 
