@@ -53,33 +53,6 @@ setup_code <- function() {
   '
 }
 
-#' @title Update treatments colours and order code
-#'
-#' @description Function to return the code to update the colours and ordering of treatments before plotting
-#' @return character, containing code to update the treatments colour and order before plotting a results plot
-#' @keywords colours code
-#' @export
-update_cols_order_code <- function() {
-  '
-    # Update order and colours of treatments
-    treatments <- unique(data$treatment)
-    treatment_cols <- metafolio::gg_color_hue(length(treatments),0,360)
-    negative_control <- c("pbs", "negative_control")
-    posotive_control <- unique(data[data$type == "m",]$treatment)
-    if (any(negative_control %in% tolower(treatments))) {
-      negative_control_index <- which(tolower(treatments) %in% negative_control)
-      treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
-      treatment_cols[1] <- "grey"
-    }
-    if (!is.na(posotive_control)) {
-      posotive_control_index <- which(treatments %in% posotive_control)
-      treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
-      treatment_cols[length(treatments)] <- "black"
-    }
-    data$treatment <- factor(data$treatment, levels = treatments)
-  '
-}
-
 #' @title Update treatments colours and order
 #'
 #' @description Function to return to update the colours and ordering of treatments before plotting
