@@ -208,7 +208,7 @@ drc_code <- function(code, drm_string, virus) {
 #' @param assay_df dataframe, main assay dataframe
 #' @param drm DRM object, the dose response model
 #' @param plot_type character, either "boxplot" (default) or "jitter"
-#' @return plot, dose-response curve plot ggplot2 object 
+#' @return list, containing IC50 boxplot ggplot2 object and individual effective dose dataframe
 #' @keywords plot code
 #' @importFrom stats median
 #' @export
@@ -240,7 +240,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
       ggplot2::ggtitle(title) +
       ggplot2::coord_flip() + 
       ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
-  return(ic50_boxplot)
+  return(list(ic50_boxplot=ic50_boxplot, ied=ied))
 }
 
 #' @title IC50 boxplot code
@@ -264,7 +264,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     model <- drc::drm(',drm_string,')
 
     # Generate plot
-    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")
+    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")$ic50_boxplot
     plotly::ggplotly(ic50_boxplot)
   ')
   if (code == "plot") code_text <- plot
