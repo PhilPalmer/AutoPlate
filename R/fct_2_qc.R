@@ -128,12 +128,13 @@ init_types_boxplot <- function(assay_df) {
     dplyr::mutate(types = ifelse((types == "v"), "virus", types)) %>%
     dplyr::mutate(types = ifelse((types == "x"), "serum sample", types))
   assay_df$plate_number <- as.factor(assay_df$plate_number)
+  title <- init_title(assay_df)
   types_boxplot <- ggplot2::ggplot(assay_df, ggplot2::aes(x = plate_number, y = rlu, colour = types)) +
     ggplot2::geom_boxplot() +
     ggplot2::geom_point(position=ggplot2::position_dodge(0.75)) +
     ggplot2::ylab("Raw luminescence value") +
     ggplot2::xlab("Plate number") +
     ggplot2::theme_classic() +
-    ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+    ggplot2::ggtitle(title)
   return(types_boxplot)
 }

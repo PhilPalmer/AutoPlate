@@ -53,12 +53,24 @@ setup_code <- function() {
   '
 }
 
+#' @title Initialise title
+#'
+#' @description Function to return the title for a given assay dataframe
+#' @param assay_df dataframe, main assay dataframe
+#' @return character, title for plot
+#' @keywords plot title
+#' @export
+init_title <- function(assay_df) {
+  virus_title <- if(nchar(toString(unique(assay_df$virus)))>50) "- All Viruses" else paste("- Virus",toString(unique(assay_df$virus)))
+  title <- paste(toString(unique(assay_df$experiment_id)), "- Bleed", toString(unique(assay_df$bleed)), virus_title)
+}
+
 #' @title Update treatments colours and order
 #'
 #' @description Function to return to update the colours and ordering of treatments before plotting
 #' @param assay_df dataframe, main assay dataframe
 #' @return list, containing a modified assay dataframe, a list of treatment colours and a list of the treatments
-#' @keywords colours code
+#' @keywords colours
 #' @importFrom metafolio gg_color_hue
 #' @export
 update_cols_order <- function(assay_df) {
@@ -90,6 +102,7 @@ update_cols_order <- function(assay_df) {
 plot_data_exploration <- function(assay_df) {
   # Preprocessing
   attach(update_cols_order(assay_df), warn.conflicts=FALSE)
+  title <- init_title(assay_df)
   # Generate plot
   data_exploration_plot <- ggplot2::ggplot(assay_df, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment)) +
     ggplot2::geom_point() +
@@ -101,7 +114,7 @@ plot_data_exploration <- function(assay_df) {
     ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
     ggplot2::ylab("Neutralisation") +
     ggplot2::xlab("Dilution") +
-    ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+    ggplot2::ggtitle(title)
   return(data_exploration_plot)
 }
 
@@ -146,6 +159,7 @@ plot_drc <- function(assay_df, drm) {
   names(new_assay_df) <- c("dilution", "sample_id")
   new_assay_df$treatment <- assay_df$treatment[match(new_assay_df$sample_id, assay_df$sample_id)]
   new_assay_df$neutralisation <- predict(drm, newdata=new_assay_df,)
+  title <- init_title(assay_df)
 
   # Generate plot
   drc_plot <- ggplot2::ggplot(new_assay_df, ggplot2::aes(x=dilution, y=neutralisation, colour=treatment, group=sample_id)) +
@@ -158,7 +172,7 @@ plot_drc <- function(assay_df, drm) {
       ggplot2::theme(strip.background = ggplot2::element_blank()) +
       ggplot2::ylab("Neutralisation") +
       ggplot2::xlab("Dilution") +
-      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+      ggplot2::ggtitle(title)
   return(drc_plot)
 }
 
@@ -212,6 +226,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(Estimate))
   ied_order <- avied$treatment[order(avied$av)]
   plot_type <- if(plot_type == tolower("boxplot")) ggplot2::geom_boxplot() else ggplot2::geom_jitter()
+  title <- init_title(assay_df)
 
   # Generate plot
   ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=Estimate, colour=treatment))+
@@ -222,7 +237,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
       ggplot2::xlab("Treatment") +
       ggplot2::theme_classic() +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus))) +
+      ggplot2::ggtitle(title) +
       ggplot2::coord_flip() + 
       ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
   return(ic50_boxplot)
@@ -267,6 +282,7 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
 plot_cv_boxplot <- function(assay_df) {
   # Preprocessing
   assay_df$plate_number <- as.factor(assay_df$plate_number)
+  title <- init_title(assay_df)
 
   # Generate plot
   cv_boxplot <- ggplot2::ggplot(assay_df, ggplot2::aes(x=types, y=rlu, colour=plate_number)) +
@@ -276,7 +292,7 @@ plot_cv_boxplot <- function(assay_df) {
       ggplot2::ylab("Log10 raw luminescence value") +
       ggplot2::xlab("Cell only or Virus only") +
       ggplot2::theme_classic() +
-      ggplot2::ggtitle(paste(unique(assay_df$experiment_id), "- Bleed", unique(assay_df$bleed), "- Virus", unique(assay_df$virus)))
+      ggplot2::ggtitle(title)
   return(cv_boxplot)
 }
 

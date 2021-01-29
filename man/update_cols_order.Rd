@@ -15,5 +15,4 @@ list, containing a modified assay dataframe, a list of treatment colours and a l
 \description{
 Function to return to update the colours and ordering of treatments before plotting
 }
-\keyword{code}
 \keyword{colours}
