@@ -213,7 +213,7 @@ create_feature_dropdown <- function(new_feature, input, values) {
 #' @param values object, containing `assay_df` biological assay data from plate reader
 #' @return rhandsontable interactive table of levles for selected feature/table in dataframe
 #' @keywords assay
-#' @export
+#' @noRd
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- values[["assay_df"]]
@@ -233,7 +233,7 @@ create_feature_table <- function(new_feature, input, values) {
 #' @param values object, containing `assay_df` biological assay data from plate reader
 #' @return null, automatically updates the main assay dataframe within the reactive values
 #' @keywords assay
-#' @export
+#' @noRd
 update_feature <- function(new_feature, input, values) {
   new_feature_table <- paste0(new_feature, "_table")
   req(new_feature_table)

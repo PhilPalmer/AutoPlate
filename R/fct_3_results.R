@@ -11,7 +11,7 @@
 #' @param language character, programming language of the HTML code block, default is R
 #' @return A HTML block with relevant langugage code tags
 #' @keywords HTML code
-#' @export
+#' @noRd
 prism_add_tags <- function(code, language = "r") {
   paste0("<pre><code class = 'language-", language, "'>",code,"</code></pre>")
 }
@@ -23,7 +23,7 @@ prism_add_tags <- function(code, language = "r") {
 #' @param language character, programming language of the HTML code block, default is R
 #' @return A HTML block with syntax highlighting
 #' @keywords HTML code Prism
-#' @export
+#' @noRd
 prism_code_block <- function(code, language = "r") {
   tagList(
     HTML(prism_add_tags(code, language = language)),
@@ -37,7 +37,7 @@ prism_code_block <- function(code, language = "r") {
 #' @return character, containing the code required to setup a results plot
 #' @keywords setup code
 #' @importFrom utils read.csv
-#' @export
+#' @noRd
 setup_code <- function() {
   '
     # Install libraries
@@ -111,7 +111,7 @@ plot_data_exploration <- function(assay_df) {
 #' @param code character, code that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @return character, containing the code required for the data exploration plot results code
 #' @keywords plot code
-#' @export
+#' @noRd
 data_exploration_code <- function(code) {
   setup <- setup_code()
   plot <- paste0('
@@ -170,7 +170,7 @@ plot_drc <- function(assay_df, drm) {
 #' @param virus character, specifying the virus to plot
 #' @return character, containing the code required for the DRC plot results code
 #' @keywords plot code
-#' @export
+#' @noRd
 drc_code <- function(code, drm_string, virus) {
   setup <- setup_code()
   plot <- paste0('
@@ -238,7 +238,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
 #' @return character, containing the code required for the IC50 plot results code
 #' @keywords plot code
 #' @importFrom stats median
-#' @export
+#' @noRd
 ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
   setup <- setup_code()
   plot_type <- if(ic50_is_boxplot) "boxplot" else "jitter"
@@ -286,7 +286,7 @@ plot_cv_boxplot <- function(assay_df) {
 #' @param code character, that's required, either "all" for setup and plot code or "plot" for just plot code
 #' @return character, containing the code required for the cell virus boxplot results code
 #' @keywords plot code
-#' @export
+#' @noRd
 cv_boxplot_code <- function(code) {
   setup <- setup_code()
   plot <- '
