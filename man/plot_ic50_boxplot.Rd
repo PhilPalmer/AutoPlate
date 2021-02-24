@@ -14,10 +14,10 @@ plot_ic50_boxplot(assay_df, drm, plot_type = "boxplot")
 \item{plot_type}{character, either "boxplot" (default) or "jitter"}
 }
 \value{
-plot, dose-response curve plot ggplot2 object
+list, containing IC50 boxplot ggplot2 object and individual effective dose dataframe
 }
 \description{
-Function to gneerate IC50 plot from input main assay dataframe and dose-response model (DRM)
+Function to generate IC50 plot from input main assay dataframe and dose-response model (DRM)
 }
 \keyword{code}
 \keyword{plot}

@@ -204,7 +204,7 @@ drc_code <- function(code, drm_string, virus) {
 
 #' @title Plot IC50 boxplot
 #'
-#' @description Function to gneerate IC50 plot from input main assay dataframe and dose-response model (DRM)
+#' @description Function to generate IC50 plot from input main assay dataframe and dose-response model (DRM)
 #' @param assay_df dataframe, main assay dataframe
 #' @param drm DRM object, the dose response model
 #' @param plot_type character, either "boxplot" (default) or "jitter"
