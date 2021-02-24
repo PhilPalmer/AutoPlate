@@ -22,7 +22,7 @@ library(autoplate)
 ```{r}
 platelist_file <- "pmn_platelist.csv"
 assay_df <- utils::read.csv(platelist_file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
-paste(toString(unique(assay_df$experiment_id)), "- Bleed", toString(unique(assay_df$bleed)), "- Virus", toString(unique(assay_df$virus)))
+init_title(assay_df, full_title = TRUE)
 ```
 
 ## Let's take a look at the data
