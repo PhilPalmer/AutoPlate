@@ -4,10 +4,12 @@
 \alias{init_title}
 \title{Initialise title}
 \usage{
-init_title(assay_df)
+init_title(assay_df, full_title = FALSE)
 }
 \arguments{
 \item{assay_df}{dataframe, main assay dataframe}
+
+\item{full_title}{bool, to specify if the full length title should be used}
 }
 \value{
 character, title for plot

@@ -57,12 +57,18 @@ setup_code <- function() {
 #'
 #' @description Function to return the title for a given assay dataframe
 #' @param assay_df dataframe, main assay dataframe
+#' @param full_title bool, to specify if the full length title should be used
 #' @return character, title for plot
 #' @keywords plot title
 #' @export
-init_title <- function(assay_df) {
-  virus_title <- if(nchar(toString(unique(assay_df$virus)))>50) "- All Viruses" else paste("- Virus",toString(unique(assay_df$virus)))
-  title <- paste(toString(unique(assay_df$experiment_id)), "- Bleed", toString(unique(assay_df$bleed)), virus_title)
+init_title <- function(assay_df, full_title = FALSE) {
+  if ((nchar(toString(unique(assay_df$virus)))>50) && full_title == FALSE) {
+    virus_title <-  "- All Viruses"
+  }
+  else {
+    virus_title <- paste("- Virus",toString(unique(assay_df$virus)))
+  }
+  paste(toString(unique(assay_df$experiment_id)), "- Bleed", toString(unique(assay_df$bleed)), virus_title)
 }
 
 #' @title Update treatments colours and order
