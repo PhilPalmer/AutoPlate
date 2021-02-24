@@ -227,15 +227,16 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   ied$treatment <- assay_df$treatment[match(ied$sample_id, assay_df$sample_id)]
   ied$plate_number <- assay_df$plate_number[match(ied$sample_id, assay_df$sample_id)]
   ied$virus <- assay_df$virus[match(ied$sample_id, assay_df$sample_id)]
-  control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$Estimate)
+  ied <- dplyr::rename(ied, log_ic50_dilution = Estimate)
+  control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$log_ic50_dilution)
   # Average Neutralisation
-  avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(Estimate))
+  avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(log_ic50_dilution))
   ied_order <- avied$treatment[order(avied$av)]
   plot_type <- if(plot_type == tolower("boxplot")) ggplot2::geom_boxplot() else ggplot2::geom_jitter()
   title <- init_title(assay_df)
 
   # Generate plot
-  ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=Estimate, colour=treatment))+
+  ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=log_ic50_dilution, colour=treatment))+
       plot_type +
       ggplot2::geom_point() +
       ggplot2::scale_x_discrete(limits=ied_order) +
