@@ -311,7 +311,12 @@ app_server <- function( input, output, session ) {
   observe({
     if (!is.null(input[["dilutions"]])) {
       values[["previous"]] <- isolate(values[["dilutions"]])
-      dilutions <- rhandsontable::hot_to_r(input[["dilutions"]])
+      # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/28
+      tryCatch({
+          dilutions <- rhandsontable::hot_to_r(input[["dilutions"]])
+        }, error = function(error_message) {
+          print(error_message)
+      })
     } else {
       if (is.null(values[["dilutions"]])) {
         dilutions <- dilutions
