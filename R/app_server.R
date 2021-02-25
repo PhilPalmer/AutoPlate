@@ -244,15 +244,20 @@ app_server <- function( input, output, session ) {
       assay_df <- calc_neut(assay_df)
       values[["assay_df"]] <- assay_df
     }
-    # Update main assay dataframe with new dilutions
+    # TODO: extract date
+    assay_df <- values[["assay_df"]]
+    return(assay_df)
+  })
+
+  # Update main assay dataframe with new dilutions
+  observeEvent(input$dilutions, {
+    req(values[["luminescence_files"]])
     if (!is.null(input$dilutions)) {
       assay_df <- values[["assay_df"]]
       dilutions <- rhandsontable::hot_to_r(input$dilutions)
       assay_df <- update_dilutions(assay_df, dilutions)
       values[["assay_df"]] <- assay_df
     }
-    # TODO: extract date
-    return(assay_df)
   })
 
   # Update the sample_id and types of the main assay dataframe based on user input
