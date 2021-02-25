@@ -1,0 +1,151 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# AutoPlate
+
+<!-- badges: start -->
+![R](https://img.shields.io/badge/R-v3.6.3+-blue?style=flat-square)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![codecov](https://codecov.io/gh/PhilPalmer/AutoPlate/branch/golem/graph/badge.svg?token=WjirKLbET1)](https://codecov.io/gh/PhilPalmer/AutoPlate)
+[![R build status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
+<!-- badges: end -->
+
+## Introduction
+
+[AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny web application](https://shiny.rstudio.com/) (and R library) that helps you automate the analysis of biological assays conducted on 96-well plates. It lets you go from raw data to publication ready figures in minutes!
+
+Currently, the only supported assay type is the [Pseudotype Micro Neutralisation (pMN) assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which dose-response curves can be fit. In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported. Let us know if there's an assay that you would like us to support!
+
+You can use AutoPlate in two ways:
+1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate!
+2. [**R library**](#using-the-r-library) - you can just use the functions you need for your own analysis! 
+
+## Check out the web application
+
+Try out the app here: https://philpalmer.shinyapps.io/AutoPlate/
+
+Currently the dashboard contains the following tabs and features, which allow you to run an analysis in three simple steps:
+
+- :house: **Home** <img src="inst/app/www/images/home.png" align="right" width="40%"  />
+
+    The opening page gives an introduction to AutoPlate and contains useful links for support and this GitHub repository
+
+    <br /> <br />
+
+- :arrow_right: **1) Input** <img src="inst/app/www/images/input.png" align="right" width="40%"  />
+
+    Upload the raw plate readouts for your 96 well-plates and specify what each well contained in terms of dilutions, samples, types, bleed, treatment, virus and experiment ID
+
+    <br /> <br /> 
+    
+- :heavy_check_mark: **2) Quality Control**  <img src="inst/app/www/images/quality_control.png" align="right" width="40%"  />
+
+    Visualise the data you entered in step 1 and check that the controls have worked for each plate/well. If the controls have failed for any wells these can be excluded from the analysis
+
+    <br /> <br /> 
+
+- :chart_with_upwards_trend: **3) Results**  <img src="inst/app/www/images/results.png" align="right" width="40%"  />
+
+    Analyse the data and generate downloadable plots such as a Dose Response Curve
+    
+    <br /> <br />
+
+### Run your own version of the web application
+
+1. Get the source code from GitHub:
+```bash
+git clone https://github.com/PhilPalmer/AutoPlate.git
+cd AutoPlate
+```
+
+2. See [`app.R`](app.R) for how you can run you own version of the app yourself locally
+
+Once you've loaded the library you can run AutoPlate like so:
+```bash
+RScript app.R
+```
+
+## Using the R library
+
+### Installation
+
+You can install the latest released version of autoplate from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("PhilPalmer/AutoPlate")
+```
+
+```r
+library(autoplate)
+```
+
+```{r, echo=FALSE}
+pkgload::load_all(export_all = FALSE,helpers = FALSE,attach_testthat = FALSE)
+```
+
+### Running your own analysis in R
+
+AutoPlate was primarily built as a web app but most of the functionality can also be run within R, which may be useful if you want to customise an analysis.
+
+Here is a basic example of how to plot a dose response curve from the data exported from AutoPlate:
+
+1) Load your dataset
+```{r, echo = TRUE}
+# Load an example dataset
+data("pmn_platelist_H1N1_example_data")
+data <- pmn_platelist_H1N1_example_data
+
+# OR
+
+# Load your own dataset - make sure your file path is correct!
+platelist_file <- "data-raw/pmn_platelist_H1N1_example_data.csv"
+data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
+```
+
+2) Define the virus you want to plot
+```{r, echo = TRUE}
+virus_to_plot <- unique(data$virus)[1]
+print(virus_to_plot)
+```
+
+3) Preprocess your dataset to keep only the non-excluded, `types` and `virus` of interest:
+```{r, echo = TRUE}
+ data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+```
+
+4) Fit your dose-response model (DRM) using the DRC package:
+```{r, echo = TRUE}
+model <- drc::drm(formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0))
+```
+
+5) Plot your dose-response curve with AutoPlate and ggplot2 (Optional: make it intereactive with Plotly!)
+```{r drc_plot, echo = TRUE}
+drc_plot <- autoplate::plot_drc(data, model)
+drc_plotly <- plotly::ggplotly(drc_plot)
+print(drc_plot)
+```
+
+## Credit
+
+This app was built by [@PhilPalmer](https://github.com/PhilPalmer) while at the University of Cambridge [Lab of Viral Zoonotics](https://www.lvz.vet.cam.ac.uk/)
+
+Many thanks to other who have helped out along the way too, including (but not limited to): David Wells, George Carnell, Joanne Marie Del Rosario and Kelly da Costa 
+
+<img src="inst/app/www/images/uni_of_cam_logo.png" height="100px"/>
+
+## Citation
+
+AutoPlate is yet to be published but we're hoping to change this soon!

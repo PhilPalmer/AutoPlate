@@ -1,0 +1,39 @@
+Package: autoplate
+Title: AutoPlate
+Version: 0.0.0.9000
+Authors@R: person('Phil', 'Palmer', email = 'pp502@cam.ac.uk', role = c('cre', 'aut'))
+Description: AutoPlate is an R Shiny web application (and UI) that helps you automate the analysis of biological assays conducted on 96-well plates.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+URL: https://github.com/PhilPalmer/AutoPlate
+BugReports: https://github.com/PhilPalmer/AutoPlate/issues
+Imports: 
+    shiny,
+    shinydashboard,
+    rhandsontable,
+    tidyr,
+    dplyr,
+    plot.matrix,
+    viridis,
+    ggplot2,
+    drc,
+    rmarkdown,
+    knitr,
+    svglite,
+    plotly,
+    shinyWidgets,
+    metafolio,
+    processx,
+    golem,
+    config,
+    pkgload
+Suggests: 
+    testthat,
+    covr
+VignetteBuilder: knitr
+Depends: 
+    magrittr,
+    R (>= 2.10)

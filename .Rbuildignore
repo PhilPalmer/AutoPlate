@@ -1,0 +1,11 @@
+^autoplate\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^README\.Rmd$
+^doc$
+^Meta$
+^codecov\.yml$
+^\.github$
+^app\.R$
+^rsconnect$
+^data-raw$
