@@ -28,6 +28,12 @@ app_server <- function( input, output, session ) {
   # 0) Home
   #########
 
+  # Create dropdown to select assay type
+  output$assay_type <- renderUI({
+    selectInput("assay_type", "Select the type of assay you wish to analyse", c("pMN", "ELLA"), "pMN")
+  })
+  observeEvent(input$assay_type, values[["assay_type"]] <- input$assay_type)
+
   output$steps <- renderText({
     HTML(paste0(
       "<li><b>Input</b> - upload the raw plate readouts for your 96 well-plates and specify what each well contained</li>",

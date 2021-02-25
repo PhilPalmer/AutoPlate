@@ -63,12 +63,14 @@ app_ui <- function(request) {
                       )
                     )
                   ),
-                  shiny::fluidRow(
-                    shinydashboard::box(
-                      width = 12, status = "primary",
-                      h3("Citing AutoPlate"),
-                      p("AutoPlate is yet to be published but we're hoping to change this soon!")
-                    )
+                  shinydashboard::box(
+                    width = 6, status = "primary",
+                    uiOutput("assay_type")
+                  ),
+                  shinydashboard::box(
+                    width = 6, status = "primary",
+                    h3("Citing AutoPlate"),
+                    p("AutoPlate is yet to be published but we're hoping to change this soon!")
                   )
                 ),
                 shiny::column(
