@@ -72,13 +72,14 @@ init_types <- function(assay_df, assay_type="pMN") {
 #'
 #' @description Initialise sample_id (mouse number) for assay dataframe based on input parameters
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param wcols vector, list of column numbers to update for each plate
+#' @param wells vector, list of well column numbers and row letters to update for each plate
 #' @param sample_id character, name to set sample_id to for specified columns
+#' @param n_samples integer, total number of samples per plate (default = 5)
 #' @return dataframe, containing the initialised sample_id column
 #' @keywords assay
 #' @importFrom magrittr %>%
 #' @export
-init_sample <- function(assay_df, wcols, sample_id) {
+init_sample <- function(assay_df, wells, sample_id, n_samples=5) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
     assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
@@ -86,14 +87,40 @@ init_sample <- function(assay_df, wcols, sample_id) {
   }
   if (sample_id != "Antibody") {
     assay_df$sample_id <- ifelse(
-      assay_df$wcol %in% wcols, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + sample_id), assay_df$sample_id
+      assay_df$wcol %in% wells | (assay_df$wrow %in% wells & !assay_df$wcol %in% c(11,12)), paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * n_samples + sample_id), assay_df$sample_id
     )
   } else {
-    assay_df$sample_id <- ifelse( assay_df$wcol %in% wcols, sample_id, assay_df$sample_id )
+    assay_df$sample_id <- ifelse( assay_df$wcol %in% wells, sample_id, assay_df$sample_id )
   }
   if (plates_not_numbered) {
     assay_df$plate_number <- assay_df$filename
     assay_df$rank <- NA
+  }
+  return(assay_df)
+}
+
+#' @title Init samples
+#'
+#' @description Initialise all sample_ids (mouse numbers) for assay dataframe based on assay type
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param assay_type character, type of assay eg "pMN" or "ELLA"
+#' @return dataframe, containing the initialised samples in sample_id column
+#' @keywords assay
+#' @export
+init_samples <- function(assay_df, assay_type) {
+  if (tolower(assay_type) == "ella") {
+    assay_df <- init_sample(assay_df = assay_df, wells = c("A","B"), sample_id = 1, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("C","D"), sample_id = 2, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("E","F"), sample_id = 3, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("G","H"), sample_id = 4, n_samples=4)
+  } else {
+    assay_df <- init_sample(assay_df = assay_df, wells = c(2,3), sample_id = 1)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(4,5), sample_id = 2)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(6,7), sample_id = 3)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(8,9), sample_id = 4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(10,11), sample_id = 5)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(12), sample_id = "Antibody")
+    assay_df$sample_id <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$sample_id)
   }
   return(assay_df)
 }

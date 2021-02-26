@@ -230,13 +230,7 @@ app_server <- function( input, output, session ) {
       # Populate main assay df with types using the default plate layout
       assay_df <- init_types(assay_df, values[["assay_type"]])
       # Populate main assay df with default sample_id info
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(2,3), sample_id = 1)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(4,5), sample_id = 2)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(6,7), sample_id = 3)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(8,9), sample_id = 4)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(10,11), sample_id = 5)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(12), sample_id = "Antibody")
-      assay_df$sample_id <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$sample_id)
+      assay_df <- init_samples(assay_df, values[["assay_type"]])
       # Populate main assay df with concentration/dilution info
       assay_df <- update_dilutions(assay_df, dilutions)
       # Calculate normalised luminescence values
