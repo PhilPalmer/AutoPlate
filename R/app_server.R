@@ -109,7 +109,7 @@ app_server <- function( input, output, session ) {
   output$message_input_files <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
       shinydashboard::box(HTML(paste0(
-        "<h4>Start here!</h4><p>Upload your CSV files first to use the app, which meet the following criteria:<p>
+        "<p>Upload your CSV files first to use the app, which meet the following criteria:<p>
             <ul>
                 <li>Each file must contain the following columns: 
                     \"ID,SequenceID,WellPosition,ScanPosition,Tag,RLU,RLU(RQ),Timestamp(ms)\"
