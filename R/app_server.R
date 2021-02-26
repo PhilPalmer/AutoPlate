@@ -119,10 +119,9 @@ app_server <- function( input, output, session ) {
         </p>
         <h5>OR</h5>
         <button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/golem/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
+          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
         </button>
         "
-        # TODO: update example data link to `main` branch once merged
       )), width = 12, background = "yellow")
     }
   })
