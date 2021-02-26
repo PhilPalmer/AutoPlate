@@ -63,14 +63,12 @@ app_ui <- function(request) {
                       )
                     )
                   ),
-                  shinydashboard::box(
-                    width = 6, status = "primary",
-                    uiOutput("assay_type")
-                  ),
-                  shinydashboard::box(
-                    width = 6, status = "primary",
-                    h3("Citing AutoPlate"),
-                    p("AutoPlate is yet to be published but we're hoping to change this soon!")
+                  shiny::fluidRow(
+                    shinydashboard::box(
+                      width = 12, status = "primary",
+                      h3("Citing AutoPlate"),
+                      p("AutoPlate is yet to be published but we're hoping to change this soon!")
+                    )
                   )
                 ),
                 shiny::column(
@@ -98,28 +96,37 @@ app_ui <- function(request) {
           shinydashboard::tabItem(
             tabName = "input",
             fluidRow(
-              shinydashboard::box(
-                title = "Luminescence files*",
-                width = 6,
-                uiOutput(outputId = "message_input_files"),
-                uiOutput(outputId = "tooltip_input_files"),
-                fileInput("luminescence_files", "Please select all luminescence readout CSV files (OR a CSV exported from AutoPlate)",
-                  multiple = TRUE,
-                  accept = c(
-                    "text/csv",
-                    "text/comma-separated-values,text/plain",
-                    ".csv"
+              column(6, 
+                shinydashboard::box(
+                  title = "1) Assay Type",
+                  width = NULL,
+                  uiOutput("assay_type")
+                ),
+                shinydashboard::box(
+                  title = "2) Luminescence files",
+                  width = NULL,
+                  uiOutput(outputId = "message_input_files"),
+                  uiOutput(outputId = "tooltip_input_files"),
+                  fileInput("luminescence_files", "Please select all luminescence readout CSV files (OR a CSV exported from AutoPlate)",
+                    multiple = TRUE,
+                    accept = c(
+                      "text/csv",
+                      "text/comma-separated-values,text/plain",
+                      ".csv"
+                    )
                   )
                 )
               ),
-              shinydashboard::box(
-                title = "Concentrations/dilutions*",
-                width = 6,
-                uiOutput(outputId = "tooltip_dilutions"),
-                rhandsontable::rHandsontableOutput("dilutions")
+              column(6,
+                shinydashboard::box(
+                  title = "3) Concentrations/dilutions",
+                  width = NULL,
+                  uiOutput(outputId = "tooltip_dilutions"),
+                  rhandsontable::rHandsontableOutput("dilutions")
+                )
               ),
               shinydashboard::box(
-                title = "96-Well Plate Data*",
+                title = "4) 96-Well Plate Data",
                 width = 12,
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
@@ -127,7 +134,7 @@ app_ui <- function(request) {
                 rhandsontable::rHandsontableOutput("plate_data")
               ),
               shinydashboard::box(
-                title = "Other features*",
+                title = "5) Other features",
                 width = 12,
                 uiOutput(outputId = "tooltip_features"),
                 shinydashboard::tabBox(
