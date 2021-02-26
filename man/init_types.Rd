@@ -4,10 +4,12 @@
 \alias{init_types}
 \title{Init types}
 \usage{
-init_types(assay_df)
+init_types(assay_df, assay_type = "pMN")
 }
 \arguments{
 \item{assay_df}{dataframe, containing biological assay data from plate reader}
+
+\item{assay_type}{character, type of assay eg "pMN" or "ELLA"}
 }
 \value{
 dataframe, containing the initialised type column

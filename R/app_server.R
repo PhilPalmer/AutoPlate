@@ -228,7 +228,7 @@ app_server <- function( input, output, session ) {
       # Rename columns
       assay_df <- dplyr::rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
       # Populate main assay df with types using the default plate layout
-      assay_df <- init_types(assay_df)
+      assay_df <- init_types(assay_df, values[["assay_type"]])
       # Populate main assay df with default sample_id info
       assay_df <- init_sample(assay_df = assay_df, wcols = c(2,3), sample_id = 1)
       assay_df <- init_sample(assay_df = assay_df, wcols = c(4,5), sample_id = 2)

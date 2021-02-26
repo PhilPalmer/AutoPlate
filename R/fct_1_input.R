@@ -44,17 +44,27 @@ init_cols <- function(assay_df) {
 #'
 #' @description Initialise types (c,m,v,x) for assay dataframe based on template 96-well plate format
 #' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param assay_type character, type of assay eg "pMN" or "ELLA"
 #' @return dataframe, containing the initialised type column
 #' @keywords assay
 #' @export
-init_types <- function(assay_df) {
-  assay_df <- assay_df %>%
-    dplyr::mutate(types = dplyr::case_when(
-      wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
-      wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
-      wcol %in% seq(2, 11) ~ "x",
-      wcol == 12 ~ "m",
-    ))
+init_types <- function(assay_df, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df <- assay_df %>%
+      dplyr::mutate(types = dplyr::case_when(
+        wcol %in% 1:10 ~ "x",
+        wcol == 11 ~ "v",
+        wcol == 12 ~ "c"
+      ))
+  } else {
+    assay_df <- assay_df %>%
+      dplyr::mutate(types = dplyr::case_when(
+        wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
+        wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
+        wcol %in% 2:11 ~ "x",
+        wcol == 12 ~ "m"
+      ))
+  }
   return(assay_df)
 }
 
