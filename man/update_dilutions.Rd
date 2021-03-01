@@ -4,12 +4,14 @@
 \alias{update_dilutions}
 \title{Update dilutions}
 \usage{
-update_dilutions(assay_df, dilutions)
+update_dilutions(assay_df, dilutions, assay_type = "pMN")
 }
 \arguments{
 \item{assay_df}{dataframe, containing biological assay data from plate reader}
 
 \item{dilutions}{dataframe, containing two columns for serum and control dilutions}
+
+\item{assay_type}{character, type of assay eg "pMN" or "ELLA" (default = "pMN")}
 }
 \value{
 dataframe, containing the updated dilutions

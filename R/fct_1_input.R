@@ -202,13 +202,27 @@ calc_neut <- function(assay_df) {
 #' @description Update dilutions in main assay dataframe based on the input dilutions dataframe
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param dilutions dataframe, containing two columns for serum and control dilutions
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
 #' @return dataframe, containing the updated dilutions
 #' @keywords assay
 #' @importFrom magrittr %>%
 #' @export
-update_dilutions <- function(assay_df, dilutions) {
-  assay_df %>%
-    dplyr::mutate(dilution = dplyr::case_when(
+update_dilutions <- function(assay_df, dilutions, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df %>% dplyr::mutate(dilution = dplyr::case_when(
+      wcol == "1" & types == "x" ~ dilutions[1, 1],
+      wcol == "2" & types == "x" ~ dilutions[2, 1],
+      wcol == "3" & types == "x" ~ dilutions[3, 1],
+      wcol == "4" & types == "x" ~ dilutions[4, 1],
+      wcol == "5" & types == "x" ~ dilutions[5, 1],
+      wcol == "6" & types == "x" ~ dilutions[6, 1],
+      wcol == "7" & types == "x" ~ dilutions[7, 1],
+      wcol == "8" & types == "x" ~ dilutions[8, 1],
+      wcol == "9" & types == "x" ~ dilutions[9, 1],
+      wcol == "10" & types == "x" ~ dilutions[10, 1]
+    ))
+  } else {
+    assay_df %>% dplyr::mutate(dilution = dplyr::case_when(
       wrow == "A" & types == "x" ~ dilutions[1, 1],
       wrow == "B" & types == "x" ~ dilutions[2, 1],
       wrow == "C" & types == "x" ~ dilutions[3, 1],
@@ -226,6 +240,7 @@ update_dilutions <- function(assay_df, dilutions) {
       wrow == "G" & types == "m" ~ dilutions[7, 2],
       wrow == "H" & types == "m" ~ dilutions[8, 2]
     ))
+  }
 }
 
 #' @title Update sample_ids

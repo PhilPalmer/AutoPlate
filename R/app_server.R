@@ -16,13 +16,10 @@ app_server <- function( input, output, session ) {
   # Define variables
   ##################
   values <- reactiveValues()
+  values[["assay_type"]] <- "pMN"
   report_filepath <- "inst/app/www/report.Rmd"
-  dilutions_filepath <- "data-raw/dilutions.csv"
-  dilutions <- utils::read.csv(dilutions_filepath,
-    header = TRUE,
-    stringsAsFactors = FALSE,
-    check.names = FALSE
-  )
+  data(dilutions_pmn)
+  data(dilutions_ella)
 
   #########
   # 0) Home
@@ -232,7 +229,7 @@ app_server <- function( input, output, session ) {
       # Populate main assay df with default sample_id info
       assay_df <- init_samples(assay_df, values[["assay_type"]])
       # Populate main assay df with concentration/dilution info
-      assay_df <- update_dilutions(assay_df, dilutions)
+      assay_df <- update_dilutions(assay_df, dilutions(), values[["assay_type"]])
       # Calculate normalised luminescence values
       assay_df <- calc_neut(assay_df)
       values[["assay_df"]] <- assay_df
@@ -248,7 +245,7 @@ app_server <- function( input, output, session ) {
     if (!is.null(input$dilutions)) {
       assay_df <- values[["assay_df"]]
       dilutions <- rhandsontable::hot_to_r(input$dilutions)
-      assay_df <- update_dilutions(assay_df, dilutions)
+      assay_df <- update_dilutions(assay_df, dilutions, values[["assay_type"]])
       values[["assay_df"]] <- assay_df
     }
   })
@@ -312,30 +309,35 @@ app_server <- function( input, output, session ) {
   })
 
   # Make dilutions table
-  observe({
+  dilutions <- reactive({
+    if (is.null(values[["dilutions"]])) {
+      dilutions <- if (tolower(values[["assay_type"]]) == "ella") dilutions_ella else dilutions_pmn
+    } else {
+      dilutions <- values[["dilutions"]]
+    }
+    return(dilutions)
+  })
+  # If user changes the assay type update the dilutions
+  observeEvent(input$assay_type, {
+    values[["dilutions"]] <- NULL
+    values[["dilutions"]] <- dilutions()
+  })
+  # Update dilutions based on user input
+  observeEvent(input$dilutions, {
     if (!is.null(input[["dilutions"]])) {
-      values[["previous"]] <- isolate(values[["dilutions"]])
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/28
       tryCatch({
           dilutions <- rhandsontable::hot_to_r(input[["dilutions"]])
         }, error = function(error_message) {
           print(error_message)
       })
-    } else {
-      if (is.null(values[["dilutions"]])) {
-        dilutions <- dilutions
-      } else {
-        dilutions <- values[["dilutions"]]
-      }
     }
-    values[["dilutions"]] <- dilutions
   })
   # Render dilutions table
   output$dilutions <- rhandsontable::renderRHandsontable({
-    dilutions <- values[["dilutions"]]
-    row.names(dilutions) <- LETTERS[1:dim(dilutions)[1]]
+    values[["dilutions"]] <- dilutions()
     if (!is.null(dilutions)) {
-      rhandsontable::rhandsontable(dilutions, stretchH = "all")
+      rhandsontable::rhandsontable(values[["dilutions"]], stretchH = "all")
     }
   })
 
