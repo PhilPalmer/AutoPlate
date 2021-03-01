@@ -112,7 +112,8 @@ app_ui <- function(request) {
                     accept = c(
                       "text/csv",
                       "text/comma-separated-values,text/plain",
-                      ".csv"
+                      ".csv",
+                      ".xls"
                     )
                   )
                 )

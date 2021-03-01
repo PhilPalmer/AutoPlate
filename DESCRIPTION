@@ -29,7 +29,8 @@ Imports:
     processx,
     golem,
     config,
-    pkgload
+    pkgload,
+    readxl
 Suggests: 
     testthat,
     covr

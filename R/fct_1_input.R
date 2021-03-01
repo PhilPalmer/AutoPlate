@@ -19,6 +19,55 @@ read_plus <- function(filename, filepath) {
     dplyr::mutate(filename = filename)
 }
 
+#' @title ELLA to assay dataframe
+#'
+#' @description Read ELLA data from an Excel file and convert to assay dataframe format appending the filename as an additional column
+#' @param filename character, file name to be added to the dataframe
+#' @param filepath character, path to the CSV file
+#' @return dataframe, generated from the input Excel file containing the filenames
+#' @keywords read input Excel files
+#' @importFrom magrittr %>%
+#' @export
+ella_to_assay_df <- function(filename, filepath) {
+  raw <- as.data.frame(readxl::read_excel(filepath, skip=2))
+  rownames(raw) <- raw[,1]
+  raw <- raw[,2:ncol(raw)]
+  assay_df <- expand.grid(names(raw), rownames(raw))
+  # Rename columns to well column and well row
+  names(assay_df) <- c("wcol", "wrow")
+  # Relative Light Units
+  assay_df$rlu <- as.vector(t(raw))
+  # When the well exceeds 3.5 the machine retuns ( + ) convert to 3.51
+  assay_df$rlu[assay_df$rlu == "( + )"] <- 3.51
+  assay_df$rlu <- as.numeric(assay_df$rlu)
+  assay_df %>% dplyr::mutate(filename = filename)
+}
+
+#' @title Initialise assay dataframe
+#'
+#' @description Read input files spectified from a dataframe and convert to assay dataframe format appending the filename as an additional column
+#' @param luminescence_files dataframe, containing columns "name" and "datapath" for input file names and path to the file respectively
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
+#' @return dataframe, generated from the files containing the filenames
+#' @keywords read input files assay dataframe
+#' @importFrom magrittr %>%
+#' @export
+init_assay_df <- function(luminescence_files, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df <-
+        apply(luminescence_files, 1, function(df) ella_to_assay_df(df["name"], df["datapath"])) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(plate_number = dplyr::dense_rank(filename))
+  } else {
+    assay_df <-
+        apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
+        tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
+  }
+  return(assay_df)
+}
+
 #' @title Init cols
 #'
 #' @description Initialise columns for assay dataframe
@@ -44,7 +93,7 @@ init_cols <- function(assay_df) {
 #'
 #' @description Initialise types (c,m,v,x) for assay dataframe based on template 96-well plate format
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param assay_type character, type of assay eg "pMN" or "ELLA"
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
 #' @return dataframe, containing the initialised type column
 #' @keywords assay
 #' @export

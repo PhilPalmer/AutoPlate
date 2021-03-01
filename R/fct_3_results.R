@@ -89,7 +89,7 @@ update_cols_order <- function(assay_df) {
     treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
     treatment_cols[1] <- "grey"
   }
-  if (!is.na(posotive_control)) {
+  if (length(posotive_control > 0)) {
     posotive_control_index <- which(treatments %in% posotive_control)
     treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
     treatment_cols[length(treatments)] <- "black"

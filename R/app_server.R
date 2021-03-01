@@ -195,8 +195,12 @@ app_server <- function( input, output, session ) {
     req(values[["luminescence_files"]], input$plate_tabs)
     # Define variables
     luminescence_files <- values[["luminescence_files"]]
-    header <- colnames(utils::read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
     cols <- c("types", "dilution", "bleed")
+    if (tolower(values[["assay_type"]]) == "ella") {
+      header <- c()
+    } else {
+      header <- colnames(utils::read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
+    }
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
@@ -218,15 +222,11 @@ app_server <- function( input, output, session ) {
     }
     # Initialise the main assay dataframe from the users uploaded luminescence files
     if (is.null(values[["plate_data"]]) & !all(cols %in% header)) {
-      assay_df <-
-        apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
-        dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
-        tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
+      assay_df <- init_assay_df(values[["luminescence_files"]], values[["assay_type"]])
       # Initialise new columns
       assay_df <- init_cols(assay_df)
       # Rename columns
-      assay_df <- dplyr::rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
+      assay_df <- dplyr::rename_all(assay_df, dplyr::recode, RLU="rlu", ID="machine_id", RLU.RQ.="rlu.rq", Timestamp.ms.="timestamp", SequenceID="sequence_id", ScanPosition="scan_position", Tag="tag")
       # Populate main assay df with types using the default plate layout
       assay_df <- init_types(assay_df, values[["assay_type"]])
       # Populate main assay df with default sample_id info

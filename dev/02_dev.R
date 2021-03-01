@@ -35,6 +35,7 @@ usethis::use_package("grDevices")
 usethis::use_package("graphics")
 usethis::use_package("stats")
 usethis::use_package("utils")
+usethis::use_package("readxl")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
