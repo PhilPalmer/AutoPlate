@@ -299,7 +299,7 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
 #' @param values object, containing `assay_df` biological assay data from plate reader
 #' @return dropdown of existing columns that can be used to define the `new_feature`
 #' @keywords assay
-#' @export
+#' @noRd
 create_feature_dropdown <- function(new_feature, input, values) {
   req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])

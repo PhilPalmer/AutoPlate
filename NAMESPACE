@@ -2,7 +2,6 @@
 
 export(assay_to_plate_df)
 export(calc_neut)
-export(create_feature_dropdown)
 export(ella_to_assay_df)
 export(exclude_wells)
 export(init_assay_df)
