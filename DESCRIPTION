@@ -30,7 +30,8 @@ Imports:
     golem,
     config,
     pkgload,
-    readxl
+    readxl,
+    pkgdown
 Suggests: 
     testthat,
     covr
