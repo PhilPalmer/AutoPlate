@@ -22,17 +22,25 @@ knitr::opts_chunk$set(
 [![R build status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
+View the [AutoPlate website](https://philpalmer.github.io/AutoPlate/) for the best browsing experience
+
 ## Introduction
 
 [AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny web application](https://shiny.rstudio.com/) (and R library) that helps you automate the analysis of biological assays conducted on 96-well plates. It lets you go from raw data to publication ready figures in minutes!
 
 Currently, the only supported assay type is the [Pseudotype Micro Neutralisation (pMN) assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which dose-response curves can be fit. In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported. Let us know if there's an assay that you would like us to support!
 
-You can use AutoPlate in two ways:
-1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate!
-2. [**R library**](#using-the-r-library) - you can just use the functions you need for your own analysis! 
+## Ways of using AutoPlate
+You can use AutoPlate in two ways: 
+1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
+    - Run the app `vignette("shiny_app")`
+    - See docs `vignette("web_app")`
+    - Run your own app `vignette("run_your_own_app")`
+2. [**R library**](#r-library-quick-start) - you can use only the functions you need to customise your own analysis!
+    - See docs `vignette("r_lib")`
+    - [See all functions](reference/index.html)
 
-## Check out the web application
+## Web Application Quick Start
 
 Try out the app here: https://philpalmer.shinyapps.io/AutoPlate/
 
@@ -77,7 +85,7 @@ Once you've loaded the library you can run AutoPlate like so:
 RScript app.R
 ```
 
-## Using the R library
+## R library Quick Start
 
 ### Installation
 

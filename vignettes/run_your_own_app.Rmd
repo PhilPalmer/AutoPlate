@@ -1,0 +1,21 @@
+---
+title: "Run your own version of the web application"
+description: >
+  Documentation for how to run your own version of the AutoPlate RShiny app
+output: rmarkdown::html_vignette
+---
+
+### Run your own version of the web application
+
+1. Get the source code from GitHub:
+```bash
+git clone https://github.com/PhilPalmer/AutoPlate.git
+cd AutoPlate
+```
+
+2. See [`app.R`](app.R) for how you can run you own version of the app yourself locally
+
+Once you've loaded the library you can run AutoPlate like so:
+```bash
+RScript app.R
+```

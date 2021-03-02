@@ -1,0 +1,8 @@
+---
+title: "Using the R library"
+description: >
+  Documentation for how to use the autoplate R library
+output: rmarkdown::html_vignette
+---
+
+See the [quick start](../index.html#r-library-quick-start)

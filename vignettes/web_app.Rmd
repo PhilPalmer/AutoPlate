@@ -1,0 +1,16 @@
+---
+title: "Using the web application"
+description: >
+  Documentation for using the web application
+output: rmarkdown::html_vignette
+---
+
+See the [Quick Start](../index.html#web-application-quick-start)
+
+## Supported Input Formats
+
+### 1) pMN CSV plates
+
+### 2) ELLA Excel plates
+
+### 3) AutoPlate format

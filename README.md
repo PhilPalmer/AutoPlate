@@ -13,6 +13,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
+View the [AutoPlate website](https://philpalmer.github.io/AutoPlate/) for the best browsing experience
+
 ## Introduction
 
 [AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny
@@ -28,11 +30,17 @@ dose-response curves can be fit. In the future, other assays such as
 ELLA, ELISA, HIA or even any custom assay may be supported. Let us know
 if there’s an assay that you would like us to support\!
 
+## Ways of using AutoPlate
 You can use AutoPlate in two ways: 
-1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate\!
-2. [**R library**](#using-the-r-library) - you can just use the functions you need for your own analysis\!
+1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
+    - Run the app `vignette("shiny_app")`
+    - See docs `vignette("web_app")`
+    - Run your own app `vignette("run_your_own_app")`
+2. [**R library**](#r-library-quick-start) - you can use only the functions you need to customise your own analysis!
+    - See docs `vignette("r_lib")`
+    - [See all functions](reference/index.html)
 
-## Check out the web application
+## Web Application Quick Start
 
 Try out the app here: <https://philpalmer.shinyapps.io/AutoPlate/>
 
@@ -73,27 +81,7 @@ allow you to run an analysis in three simple steps:
     
     <br /> <br /><br /><br />
 
-### Run your own version of the web application
-
-1.  Get the source code from GitHub:
-
-<!-- end list -->
-
-``` bash
-git clone https://github.com/PhilPalmer/AutoPlate.git
-cd AutoPlate
-```
-
-2.  See [`app.R`](app.R) for how you can run you own version of the app
-    yourself locally
-
-Once you’ve loaded the library you can run AutoPlate like so:
-
-``` bash
-RScript app.R
-```
-
-## Using the R library
+## R library Quick Start
 
 ### Installation
 
