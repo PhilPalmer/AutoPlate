@@ -53,6 +53,9 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li>
+  <a href="articles/index.html">Articles</a>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
@@ -79,22 +82,42 @@
 </h1></div>
 <!-- badges: start -->
 
+<p>View the <a href="https://philpalmer.github.io/AutoPlate/">AutoPlate website</a> for the best browsing experience</p>
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h2>
 <p><a href="https://philpalmer.shinyapps.io/AutoPlate/">AutoPlate</a> is an <a href="https://shiny.rstudio.com/">R Shiny web application</a> (and R library) that helps you automate the analysis of biological assays conducted on 96-well plates. It lets you go from raw data to publication ready figures in minutes!</p>
 <p>Currently, the only supported assay type is the <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/">Pseudotype Micro Neutralisation (pMN) assay</a>, for which dose-response curves can be fit. In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported. Let us know if there’s an assay that you would like us to support!</p>
+</div>
+<div id="ways-of-using-autoplate" class="section level2">
+<h2 class="hasAnchor">
+<a href="#ways-of-using-autoplate" class="anchor"></a>Ways of using AutoPlate</h2>
 <p>You can use AutoPlate in two ways:</p>
 <ol>
 <li>
-<a href="#check-out-the-web-application"><strong>Web application</strong></a> - this is the easiest way to run AutoPlate!</li>
+<a href="#web-application-quick-start"><strong>Web application</strong></a> - - this is the easiest way to run AutoPlate!
+<ul>
+<li>Run the app <code><a href="articles/shiny_app.html">vignette("shiny_app")</a></code>
+</li>
+<li>See docs <code><a href="articles/web_app.html">vignette("web_app")</a></code>
+</li>
+<li>Run your own app <code><a href="articles/run_your_own_app.html">vignette("run_your_own_app")</a></code>
+</li>
+</ul>
+</li>
 <li>
-<a href="#using-the-r-library"><strong>R library</strong></a> - you can just use the functions you need for your own analysis!</li>
+<a href="#r-library-quick-start"><strong>R library</strong></a> - you can use only the functions you need to customise your own analysis!
+<ul>
+<li>See docs <code><a href="articles/r_lib.html">vignette("r_lib")</a></code>
+</li>
+<li><a href="reference/index.html">See all functions</a></li>
+</ul>
+</li>
 </ol>
 </div>
-<div id="check-out-the-web-application" class="section level2">
+<div id="web-application-quick-start" class="section level2">
 <h2 class="hasAnchor">
-<a href="#check-out-the-web-application" class="anchor"></a>Check out the web application</h2>
+<a href="#web-application-quick-start" class="anchor"></a>Web Application Quick Start</h2>
 <p>Try out the app here: <a href="https://philpalmer.shinyapps.io/AutoPlate/" class="uri">https://philpalmer.shinyapps.io/AutoPlate/</a></p>
 <p>Currently the dashboard contains the following tabs and features, which allow you to run an analysis in three simple steps:</p>
 <ul>
@@ -119,35 +142,21 @@
 <p><br><br><br><br></p>
 </li>
 </ul>
-<div id="run-your-own-version-of-the-web-application" class="section level3">
-<h3 class="hasAnchor">
-<a href="#run-your-own-version-of-the-web-application" class="anchor"></a>Run your own version of the web application</h3>
-<ol>
-<li>Get the source code from GitHub:</li>
-</ol>
-<!-- end list --><div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">git</span> clone https://github.com/PhilPalmer/AutoPlate.git</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="bu">cd</span> AutoPlate</span></code></pre></div>
-<ol>
-<li>See <a href="app.R"><code>app.R</code></a> for how you can run you own version of the app yourself locally</li>
-</ol>
-<p>Once you’ve loaded the library you can run AutoPlate like so:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1"></a><span class="ex">RScript</span> app.R</span></code></pre></div>
 </div>
-</div>
-<div id="using-the-r-library" class="section level2">
+<div id="r-library-quick-start" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-the-r-library" class="anchor"></a>Using the R library</h2>
+<a href="#r-library-quick-start" class="anchor"></a>R library Quick Start</h2>
 <div id="installation" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h3>
 <p>You can install the latest released version of autoplate from <a href="https://github.com/">GitHub</a> with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"PhilPalmer/AutoPlate"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/PhilPalmer/AutoPlate">autoplate</a></span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="co">#&gt; Loading autoplate</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="co">#&gt; Loading required package: magrittr</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">#&gt; Loading autoplate</span></span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; Loading required package: magrittr</span></span></code></pre></div>
 </div>
 <div id="running-your-own-analysis-in-r" class="section level3">
 <h3 class="hasAnchor">
@@ -156,7 +165,7 @@
 <p>Here is a basic example of how to plot a dose response curve from the data exported from AutoPlate:</p>
 <p>1) Load your dataset</p>
 <!-- end list -->
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Load an example dataset</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"pmn_platelist_H1N1_example_data"</span><span class="op">)</span>
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="va">pmn_platelist_H1N1_example_data</span>
@@ -168,21 +177,21 @@
 <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="va">platelist_file</span>, header<span class="op">=</span><span class="cn">TRUE</span>, stringsAsFactors<span class="op">=</span><span class="cn">FALSE</span>, check.names<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 <p>2) Define the virus you want to plot</p>
 <!-- end list -->
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">virus_to_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">virus</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">virus_to_plot</span><span class="op">)</span>
 <span class="co">#&gt; [1] "A/swine/Guangxi/1/2013 (H1N1)"</span></code></pre></div>
 <p>3) Preprocess your dataset to keep only the non-excluded, <code>types</code> and <code>virus</code> of interest:</p>
 <!-- end list -->
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"> <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">types</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"x"</span>, <span class="st">"m"</span><span class="op">)</span>, <span class="va">exclude</span> <span class="op">==</span> <span class="cn">FALSE</span>, <span class="va">virus</span> <span class="op">==</span> <span class="va">virus_to_plot</span><span class="op">)</span></code></pre></div>
 <p>4) Fit your dose-response model (DRM) using the DRC package:</p>
 <!-- end list -->
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">drc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/drc/man/drm.html">drm</a></span><span class="op">(</span>formula<span class="op">=</span><span class="va">neutralisation</span><span class="op">~</span><span class="va">dilution</span>, curveid<span class="op">=</span><span class="va">sample_id</span>, fct<span class="op">=</span><span class="fu">drc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/drc/man/LL.4.html">LL2.4</a></span><span class="op">(</span><span class="op">)</span>, data<span class="op">=</span><span class="va">data</span>, pmodels<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="va">sample_id</span><span class="op">)</span>, upperl<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="cn">NA</span>,<span class="fl">100</span>,<span class="cn">NA</span><span class="op">)</span>, lowerl<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="cn">NA</span>,<span class="cn">NA</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>5) Plot your dose-response curve with AutoPlate and ggplot2 (Optional: make it intereactive with Plotly!)</p>
 <!-- end list -->
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">drc_plot</span> <span class="op">&lt;-</span> <span class="fu">autoplate</span><span class="fu">::</span><span class="fu"><a href="reference/plot_drc.html">plot_drc</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">model</span><span class="op">)</span>
 <span class="va">drc_plotly</span> <span class="op">&lt;-</span> <span class="fu">plotly</span><span class="fu">::</span><span class="fu"><a href="https://docs.ropensci.org/plotly/reference/ggplotly.html">ggplotly</a></span><span class="op">(</span><span class="va">drc_plot</span><span class="op">)</span>
 <span class="co">#&gt; Warning: `group_by_()` is deprecated as of dplyr 0.7.0.</span>
@@ -216,6 +225,8 @@
 <li>Browse source code at <br><a href="https://github.com/PhilPalmer/AutoPlate/">https://​github.com/​PhilPalmer/​AutoPlate/​</a>
 </li>
 <li>Report a bug at <br><a href="https://github.com/PhilPalmer/AutoPlate/issues">https://​github.com/​PhilPalmer/​AutoPlate/​issues</a>
+</li>
+<li>Use the app at <br><a href="https://philpalmer.shinyapps.io/AutoPlate/">https://​philpalmer.shinyapps.io/​AutoPlate/​</a>
 </li>
 </ul>
 </div>

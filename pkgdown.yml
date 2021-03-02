@@ -1,6 +1,10 @@
 pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2021-03-02T11:18Z
+articles:
+  r_lib: r_lib.html
+  run_your_own_app: run_your_own_app.html
+  shiny_app: shiny_app.html
+  web_app: web_app.html
+last_built: 2021-03-02T17:08Z
 
