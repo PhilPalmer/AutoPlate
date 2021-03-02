@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# AutoPlate
+# AutoPlate <img src="man/figures/logo.png" align="right" height=140/>
 
 <!-- badges: start -->
 
@@ -40,38 +40,38 @@ Currently the dashboard contains the following tabs and features, which
 allow you to run an analysis in three simple steps:
 
   - :house: **Home**
-    <img src="inst/app/www/images/home.png" align="right" width="40%"  />
+    <img src="man/figures/home.png" align="right" width="45%"  />
     
     The opening page gives an introduction to AutoPlate and contains
     useful links for support and this GitHub repository
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :arrow\_right: **1) Input**
-    <img src="inst/app/www/images/input.png" align="right" width="40%"  />
+  - :arrow_right: **1) Input**
+    <img src="man/figures/input.png" align="right" width="45%"  />
     
     Upload the raw plate readouts for your 96 well-plates and specify
     what each well contained in terms of dilutions, samples, types,
     bleed, treatment, virus and experiment ID
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :heavy\_check\_mark: **2) Quality Control**
-    <img src="inst/app/www/images/quality_control.png" align="right" width="40%"  />
+  - :heavy_check_mark: **2) Quality Control**
+    <img src="man/figures/quality_control.png" align="right" width="45%"  />
     
     Visualise the data you entered in step 1 and check that the controls
     have worked for each plate/well. If the controls have failed for any
     wells these can be excluded from the analysis
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :chart\_with\_upwards\_trend: **3) Results**
-    <img src="inst/app/www/images/results.png" align="right" width="40%"  />
+  - :chart_with_upwards_trend: **3) Results**
+    <img src="man/figures/results.png" align="right" width="45%"  />
     
     Analyse the data and generate downloadable plots such as a Dose
     Response Curve
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
 ### Run your own version of the web application
 
@@ -188,11 +188,11 @@ This app was built by [@PhilPalmer](https://github.com/PhilPalmer)
 while at the University of Cambridge [Lab of Viral
 Zoonotics](https://www.lvz.vet.cam.ac.uk/)
 
-Many thanks to other who have helped out along the way too, including
+Many thanks to others who have helped out along the way too, including
 (but not limited to): David Wells, George Carnell, Joanne Marie Del
 Rosario and Kelly da Costa
 
-<img src="inst/app/www/images/uni_of_cam_logo.png" height="100px"/>
+<img src="man/figures/uni_of_cam_logo.png" height="100px"/>
 
 ## Citation
 
