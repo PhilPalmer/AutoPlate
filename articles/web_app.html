@@ -92,17 +92,133 @@
 <div id="supported-input-formats" class="section level2">
 <h2 class="hasAnchor">
 <a href="#supported-input-formats" class="anchor"></a>Supported Input Formats</h2>
-<div id="pmn-csv-plates" class="section level3">
+<div id="pmn-csv-plate" class="section level3">
 <h3 class="hasAnchor">
-<a href="#pmn-csv-plates" class="anchor"></a>1) pMN CSV plates</h3>
+<a href="#pmn-csv-plate" class="anchor"></a>1) pMN CSV plate</h3>
+<table class="table">
+<colgroup>
+<col width="56%">
+<col width="43%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Description</td>
+<td>CSV input from a plate reader used for the pMN assay</td>
+</tr>
+<tr class="even">
+<td>Format</td>
+<td>CSV</td>
+</tr>
+<tr class="odd">
+<td>Extension</td>
+<td><code>.csv</code></td>
+</tr>
+<tr class="even">
+<td>Example</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Required columns</td>
+<td>
+<code>WellPosition</code>, <code>RLU</code>
+</td>
+</tr>
+<tr class="even">
+<td>Plate number</td>
+<td>The end of the filename can be used to specify the filename eg <code>n1.csv</code> for plate 1. If numbers are not provided the filename will be used instead</td>
+</tr>
+<tr class="odd">
+<td>Number of files</td>
+<td>One CSV file per plate. Multiple files can be uploaded</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="ella-excel-plates" class="section level3">
+<div id="ella-excel-plate" class="section level3">
 <h3 class="hasAnchor">
-<a href="#ella-excel-plates" class="anchor"></a>2) ELLA Excel plates</h3>
+<a href="#ella-excel-plate" class="anchor"></a>2) ELLA Excel plate</h3>
+<table class="table">
+<colgroup>
+<col width="56%">
+<col width="43%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Description</td>
+<td>Excel input from a plate reader used for the ELLA assay</td>
+</tr>
+<tr class="even">
+<td>Format</td>
+<td>Excel</td>
+</tr>
+<tr class="odd">
+<td>Extension</td>
+<td><code>.xls</code></td>
+</tr>
+<tr class="even">
+<td>Example</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Required columns</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Plate number</td>
+<td>To generate the plate numbers the names of the input files will be sorted and numbered sequentially</td>
+</tr>
+<tr class="odd">
+<td>Other info</td>
+<td>The first two lines of the Excel file will be skipped so the 96-well plate table should start on line 3</td>
+</tr>
+<tr class="even">
+<td>Number of files</td>
+<td>One Excel file per plate. Multiple files can be uploaded</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="autoplate-format" class="section level3">
+<div id="autoplate-csv-plates" class="section level3">
 <h3 class="hasAnchor">
-<a href="#autoplate-format" class="anchor"></a>3) AutoPlate format</h3>
+<a href="#autoplate-csv-plates" class="anchor"></a>3) AutoPlate CSV plates</h3>
+<table class="table">
+<colgroup>
+<col width="56%">
+<col width="43%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>Description</td>
+<td>CSV input downloaded from AutoPlate on the QC page generated from one of the two previous input files</td>
+</tr>
+<tr class="even">
+<td>Format</td>
+<td>CSV</td>
+</tr>
+<tr class="odd">
+<td>Extension</td>
+<td><code>.csv</code></td>
+</tr>
+<tr class="even">
+<td>Example</td>
+<td><a href="https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv"><code>pmn_platelist_H1N1_example_data.csv</code></a></td>
+</tr>
+<tr class="odd">
+<td>Required columns</td>
+<td>
+<code>types</code>, <code>dilution</code>, <code>bleed</code>, <code>sample_id</code>, <code>virus</code>, <code>rlu</code>, <code>neutralisation</code>, <code>treatment</code>, <code>experiment_id</code>, <code>bleed</code>, <code>exclude</code>, <code>plate_number</code>
+</td>
+</tr>
+<tr class="even">
+<td>Plate number</td>
+<td>The plate number will be specified in the <code>plate_number</code> column</td>
+</tr>
+<tr class="odd">
+<td>Number of files</td>
+<td>One CSV file which can correspond to multiple plates</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
   </div>
