@@ -46,13 +46,13 @@ app_ui <- function(request) {
                       h4("What is AutoPlate?"),
                       p(
                         "AutoPlate is an ", a(href = "https://shiny.rstudio.com/", "R Shiny web application"),
-                        "(and UI) that helps you automate the analysis of biological assays conducted on 96-well plates.",
+                        "(and R library) that helps you automate the analysis of biological assays conducted on 96-well plates.",
                         "It lets you go from raw data to publication ready figures in minutes!"
                       ),
                       h4("What biological assays can I analyse?"),
-                      p("Currently, the only supported assay type is the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseudotype Micro Neutralisation (pMN) assay", .noWS = "outside"),
-                        ", for which dose-response curves can be fit.",
-                        "In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported.",
+                      p("Currently, the only supported assay types are the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseudotype Micro Neutralisation (pMN)", .noWS = "outside"),
+                        " and ELLA assays, for which dose-response curves can be fit.",
+                        "In the future, other assays such as ELISA, HIA or even any custom assay may be supported.",
                         "Let us know if there's an assay that you would like us to support!",
                         .noWS = c("after-begin", "before-end")
                       ),

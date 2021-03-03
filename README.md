@@ -23,11 +23,10 @@ you automate the analysis of biological assays conducted on 96-well
 plates. It lets you go from raw data to publication ready figures in
 minutes\!
 
-Currently, the only supported assay type is the [Pseudotype Micro
-Neutralisation (pMN)
-assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which
+Currently, the only supported assay types are the [Pseudotype Micro
+Neutralisation (pMN)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/) and ELLA assays, for which
 dose-response curves can be fit. In the future, other assays such as
-ELLA, ELISA, HIA or even any custom assay may be supported. Let us know
+ELISA, HIA or even any custom assay may be supported. Let us know
 if there’s an assay that you would like us to support\!
 
 ## Ways of using AutoPlate
