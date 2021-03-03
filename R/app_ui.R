@@ -105,9 +105,15 @@ app_ui <- function(request) {
                 shinydashboard::box(
                   title = "2) Luminescence files",
                   width = NULL,
-                  uiOutput(outputId = "message_input_files"),
                   uiOutput(outputId = "tooltip_input_files"),
-                  fileInput("luminescence_files", "Please select all luminescence readout CSV files (OR a CSV exported from AutoPlate)",
+                  fileInput("luminescence_files",
+                    span("Please upload all input luminescence files",
+                      tags$a(
+                          "(see supported input formats)",
+                          href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html",
+                          target = "_blank"
+                        )
+                    ),
                     multiple = TRUE,
                     accept = c(
                       "text/csv",
@@ -115,7 +121,8 @@ app_ui <- function(request) {
                       ".csv",
                       ".xls"
                     )
-                  )
+                  ),
+                  uiOutput(outputId = "message_input_files"),
                 )
               ),
               column(6,

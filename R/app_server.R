@@ -105,21 +105,12 @@ app_server <- function( input, output, session ) {
   # Create messages to display to user
   output$message_input_files <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
-      shinydashboard::box(HTML(paste0(
-        "<p>Upload your CSV files first to use the app, which meet the following criteria:<p>
-            <ul>
-                <li>Each file must contain the following columns: 
-                    \"ID,SequenceID,WellPosition,ScanPosition,Tag,RLU,RLU(RQ),Timestamp(ms)\"
-                <li>(Recommended) the file names end with the plate number, such as \"n1.csv\" for plate 1, 
-                    for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
-            </ul>
-        </p>
-        <h5>OR</h5>
-        <button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
+      HTML(paste0(
+        "<button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
+          Or try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data!</a>
         </button>
         "
-      )), width = 12, background = "yellow")
+      ))
     }
   })
   output$message_drm_string <- renderText({
