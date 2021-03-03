@@ -20,8 +20,41 @@ See the [Quick Start](../index.html#web-application-quick-start)
 
 ## Supported Input Formats
 
-### 1) pMN CSV plates
+### 1) pMN CSV plate
 
-### 2) ELLA Excel plates
+|                   |               |
+| ----------------- | ------------- |
+| Description       | CSV input from a plate reader used for the pMN assay |
+| Format            | CSV  |
+| Extension         | `.csv`  |
+| Example           |  |
+| Required columns  | `WellPosition`, `RLU` |
+| Plate number      | The end of the filename can be used to specify the filename eg `n1.csv` for plate 1. If numbers are not provided the filename will be used instead |
+| Number of files   | One CSV file per plate. Multiple files can be uploaded |
 
-### 3) AutoPlate format
+
+### 2) ELLA Excel plate
+
+|                   |               |
+| ----------------- | ------------- |
+| Description       | Excel input from a plate reader used for the ELLA assay |
+| Format            | Excel  |
+| Extension         | `.xls`  |
+| Example           |  |
+| Required columns  |  |
+| Plate number      | To generate the plate numbers the names of the input files will be sorted and numbered sequentially |
+| Other info        | The first two lines of the Excel file will be skipped so the 96-well plate table should start on line 3 |
+| Number of files   | One Excel file per plate. Multiple files can be uploaded |
+
+
+### 3) AutoPlate CSV plates
+
+|                   |               |
+| ----------------- | ------------- |
+| Description       | CSV input downloaded from AutoPlate on the QC page generated from one of the two previous input files |
+| Format            | CSV  |
+| Extension         | `.csv`  |
+| Example           | [`pmn_platelist_H1N1_example_data.csv`](https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv) |
+| Required columns  | `types`, `dilution`, `bleed`, `sample_id`, `virus`, `rlu`, `neutralisation`, `treatment`, `experiment_id`, `bleed`, `exclude`, `plate_number` |
+| Plate number      | The plate number will be specified in the `plate_number` column |
+| Number of files   | One CSV file which can correspond to multiple plates  |
