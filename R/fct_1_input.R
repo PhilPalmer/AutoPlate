@@ -131,7 +131,7 @@ init_types <- function(assay_df, assay_type="pMN") {
 init_sample <- function(assay_df, wells, sample_id, n_samples=5) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
-    assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
+    assay_df <- assay_df %>% dplyr::mutate(rank = dplyr::dense_rank(plate_number))
     assay_df$plate_number <- assay_df$rank
   }
   if (sample_id != "Antibody") {
