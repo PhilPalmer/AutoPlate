@@ -3,7 +3,18 @@ title: "Using the web application"
 description: >
   Documentation for using the web application
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the web application}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 See the [Quick Start](../index.html#web-application-quick-start)
 

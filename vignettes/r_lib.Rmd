@@ -3,6 +3,17 @@ title: "Using the R library"
 description: >
   Documentation for how to use the autoplate R library
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using the R library}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 See the [quick start](../index.html#r-library-quick-start)

@@ -3,7 +3,18 @@ title: "Run your own version of the web application"
 description: >
   Documentation for how to run your own version of the AutoPlate RShiny app
 output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Run your own version of the web application}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 ### Run your own version of the web application
 
