@@ -16,7 +16,11 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # List the first level UI elements here 
     shinydashboard::dashboardPage(
-      shinydashboard::dashboardHeader(title = "AutoPlate"),
+      shinydashboard::dashboardHeader(title = "AutoPlate",
+        tags$li(tags$a(
+          span(icon("book"),"Docs"), href = "https://philpalmer.github.io/AutoPlate/", target = "_blank"
+        ), class = "dropdown")
+      ),
       shinydashboard::dashboardSidebar(
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
