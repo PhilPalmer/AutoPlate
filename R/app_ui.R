@@ -123,7 +123,8 @@ app_ui <- function(request) {
                       "text/csv",
                       "text/comma-separated-values,text/plain",
                       ".csv",
-                      ".xls"
+                      ".xls",
+                      ".xlsx"
                     )
                   ),
                   uiOutput(outputId = "message_input_files"),

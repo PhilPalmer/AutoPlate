@@ -39,7 +39,7 @@ See the [Quick Start](../index.html#web-application-quick-start)
 | ----------------- | ------------- |
 | Description       | Excel input from a plate reader used for the ELLA assay |
 | Format            | Excel  |
-| Extension         | `.xls`  |
+| Extension         | `.xls`, `xlsx` |
 | Example           |  |
 | Required columns  |  |
 | Plate number      | To generate the plate numbers the names of the input files will be sorted and numbered sequentially |

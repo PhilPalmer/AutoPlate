@@ -29,7 +29,8 @@ read_plus <- function(filename, filepath) {
 #' @importFrom magrittr %>%
 #' @export
 ella_to_assay_df <- function(filename, filepath) {
-  raw <- as.data.frame(readxl::read_excel(filepath, skip=2))
+  raw <- as.data.frame(readxl::read_excel(filepath))
+  if (all(is.na(raw[1,]))) raw <- as.data.frame(readxl::read_excel(filepath, skip=2))
   rownames(raw) <- raw[,1]
   raw <- raw[,2:ncol(raw)]
   assay_df <- expand.grid(names(raw), rownames(raw))
