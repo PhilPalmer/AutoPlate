@@ -304,7 +304,9 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
 create_feature_dropdown <- function(new_feature, input, values) {
   req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])
-  selectInput(new_feature, "Select existing feature", names(assay_df))
+  features <- c("update_all_wells", names(assay_df))
+  selected <- if (new_feature == "treatment") "sample_id" else features[1]
+  selectInput(new_feature, "Select existing feature", features, selected)
 }
 
 #' @title Create feature table
@@ -319,10 +321,15 @@ create_feature_dropdown <- function(new_feature, input, values) {
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- values[["assay_df"]]
-  feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
-  feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
-  new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow = length(feature_levels), byrow = T))
-  names(new_feature_df) <- input[[new_feature]]
+  if (tolower(input[[new_feature]]) == "update_all_wells") {
+    new_feature_df <- setNames(data.frame(matrix(ncol = 2, nrow = 1)), c("Wells to update", new_feature))
+    new_feature_df["Wells to update"] <- "all"
+  } else {
+    feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
+    feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
+    new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow = length(feature_levels), byrow = T))
+    names(new_feature_df) <- input[[new_feature]]
+  }
   new_feature_df[[new_feature]] <- as.character(NA)
   rhandsontable::rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
 }
@@ -337,13 +344,20 @@ create_feature_table <- function(new_feature, input, values) {
 #' @keywords assay
 #' @noRd
 update_feature <- function(new_feature, input, values) {
-  new_feature_table <- paste0(new_feature, "_table")
-  req(new_feature_table)
-  existing_feature <- input[[new_feature]]
-  assay_df <- values[["assay_df"]]
-  mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
-  assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
-  values[["assay_df"]] <- assay_df
+  tryCatch({
+    new_feature_table <- paste0(new_feature, "_table")
+    existing_feature <- input[[new_feature]]
+    assay_df <- values[["assay_df"]]
+    mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
+    if (tolower(existing_feature) == "update_all_wells") {
+      assay_df[[new_feature]] <- mappings_table[[new_feature]]
+    } else {
+      assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
+    }
+    values[["assay_df"]] <- assay_df
+  }, error = function(error_message) {
+    print(error_message)
+  })
 }
 
 #' @title Assay to plate dataframe
