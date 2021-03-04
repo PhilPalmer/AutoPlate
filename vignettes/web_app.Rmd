@@ -42,8 +42,7 @@ See the [Quick Start](../index.html#web-application-quick-start)
 | Extension         | `.xls`, `xlsx` |
 | Example           |  |
 | Required columns  |  |
-| Plate number      | To generate the plate numbers the names of the input files will be sorted and numbered sequentially |
-| Other info        | The first two lines of the Excel file will be skipped so the 96-well plate table should start on line 3 |
+| Plate number      | The end of the filename can be used to specify the filename eg `n1.csv` for plate 1. If numbers are not provided the filename will be used instead |
 | Number of files   | One Excel file per plate. Multiple files can be uploaded |
 
 
