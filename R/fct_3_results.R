@@ -232,12 +232,11 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   # Average Neutralisation
   avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(log_ic50_dilution))
   ied_order <- avied$treatment[order(avied$av)]
-  plot_type <- if(plot_type == tolower("boxplot")) ggplot2::geom_boxplot() else ggplot2::geom_jitter()
   title <- init_title(assay_df)
 
   # Generate plot
   ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=log_ic50_dilution, colour=treatment))+
-      plot_type +
+      { if (plot_type == tolower("boxplot")) ggplot2::geom_boxplot() } +
       ggplot2::geom_point() +
       ggplot2::scale_x_discrete(limits=ied_order) +
       ggplot2::ylab("Individual IC50 log10") +
