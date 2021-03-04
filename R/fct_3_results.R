@@ -270,8 +270,8 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     model <- drc::drm(',drm_string,')
 
     # Generate plot
-    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")$ic50_boxplot
-    plotly::ggplotly(ic50_boxplot)
+    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")
+    plotly::ggplotly(ic50_boxplot$ic50_boxplot)
   ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)

@@ -499,6 +499,10 @@ app_server <- function( input, output, session ) {
     filename = "ic50_boxplot.svg",
     content = function(file) ggplot2::ggsave(file, plot = values[["ic50_boxplot"]], width = 10)
   )
+  output$download_ied <- downloadHandler(
+    filename = "ied.csv",
+    content = function(file) utils::write.table(values[["ied"]], file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+  )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
     content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10)
@@ -541,7 +545,8 @@ app_server <- function( input, output, session ) {
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
       eval(parse(text=ic50_boxplot_code("plot",input$drm_string,input$ic50_is_boxplot,input$virus_ic50)))
-      values[["ic50_boxplot"]] <- ic50_boxplot
+      values[["ied"]] <- ic50_boxplot$ied
+      values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
       }, error = function(error_message) {
         print(error_message)
     })

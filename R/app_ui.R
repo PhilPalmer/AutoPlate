@@ -259,10 +259,15 @@ app_ui <- function(request) {
                   ),
                   tabPanel(
                     "IC50 Boxplot",
-                    div(downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control'),
+                    div(
+                      downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control',
+                      br(),br(),
+                      div(downloadButton("download_ied", "Download CSV IED Table"), class = 'inline control')
+                    ),
                     div(uiOutput("virus_ic50"), class = 'inline control'),
                     div(br(), class = 'inline space'),
                     div(shinyWidgets::switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
+                    br(),br(),
                     shinydashboard::tabBox(
                       width = 12,
                       tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
