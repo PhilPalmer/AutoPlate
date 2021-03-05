@@ -253,7 +253,7 @@ app_ui <- function(request) {
                     div(uiOutput("virus_drc"), class = 'inline control'),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12, height = "90vh",
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("drc")),
                       tabPanel("View code", uiOutput("drc_code"))
                     )
@@ -270,7 +270,7 @@ app_ui <- function(request) {
                     div(shinyWidgets::switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
                     br(),br(),
                     shinydashboard::tabBox(
-                      width = 12, height = "90vh",
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
                       tabPanel("View code", uiOutput("ic50_boxplot_code"))
                     )
