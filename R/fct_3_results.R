@@ -121,10 +121,16 @@ plot_data_exploration <- function(assay_df) {
     ggplot2::facet_wrap(.~virus) +
     ggplot2::ylim(c(-100, 110)) +
     ggplot2::scale_x_continuous(trans="log10") +
-    ggplot2::theme_classic() +
+    ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+    ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+    ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+    ggplot2::annotation_logticks(side="b", outside = TRUE) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
+    ggplot2::geom_vline(ggplot2::aes(xintercept=-Inf)) + 
+    ggplot2::coord_cartesian(clip="off") +
     ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-    ggplot2::ylab("Neutralisation") +
-    ggplot2::xlab("Dilution") +
+    ggplot2::ylab("% Neutralisation") +
+    ggplot2::xlab("Serum Dilution") +
     ggplot2::ggtitle(title)
   return(data_exploration_plot)
 }

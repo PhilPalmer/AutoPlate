@@ -242,7 +242,7 @@ app_ui <- function(request) {
                     downloadButton("download_data_exploration", "Download SVG Plot"),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("data_exploration")),
                       tabPanel("View code", uiOutput("data_exploration_code"))
                     )

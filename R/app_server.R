@@ -489,7 +489,7 @@ app_server <- function( input, output, session ) {
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["data_exploration"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["data_exploration"]], width = 10, height = 8)
   )
   output$download_drc <- downloadHandler(
     filename = "drc.svg",
@@ -525,8 +525,9 @@ app_server <- function( input, output, session ) {
   output$data_exploration <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
-    eval(parse(text=data_exploration_code("plot")))
-    values[["data_exploration"]] <- data_exploration_plot
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    values[["data_exploration"]] <- plot_data_exploration(data)
+    plotly::ggplotly(values[["data_exploration"]])
   })
   output$drc <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
