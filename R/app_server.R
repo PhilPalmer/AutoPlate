@@ -527,7 +527,8 @@ app_server <- function( input, output, session ) {
     data <- values[["assay_df"]]
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     values[["data_exploration"]] <- plot_data_exploration(data)
-    plotly::ggplotly(values[["data_exploration"]])
+    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+    plotly::ggplotly(values[["data_exploration"]])  %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
   })
   output$drc <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
