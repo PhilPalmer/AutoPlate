@@ -251,9 +251,11 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
       { if (plot_type == tolower("boxplot")) ggplot2::geom_boxplot() } +
       ggplot2::geom_point() +
       ggplot2::scale_x_discrete(limits=ied_order) +
-      ggplot2::ylab("Individual IC50 log10") +
+      ggplot2::ylab("IC50 Dilution log10") +
       ggplot2::xlab("Treatment") +
-      ggplot2::theme_classic() +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::ggtitle(title) +
       ggplot2::coord_flip() + 
