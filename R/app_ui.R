@@ -253,7 +253,7 @@ app_ui <- function(request) {
                     div(uiOutput("virus_drc"), class = 'inline control'),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "90vh",
                       tabPanel("View Plot", plotly::plotlyOutput("drc")),
                       tabPanel("View code", uiOutput("drc_code"))
                     )

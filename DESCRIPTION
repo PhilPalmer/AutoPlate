@@ -31,7 +31,7 @@ Imports:
     config,
     pkgload,
     readxl,
-    pkgdown
+    ggprism
 Suggests: 
     testthat,
     covr

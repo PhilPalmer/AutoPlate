@@ -81,7 +81,12 @@ init_title <- function(assay_df, full_title = FALSE) {
 #' @export
 update_cols_order <- function(assay_df) {
   treatments <- unique(assay_df$treatment)
-  treatment_cols <- metafolio::gg_color_hue(length(treatments),0,360)
+  colorblind_safe <- c("#000000", "#ff0066", "#0f7f80", "#410080", "#ab66ff", "#66ccfd")
+  if (length(treatments) > length(colorblind_safe)) {
+    treatment_cols <- gg_color_hue(length(treatments),0,360)
+  } else {
+    treatment_cols <- colorblind_safe
+  }
   negative_control <- c("pbs", "negative_control")
   posotive_control <- unique(assay_df[assay_df$type == "m",]$treatment)
   if (any(negative_control %in% tolower(treatments))) {
@@ -173,11 +178,18 @@ plot_drc <- function(assay_df, drm) {
       ggplot2::geom_point(data=assay_df, ggplot2::aes(y=neutralisation)) +
       ggplot2::facet_wrap("treatment") +  
       ggplot2::scale_x_continuous(trans="log10") +
-      ggplot2::theme_classic() +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::theme(strip.background = ggplot2::element_blank()) +
-      ggplot2::ylab("Neutralisation") +
-      ggplot2::xlab("Dilution") +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+      ggplot2::annotation_logticks(side="b", outside = TRUE) +
+      ggplot2::geom_hline(yintercept=50, linetype="dotted") +
+      ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
+      ggplot2::geom_vline(ggplot2::aes(xintercept=-Inf)) + 
+      ggplot2::coord_cartesian(clip="off") +
+      ggplot2::ylab("% Neutralisation") +
+      ggplot2::xlab("Serum Dilution") +
       ggplot2::ggtitle(title)
   return(drc_plot)
 }

@@ -36,7 +36,7 @@ usethis::use_package("graphics")
 usethis::use_package("stats")
 usethis::use_package("utils")
 usethis::use_package("readxl")
-usethis::use_package("pkgdown")
+usethis::use_package("ggprism")
 
 ## Add modules ----
 ## Create a module infrastructure in R/

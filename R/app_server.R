@@ -493,7 +493,7 @@ app_server <- function( input, output, session ) {
   )
   output$download_drc <- downloadHandler(
     filename = "drc.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["drc"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["drc"]], width = 10, height = 8)
   )
   output$download_ic50 <- downloadHandler(
     filename = "ic50_boxplot.svg",
@@ -533,10 +533,16 @@ app_server <- function( input, output, session ) {
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-        eval(parse(text=drc_code("plot",input$drm_string,input$virus_drc)))
-        values[["drc"]] <- drc_plot
-      }, error = function(error_message) {
-        print(error_message)
+      virus_to_plot <- input$virus_drc
+      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+      model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+      values[["drc"]] <- plot_drc(data, model)
+      drc_plotly <- plotly::ggplotly(values[["drc"]])
+      m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+      drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
+      drc_plotly 
+    }, error = function(error_message) {
+      print(error_message)
     })
   })
   output$ic50_boxplot <- plotly::renderPlotly({
