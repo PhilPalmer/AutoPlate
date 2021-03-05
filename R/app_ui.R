@@ -280,7 +280,7 @@ app_ui <- function(request) {
                     downloadButton("download_cv_boxplot", "Download SVG Plot"),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("cv_boxplot")),
                       tabPanel("View code", uiOutput("cv_boxplot_code"))
                     )

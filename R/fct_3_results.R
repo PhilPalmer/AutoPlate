@@ -317,7 +317,10 @@ plot_cv_boxplot <- function(assay_df) {
       ggplot2::scale_y_continuous(trans="log10") +
       ggplot2::ylab("Log10 raw luminescence value") +
       ggplot2::xlab("Cell only or Virus only") +
-      ggplot2::theme_classic() +
+      ggplot2::annotation_logticks(side="l") +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
       ggplot2::ggtitle(title)
   return(cv_boxplot)
 }

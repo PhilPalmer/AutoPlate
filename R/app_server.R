@@ -505,7 +505,7 @@ app_server <- function( input, output, session ) {
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10, height = 8)
   )
 
   # Create dropdown to select virus for DRC & IC50 plots
@@ -569,8 +569,13 @@ app_server <- function( input, output, session ) {
   output$cv_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
-    eval(parse(text=cv_boxplot_code("plot"))) 
-    values[["cv_boxplot"]] <- cv_boxplot
-    plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
+    data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
+      dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+      dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
+    values[["cv_boxplot"]] <- plot_cv_boxplot(data)
+    cv_boxplotly <- plotly::ggplotly(values[["cv_boxplot"]]) 
+    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+    cv_boxplotly <- cv_boxplotly %>% plotly::layout(boxmode = "group", autosize = F, width = 1000, height = 800, margin = m)
+    cv_boxplotly
   })
 }
