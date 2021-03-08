@@ -104,13 +104,13 @@ plotly::ggplotly(types_boxplot) %>% plotly::layout(boxmode = "group")
 
 ## Data Exploration
 
-```{r}
+```{r, fig.width=12, fig.height=10}
 # Preprocessing
 data <- dplyr::filter(data, types %in% c("x", "m"))
 
 # Generate plot
 data_exploration_plot <- plot_data_exploration(data)
-plotly::ggplotly(data_exploration_plot)
+suppressWarnings(plotly::ggplotly(data_exploration_plot))
 ```
 
 ## DRM model
@@ -122,7 +122,7 @@ drm_model
 
 ## Dose Response Curve(s)
 
-```{r}
+```{r, fig.width=12, fig.height=10}
 # Produce a seperate plot for each virus
 htmltools::tagList(lapply(unique(data$virus), function(virus_to_plot) {
   # Preprocessing
@@ -130,13 +130,13 @@ htmltools::tagList(lapply(unique(data$virus), function(virus_to_plot) {
   model <- eval(parse(text = paste("drc::drm(", drm_model, ")")))
   # Generate plot
   drc_plot <- plot_drc(data, model)
-  plotly::ggplotly(drc_plot)
+  suppressWarnings(plotly::ggplotly(drc_plot))
 }))
 ```
 
 ## Individual Effective Dose (IED) Table(s)
 
-```{r, results='asis'}
+```{r, results='asis', fig.width=12, fig.height=10}
 # Generate ied tables and ic50 boxplots
 ic50_boxplots <- htmltools::tagList()
 for (virus_to_plot in unique(data$virus)) {
@@ -152,19 +152,19 @@ for (virus_to_plot in unique(data$virus)) {
 
 ## IC50 Boxplot(s)
 
-```{r}
+```{r, fig.width=12, fig.height=10}
 ic50_boxplots
 ```
 
 ## Virus + Cell Boxplot
 
-```{r}
+```{r, fig.width=12, fig.height=10}
 # Preprocessing
 boxplot_data <- dplyr::filter(boxplot_data, types %in% c("cell", "virus"))
 
 # Generate plot
 cv_boxplot <- plot_cv_boxplot(boxplot_data)
-plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
+suppressWarnings(plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group"))
 ```
 
 # Session Info for Reproducibility
