@@ -304,9 +304,10 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
 create_feature_dropdown <- function(new_feature, input, values) {
   req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])
-  features <- c("update_all_wells", names(assay_df))
+  message <- paste("Enter the",new_feature,"for each:")
+  features <- c("well", names(assay_df))
   selected <- if (new_feature == "treatment") "sample_id" else features[1]
-  selectInput(new_feature, "Select existing feature", features, selected)
+  selectInput(new_feature, message, features, selected)
 }
 
 #' @title Create feature table
@@ -321,7 +322,7 @@ create_feature_dropdown <- function(new_feature, input, values) {
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- values[["assay_df"]]
-  if (tolower(input[[new_feature]]) == "update_all_wells") {
+  if (tolower(input[[new_feature]]) == "well") {
     new_feature_df <- setNames(data.frame(matrix(ncol = 2, nrow = 1)), c("Wells to update", new_feature))
     new_feature_df["Wells to update"] <- "all"
   } else {
@@ -345,13 +346,14 @@ create_feature_table <- function(new_feature, input, values) {
 #' @noRd
 update_feature <- function(new_feature, input, values) {
   tryCatch({
-    new_feature_table <- paste0(new_feature, "_table")
     existing_feature <- input[[new_feature]]
     assay_df <- values[["assay_df"]]
-    mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
-    if (tolower(existing_feature) == "update_all_wells") {
-      assay_df[[new_feature]] <- mappings_table[[new_feature]]
+    if (tolower(existing_feature) == "well") {
+      new_feature_text <- paste0(new_feature, "_text")
+      assay_df[[new_feature]] <- input[[new_feature_text]]
     } else {
+      new_feature_table <- paste0(new_feature, "_table")
+      mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
       assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
     }
     values[["assay_df"]] <- assay_df

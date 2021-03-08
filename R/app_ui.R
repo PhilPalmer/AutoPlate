@@ -157,9 +157,22 @@ app_ui <- function(request) {
                   id = "tabset_features",
                   tabPanel(
                     "Bleed",
-                    actionButton("go_bleed", "Submit feature", icon("check-circle")),
-                    uiOutput("bleed"),
-                    rhandsontable::rHandsontableOutput("bleed_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("bleed")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.bleed == 'well'",
+                          textInput("bleed_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.bleed != 'well'",
+                          rhandsontable::rHandsontableOutput("bleed_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_bleed", "Submit feature", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
                     "Treatment",
