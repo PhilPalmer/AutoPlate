@@ -141,6 +141,7 @@ app_ui <- function(request) {
               shinydashboard::box(
                 title = "4) 96-Well Plate Data",
                 width = 12,
+                HTML("<p>Enter data for any well or feature. Make sure the <code>types</code>, <code>sample_id</code> and <code>dilution</code> are entered correctly</p>"),
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
                 uiOutput("plate_tabs"),
