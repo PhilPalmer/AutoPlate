@@ -322,15 +322,10 @@ create_feature_dropdown <- function(new_feature, input, values) {
 create_feature_table <- function(new_feature, input, values) {
   req(input[[new_feature]])
   assay_df <- values[["assay_df"]]
-  if (tolower(input[[new_feature]]) == "well") {
-    new_feature_df <- setNames(data.frame(matrix(ncol = 2, nrow = 1)), c("Wells to update", new_feature))
-    new_feature_df["Wells to update"] <- "all"
-  } else {
-    feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
-    feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
-    new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow = length(feature_levels), byrow = T))
-    names(new_feature_df) <- input[[new_feature]]
-  }
+  feature_levels <- levels(as.factor(unlist(assay_df[[input[[new_feature]]]])))
+  feature_levels <- feature_levels[order(nchar(feature_levels), feature_levels)]
+  new_feature_df <- data.frame(matrix(unlist(feature_levels), nrow = length(feature_levels), byrow = T))
+  names(new_feature_df) <- input[[new_feature]]
   new_feature_df[[new_feature]] <- as.character(NA)
   rhandsontable::rhandsontable(new_feature_df, stretchH = "all", rowHeaders = NULL)
 }
