@@ -62,6 +62,10 @@ setup_code <- function() {
 #' @keywords plot title
 #' @export
 init_title <- function(assay_df, full_title = FALSE) {
+  features <- c("bleed", "experiment_id", "virus")
+  for (feature in features) {
+    if (all(unique(assay_df[feature]) %in% c(NA, ""))) assay_df[feature] <- NA
+  }
   if ((nchar(toString(unique(assay_df$virus)))>50) && full_title == FALSE) {
     virus_title <-  "- All Viruses"
   }
