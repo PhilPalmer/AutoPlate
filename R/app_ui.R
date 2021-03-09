@@ -232,6 +232,11 @@ app_ui <- function(request) {
                       )
                     )
                   )
+                ),
+                shinydashboard::box(
+                  title = "Make sure you've entered all features",
+                  width = 4,
+                  formattable::formattableOutput("features_table")
                 )
               )
             )

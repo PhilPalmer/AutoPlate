@@ -350,6 +350,24 @@ app_server <- function( input, output, session ) {
   observeEvent(input$go_virus, update_feature("virus", input, values))
   observeEvent(input$go_experiment_id, update_feature("experiment_id", input, values))
 
+  # Creature table to display which features have been entered
+  output$features_table <- formattable::renderFormattable({
+    req(values[["luminescence_files"]])
+    assay_df <- values[["assay_df"]]
+    features <- c("types", "sample_id", "dilution", "virus", "treatment", "bleed", "experiment_id")
+    features_df <- setNames(data.frame(matrix(ncol = 2, nrow = length(features))), c("Feature", "Entered"))
+    features_df$Feature <- features
+    for (feature in features) {
+      empty <- all(unique(assay_df[feature]) %in% c(NA, ""))
+      features_df[features_df$Feature == feature,]$Entered <- if(empty) FALSE else TRUE
+    }
+    formattable::formattable(features_df, list(
+      Entered = formattable::formatter("span",
+        style = x ~ formattable::style(color = ifelse(x, "green", "red")),
+        x ~ formattable::icontext(ifelse(x, "ok", "remove"), ifelse(x, "Yes", "No")))
+    ))
+  })
+
   #######
   # 2) QC
   #######

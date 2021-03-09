@@ -37,6 +37,7 @@ usethis::use_package("stats")
 usethis::use_package("utils")
 usethis::use_package("readxl")
 usethis::use_package("ggprism")
+usethis::use_package("formattable", "suggests")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
