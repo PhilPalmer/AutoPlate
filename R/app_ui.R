@@ -170,7 +170,7 @@ app_ui <- function(request) {
                         )
                       ),
                       shiny::column(width = 1,
-                        actionButton("go_bleed", "Submit feature", icon("check-circle")),
+                        actionButton("go_bleed", "Submit", icon("check-circle")),
                       )
                     )
                   ),
