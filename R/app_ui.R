@@ -176,21 +176,60 @@ app_ui <- function(request) {
                   ),
                   tabPanel(
                     "Treatment",
-                    actionButton("go_treatment", "Submit feature", icon("check-circle")),
-                    uiOutput("treatment"),
-                    rhandsontable::rHandsontableOutput("treatment_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("treatment")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.treatment == 'well'",
+                          textInput("treatment_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.treatment != 'well'",
+                          rhandsontable::rHandsontableOutput("treatment_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_treatment", "Submit", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
                     "Virus",
-                    actionButton("go_virus", "Submit feature", icon("check-circle")),
-                    uiOutput("virus"),
-                    rhandsontable::rHandsontableOutput("virus_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("virus")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.virus == 'well'",
+                          textInput("virus_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.virus != 'well'",
+                          rhandsontable::rHandsontableOutput("virus_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_virus", "Submit", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
                     "Experiment ID",
-                    actionButton("go_experiment_id", "Submit feature", icon("check-circle")),
-                    uiOutput("experiment_id"),
-                    rhandsontable::rHandsontableOutput("experiment_id_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("experiment_id")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.experiment_id == 'well'",
+                          textInput("experiment_id_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.experiment_id != 'well'",
+                          rhandsontable::rHandsontableOutput("experiment_id_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_experiment_id", "Submit", icon("check-circle")),
+                      )
+                    )
                   )
                 )
               )
