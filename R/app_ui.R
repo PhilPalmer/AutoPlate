@@ -157,21 +157,21 @@ app_ui <- function(request) {
                   # The id lets us use input$tabset_features on the server to find the current tab
                   id = "tabset_features",
                   tabPanel(
-                    "Bleed",
+                    "Virus",
                     fluidRow(
-                      shiny::column(width = 3, uiOutput("bleed")),
+                      shiny::column(width = 3, uiOutput("virus")),
                       shiny::column(width = 8,
                         conditionalPanel(
-                          condition = "input.bleed == 'well'",
-                          textInput("bleed_text", NULL)
+                          condition = "input.virus == 'well'",
+                          textInput("virus_text", NULL)
                         ),
                         conditionalPanel(
-                          condition = "input.bleed != 'well'",
-                          rhandsontable::rHandsontableOutput("bleed_table"),
+                          condition = "input.virus != 'well'",
+                          rhandsontable::rHandsontableOutput("virus_table"),
                         )
                       ),
                       shiny::column(width = 1,
-                        actionButton("go_bleed", "Submit", icon("check-circle")),
+                        actionButton("go_virus", "Submit", icon("check-circle")),
                       )
                     )
                   ),
@@ -195,21 +195,21 @@ app_ui <- function(request) {
                     )
                   ),
                   tabPanel(
-                    "Virus",
+                    "Bleed",
                     fluidRow(
-                      shiny::column(width = 3, uiOutput("virus")),
+                      shiny::column(width = 3, uiOutput("bleed")),
                       shiny::column(width = 8,
                         conditionalPanel(
-                          condition = "input.virus == 'well'",
-                          textInput("virus_text", NULL)
+                          condition = "input.bleed == 'well'",
+                          textInput("bleed_text", NULL)
                         ),
                         conditionalPanel(
-                          condition = "input.virus != 'well'",
-                          rhandsontable::rHandsontableOutput("virus_table"),
+                          condition = "input.bleed != 'well'",
+                          rhandsontable::rHandsontableOutput("bleed_table"),
                         )
                       ),
                       shiny::column(width = 1,
-                        actionButton("go_virus", "Submit", icon("check-circle")),
+                        actionButton("go_bleed", "Submit", icon("check-circle")),
                       )
                     )
                   ),
