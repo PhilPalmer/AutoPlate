@@ -16,7 +16,11 @@ app_ui <- function(request) {
     golem_add_external_resources(),
     # List the first level UI elements here 
     shinydashboard::dashboardPage(
-      shinydashboard::dashboardHeader(title = "AutoPlate"),
+      shinydashboard::dashboardHeader(title = "AutoPlate",
+        tags$li(tags$a(
+          span(icon("book"),"Docs"), href = "https://philpalmer.github.io/AutoPlate/", target = "_blank"
+        ), class = "dropdown")
+      ),
       shinydashboard::dashboardSidebar(
         shinydashboard::sidebarMenu(
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
@@ -46,13 +50,13 @@ app_ui <- function(request) {
                       h4("What is AutoPlate?"),
                       p(
                         "AutoPlate is an ", a(href = "https://shiny.rstudio.com/", "R Shiny web application"),
-                        "(and UI) that helps you automate the analysis of biological assays conducted on 96-well plates.",
+                        "(and R library) that helps you automate the analysis of biological assays conducted on 96-well plates.",
                         "It lets you go from raw data to publication ready figures in minutes!"
                       ),
                       h4("What biological assays can I analyse?"),
-                      p("Currently, the only supported assay type is the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseudotype Micro Neutralisation (pMN) assay", .noWS = "outside"),
-                        ", for which dose-response curves can be fit.",
-                        "In the future, other assays such as ELLA, ELISA, HIA or even any custom assay may be supported.",
+                      p("Currently, the only supported assay types are the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseudotype Micro Neutralisation (pMN)", .noWS = "outside"),
+                        " and ELLA assays, for which dose-response curves can be fit.",
+                        "In the future, other assays such as ELISA, HIA or even any custom assay may be supported.",
                         "Let us know if there's an assay that you would like us to support!",
                         .noWS = c("after-begin", "before-end")
                       ),
@@ -96,36 +100,55 @@ app_ui <- function(request) {
           shinydashboard::tabItem(
             tabName = "input",
             fluidRow(
-              shinydashboard::box(
-                title = "Luminescence files*",
-                width = 6,
-                uiOutput(outputId = "message_input_files"),
-                uiOutput(outputId = "tooltip_input_files"),
-                fileInput("luminescence_files", "Please select all luminescence readout CSV files (OR a CSV exported from AutoPlate)",
-                  multiple = TRUE,
-                  accept = c(
-                    "text/csv",
-                    "text/comma-separated-values,text/plain",
-                    ".csv"
-                  )
+              column(6, 
+                shinydashboard::box(
+                  title = "1) Assay Type",
+                  width = NULL,
+                  uiOutput("assay_type")
+                ),
+                shinydashboard::box(
+                  title = "2) Luminescence files",
+                  width = NULL,
+                  uiOutput(outputId = "tooltip_input_files"),
+                  fileInput("luminescence_files",
+                    span("Please upload all input luminescence files",
+                      tags$a(
+                          "(see supported input formats)",
+                          href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html",
+                          target = "_blank"
+                        )
+                    ),
+                    multiple = TRUE,
+                    accept = c(
+                      "text/csv",
+                      "text/comma-separated-values,text/plain",
+                      ".csv",
+                      ".xls",
+                      ".xlsx"
+                    )
+                  ),
+                  uiOutput(outputId = "message_input_files"),
+                )
+              ),
+              column(6,
+                shinydashboard::box(
+                  title = "3) Concentrations/dilutions",
+                  width = NULL,
+                  uiOutput(outputId = "tooltip_dilutions"),
+                  rhandsontable::rHandsontableOutput("dilutions")
                 )
               ),
               shinydashboard::box(
-                title = "Concentrations/dilutions*",
-                width = 6,
-                uiOutput(outputId = "tooltip_dilutions"),
-                rhandsontable::rHandsontableOutput("dilutions")
-              ),
-              shinydashboard::box(
-                title = "96-Well Plate Data*",
+                title = "4) 96-Well Plate Data",
                 width = 12,
+                HTML("<p>Enter data for any well or feature. Make sure the <code>types</code>, <code>sample_id</code> and <code>dilution</code> are entered correctly</p>"),
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
                 uiOutput("plate_tabs"),
                 rhandsontable::rHandsontableOutput("plate_data")
               ),
               shinydashboard::box(
-                title = "Other features*",
+                title = "5) Other features",
                 width = 12,
                 uiOutput(outputId = "tooltip_features"),
                 shinydashboard::tabBox(
@@ -134,29 +157,86 @@ app_ui <- function(request) {
                   # The id lets us use input$tabset_features on the server to find the current tab
                   id = "tabset_features",
                   tabPanel(
-                    "Bleed",
-                    actionButton("go_bleed", "Submit feature", icon("check-circle")),
-                    uiOutput("bleed"),
-                    rhandsontable::rHandsontableOutput("bleed_table")
+                    "Virus",
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("virus")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.virus == 'well'",
+                          textInput("virus_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.virus != 'well'",
+                          rhandsontable::rHandsontableOutput("virus_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_virus", "Submit", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
                     "Treatment",
-                    actionButton("go_treatment", "Submit feature", icon("check-circle")),
-                    uiOutput("treatment"),
-                    rhandsontable::rHandsontableOutput("treatment_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("treatment")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.treatment == 'well'",
+                          textInput("treatment_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.treatment != 'well'",
+                          rhandsontable::rHandsontableOutput("treatment_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_treatment", "Submit", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
-                    "Virus",
-                    actionButton("go_virus", "Submit feature", icon("check-circle")),
-                    uiOutput("virus"),
-                    rhandsontable::rHandsontableOutput("virus_table")
+                    "Bleed",
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("bleed")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.bleed == 'well'",
+                          textInput("bleed_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.bleed != 'well'",
+                          rhandsontable::rHandsontableOutput("bleed_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_bleed", "Submit", icon("check-circle")),
+                      )
+                    )
                   ),
                   tabPanel(
                     "Experiment ID",
-                    actionButton("go_experiment_id", "Submit feature", icon("check-circle")),
-                    uiOutput("experiment_id"),
-                    rhandsontable::rHandsontableOutput("experiment_id_table")
+                    fluidRow(
+                      shiny::column(width = 3, uiOutput("experiment_id")),
+                      shiny::column(width = 8,
+                        conditionalPanel(
+                          condition = "input.experiment_id == 'well'",
+                          textInput("experiment_id_text", NULL)
+                        ),
+                        conditionalPanel(
+                          condition = "input.experiment_id != 'well'",
+                          rhandsontable::rHandsontableOutput("experiment_id_table"),
+                        )
+                      ),
+                      shiny::column(width = 1,
+                        actionButton("go_experiment_id", "Submit", icon("check-circle")),
+                      )
+                    )
                   )
+                ),
+                shinydashboard::box(
+                  title = "Make sure you've entered all features",
+                  width = 4,
+                  formattable::formattableOutput("features_table")
                 )
               )
             )
@@ -220,7 +300,7 @@ app_ui <- function(request) {
                     downloadButton("download_data_exploration", "Download SVG Plot"),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("data_exploration")),
                       tabPanel("View code", uiOutput("data_exploration_code"))
                     )
@@ -231,19 +311,24 @@ app_ui <- function(request) {
                     div(uiOutput("virus_drc"), class = 'inline control'),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("drc")),
                       tabPanel("View code", uiOutput("drc_code"))
                     )
                   ),
                   tabPanel(
                     "IC50 Boxplot",
-                    div(downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control'),
+                    div(
+                      downloadButton("download_ic50", "Download SVG Plot"), class = 'inline control',
+                      br(),br(),
+                      div(downloadButton("download_ied", "Download CSV IED Table"), class = 'inline control')
+                    ),
                     div(uiOutput("virus_ic50"), class = 'inline control'),
                     div(br(), class = 'inline space'),
                     div(shinyWidgets::switchInput(inputId = "ic50_is_boxplot", value = TRUE, onLabel = "Boxplot", offLabel = "Scatter plot"), class = 'inline control'),
+                    br(),br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
                       tabPanel("View code", uiOutput("ic50_boxplot_code"))
                     )
@@ -253,7 +338,7 @@ app_ui <- function(request) {
                     downloadButton("download_cv_boxplot", "Download SVG Plot"),
                     br(), br(),
                     shinydashboard::tabBox(
-                      width = 12,
+                      width = 12, height = "100vh",
                       tabPanel("View Plot", plotly::plotlyOutput("cv_boxplot")),
                       tabPanel("View code", uiOutput("cv_boxplot_code"))
                     )

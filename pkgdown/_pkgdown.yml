@@ -1,0 +1,15 @@
+home:
+  title: AutoPlate
+  links:
+  - text: Use the app
+    href: https://philpalmer.shinyapps.io/AutoPlate/
+
+articles:
+  - title: Web Application
+    contents:
+    - shiny_app
+    - web_app
+    - run_your_own_app
+  - title: R library
+    contents:
+    - r_lib

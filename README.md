@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# AutoPlate
+# AutoPlate <img src="man/figures/logo.png" align="right" height=140/>
 
 <!-- badges: start -->
 
@@ -13,6 +13,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
+View the [AutoPlate website](https://philpalmer.github.io/AutoPlate/) for the best browsing experience
+
 ## Introduction
 
 [AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny
@@ -21,18 +23,23 @@ you automate the analysis of biological assays conducted on 96-well
 plates. It lets you go from raw data to publication ready figures in
 minutes\!
 
-Currently, the only supported assay type is the [Pseudotype Micro
-Neutralisation (pMN)
-assay](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/), for which
+Currently, the only supported assay types are the [Pseudotype Micro
+Neutralisation (pMN)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/) and ELLA assays, for which
 dose-response curves can be fit. In the future, other assays such as
-ELLA, ELISA, HIA or even any custom assay may be supported. Let us know
+ELISA, HIA or even any custom assay may be supported. Let us know
 if there’s an assay that you would like us to support\!
 
+## Ways of using AutoPlate
 You can use AutoPlate in two ways: 
-1. [**Web application**](#check-out-the-web-application) - this is the easiest way to run AutoPlate\!
-2. [**R library**](#using-the-r-library) - you can just use the functions you need for your own analysis\!
+1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
+    - Run the app `vignette("shiny_app")`
+    - See docs `vignette("web_app")`
+    - Run your own app `vignette("run_your_own_app")`
+2. [**R library**](#r-library-quick-start) - you can use only the functions you need to customise your own analysis!
+    - See docs `vignette("r_lib")`
+    - [See all functions](reference/index.html)
 
-## Check out the web application
+## Web Application Quick Start
 
 Try out the app here: <https://philpalmer.shinyapps.io/AutoPlate/>
 
@@ -40,60 +47,40 @@ Currently the dashboard contains the following tabs and features, which
 allow you to run an analysis in three simple steps:
 
   - :house: **Home**
-    <img src="inst/app/www/images/home.png" align="right" width="40%"  />
+    <img src="man/figures/home.png" align="right" width="45%"  />
     
     The opening page gives an introduction to AutoPlate and contains
     useful links for support and this GitHub repository
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :arrow\_right: **1) Input**
-    <img src="inst/app/www/images/input.png" align="right" width="40%"  />
+  - :arrow_right: **1) Input**
+    <img src="man/figures/input.png" align="right" width="45%"  />
     
     Upload the raw plate readouts for your 96 well-plates and specify
     what each well contained in terms of dilutions, samples, types,
     bleed, treatment, virus and experiment ID
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :heavy\_check\_mark: **2) Quality Control**
-    <img src="inst/app/www/images/quality_control.png" align="right" width="40%"  />
+  - :heavy_check_mark: **2) Quality Control**
+    <img src="man/figures/quality_control.png" align="right" width="45%"  />
     
     Visualise the data you entered in step 1 and check that the controls
     have worked for each plate/well. If the controls have failed for any
     wells these can be excluded from the analysis
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-  - :chart\_with\_upwards\_trend: **3) Results**
-    <img src="inst/app/www/images/results.png" align="right" width="40%"  />
+  - :chart_with_upwards_trend: **3) Results**
+    <img src="man/figures/results.png" align="right" width="45%"  />
     
     Analyse the data and generate downloadable plots such as a Dose
     Response Curve
     
-    <br /> <br />
+    <br /> <br /><br /><br />
 
-### Run your own version of the web application
-
-1.  Get the source code from GitHub:
-
-<!-- end list -->
-
-``` bash
-git clone https://github.com/PhilPalmer/AutoPlate.git
-cd AutoPlate
-```
-
-2.  See [`app.R`](app.R) for how you can run you own version of the app
-    yourself locally
-
-Once you’ve loaded the library you can run AutoPlate like so:
-
-``` bash
-RScript app.R
-```
-
-## Using the R library
+## R library Quick Start
 
 ### Installation
 
@@ -188,11 +175,11 @@ This app was built by [@PhilPalmer](https://github.com/PhilPalmer)
 while at the University of Cambridge [Lab of Viral
 Zoonotics](https://www.lvz.vet.cam.ac.uk/)
 
-Many thanks to other who have helped out along the way too, including
+Many thanks to others who have helped out along the way too, including
 (but not limited to): David Wells, George Carnell, Joanne Marie Del
 Rosario and Kelly da Costa
 
-<img src="inst/app/www/images/uni_of_cam_logo.png" height="100px"/>
+<img src="man/figures/uni_of_cam_logo.png" height="100px"/>
 
 ## Citation
 

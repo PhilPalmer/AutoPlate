@@ -19,6 +19,56 @@ read_plus <- function(filename, filepath) {
     dplyr::mutate(filename = filename)
 }
 
+#' @title ELLA to assay dataframe
+#'
+#' @description Read ELLA data from an Excel file and convert to assay dataframe format appending the filename as an additional column
+#' @param filename character, file name to be added to the dataframe
+#' @param filepath character, path to the CSV file
+#' @return dataframe, generated from the input Excel file containing the filenames
+#' @keywords read input Excel files
+#' @importFrom magrittr %>%
+#' @export
+ella_to_assay_df <- function(filename, filepath) {
+  raw <- as.data.frame(readxl::read_excel(filepath))
+  if (all(is.na(raw[1,]))) raw <- as.data.frame(readxl::read_excel(filepath, skip=2))
+  rownames(raw) <- raw[,1]
+  raw <- raw[,2:ncol(raw)]
+  assay_df <- expand.grid(names(raw), rownames(raw))
+  # Rename columns to well column and well row
+  names(assay_df) <- c("wcol", "wrow")
+  # Relative Light Units
+  assay_df$rlu <- as.vector(t(raw))
+  # When the well exceeds 3.5 the machine retuns ( + ) convert to 3.51
+  assay_df$rlu[assay_df$rlu == "( + )"] <- 3.51
+  assay_df$rlu <- as.numeric(assay_df$rlu)
+  assay_df %>% dplyr::mutate(filename = filename)
+}
+
+#' @title Initialise assay dataframe
+#'
+#' @description Read input files spectified from a dataframe and convert to assay dataframe format appending the filename as an additional column
+#' @param luminescence_files dataframe, containing columns "name" and "datapath" for input file names and path to the file respectively
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
+#' @return dataframe, generated from the files containing the filenames
+#' @keywords read input files assay dataframe
+#' @importFrom magrittr %>%
+#' @export
+init_assay_df <- function(luminescence_files, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df <-
+        apply(luminescence_files, 1, function(df) ella_to_assay_df(df["name"], df["datapath"])) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).xls", '\\1', tolower(filename)))
+  } else {
+    assay_df <-
+        apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
+        dplyr::bind_rows() %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
+        tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
+  }
+  return(assay_df)
+}
+
 #' @title Init cols
 #'
 #' @description Initialise columns for assay dataframe
@@ -44,17 +94,27 @@ init_cols <- function(assay_df) {
 #'
 #' @description Initialise types (c,m,v,x) for assay dataframe based on template 96-well plate format
 #' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
 #' @return dataframe, containing the initialised type column
 #' @keywords assay
 #' @export
-init_types <- function(assay_df) {
-  assay_df <- assay_df %>%
-    dplyr::mutate(types = dplyr::case_when(
-      wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
-      wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
-      wcol %in% seq(2, 11) ~ "x",
-      wcol == 12 ~ "m",
-    ))
+init_types <- function(assay_df, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df <- assay_df %>%
+      dplyr::mutate(types = dplyr::case_when(
+        wcol %in% 1:10 ~ "x",
+        wcol == 11 ~ "v",
+        wcol == 12 ~ "c"
+      ))
+  } else {
+    assay_df <- assay_df %>%
+      dplyr::mutate(types = dplyr::case_when(
+        wcol == 1 & wrow %in% c("A", "B", "C", "D", "E") ~ "v",
+        wcol == 1 & wrow %in% c("F", "G", "H") ~ "c",
+        wcol %in% 2:11 ~ "x",
+        wcol == 12 ~ "m"
+      ))
+  }
   return(assay_df)
 }
 
@@ -62,28 +122,55 @@ init_types <- function(assay_df) {
 #'
 #' @description Initialise sample_id (mouse number) for assay dataframe based on input parameters
 #' @param assay_df dataframe, containing biological assay data from plate reader
-#' @param wcols vector, list of column numbers to update for each plate
+#' @param wells vector, list of well column numbers and row letters to update for each plate
 #' @param sample_id character, name to set sample_id to for specified columns
+#' @param n_samples integer, total number of samples per plate (default = 5)
 #' @return dataframe, containing the initialised sample_id column
 #' @keywords assay
 #' @importFrom magrittr %>%
 #' @export
-init_sample <- function(assay_df, wcols, sample_id) {
+init_sample <- function(assay_df, wells, sample_id, n_samples=5) {
   plates_not_numbered <- all(is.na(as.numeric(assay_df$plate_number)))
   if (plates_not_numbered) {
-    assay_df <- assay_df %>% dplyr::mutate(rank = dense_rank(plate_number))
+    assay_df <- assay_df %>% dplyr::mutate(rank = dplyr::dense_rank(plate_number))
     assay_df$plate_number <- assay_df$rank
   }
   if (sample_id != "Antibody") {
     assay_df$sample_id <- ifelse(
-      assay_df$wcol %in% wcols, paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * 5 + sample_id), assay_df$sample_id
+      assay_df$wcol %in% wells | (assay_df$wrow %in% wells & !assay_df$wcol %in% c(11,12)), paste("Mouse", (as.numeric(assay_df$plate_number) - 1) * n_samples + sample_id), assay_df$sample_id
     )
   } else {
-    assay_df$sample_id <- ifelse( assay_df$wcol %in% wcols, sample_id, assay_df$sample_id )
+    assay_df$sample_id <- ifelse( assay_df$wcol %in% wells, sample_id, assay_df$sample_id )
   }
   if (plates_not_numbered) {
     assay_df$plate_number <- assay_df$filename
     assay_df$rank <- NA
+  }
+  return(assay_df)
+}
+
+#' @title Init samples
+#'
+#' @description Initialise all sample_ids (mouse numbers) for assay dataframe based on assay type
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param assay_type character, type of assay eg "pMN" or "ELLA"
+#' @return dataframe, containing the initialised samples in sample_id column
+#' @keywords assay
+#' @export
+init_samples <- function(assay_df, assay_type) {
+  if (tolower(assay_type) == "ella") {
+    assay_df <- init_sample(assay_df = assay_df, wells = c("A","B"), sample_id = 1, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("C","D"), sample_id = 2, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("E","F"), sample_id = 3, n_samples=4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c("G","H"), sample_id = 4, n_samples=4)
+  } else {
+    assay_df <- init_sample(assay_df = assay_df, wells = c(2,3), sample_id = 1)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(4,5), sample_id = 2)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(6,7), sample_id = 3)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(8,9), sample_id = 4)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(10,11), sample_id = 5)
+    assay_df <- init_sample(assay_df = assay_df, wells = c(12), sample_id = "Antibody")
+    assay_df$sample_id <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$sample_id)
   }
   return(assay_df)
 }
@@ -116,13 +203,27 @@ calc_neut <- function(assay_df) {
 #' @description Update dilutions in main assay dataframe based on the input dilutions dataframe
 #' @param assay_df dataframe, containing biological assay data from plate reader
 #' @param dilutions dataframe, containing two columns for serum and control dilutions
+#' @param assay_type character, type of assay eg "pMN" or "ELLA" (default = "pMN")
 #' @return dataframe, containing the updated dilutions
 #' @keywords assay
 #' @importFrom magrittr %>%
 #' @export
-update_dilutions <- function(assay_df, dilutions) {
-  assay_df %>%
-    dplyr::mutate(dilution = dplyr::case_when(
+update_dilutions <- function(assay_df, dilutions, assay_type="pMN") {
+  if (tolower(assay_type) == "ella") {
+    assay_df %>% dplyr::mutate(dilution = dplyr::case_when(
+      wcol == "1" & types == "x" ~ dilutions[1, 1],
+      wcol == "2" & types == "x" ~ dilutions[2, 1],
+      wcol == "3" & types == "x" ~ dilutions[3, 1],
+      wcol == "4" & types == "x" ~ dilutions[4, 1],
+      wcol == "5" & types == "x" ~ dilutions[5, 1],
+      wcol == "6" & types == "x" ~ dilutions[6, 1],
+      wcol == "7" & types == "x" ~ dilutions[7, 1],
+      wcol == "8" & types == "x" ~ dilutions[8, 1],
+      wcol == "9" & types == "x" ~ dilutions[9, 1],
+      wcol == "10" & types == "x" ~ dilutions[10, 1]
+    ))
+  } else {
+    assay_df %>% dplyr::mutate(dilution = dplyr::case_when(
       wrow == "A" & types == "x" ~ dilutions[1, 1],
       wrow == "B" & types == "x" ~ dilutions[2, 1],
       wrow == "C" & types == "x" ~ dilutions[3, 1],
@@ -140,6 +241,7 @@ update_dilutions <- function(assay_df, dilutions) {
       wrow == "G" & types == "m" ~ dilutions[7, 2],
       wrow == "H" & types == "m" ~ dilutions[8, 2]
     ))
+  }
 }
 
 #' @title Update sample_ids
@@ -198,11 +300,14 @@ update_feature_plate <- function(assay_df, feature, plate_n, changes) {
 #' @param values object, containing `assay_df` biological assay data from plate reader
 #' @return dropdown of existing columns that can be used to define the `new_feature`
 #' @keywords assay
-#' @export
+#' @noRd
 create_feature_dropdown <- function(new_feature, input, values) {
   req(values[["plate_data"]])
   assay_df <- isolate(values[["assay_df"]])
-  selectInput(new_feature, "Select existing feature", names(assay_df))
+  message <- paste("Enter the",new_feature,"for each:")
+  features <- c("well", names(assay_df))
+  selected <- if (new_feature == "treatment") "sample_id" else features[1]
+  selectInput(new_feature, message, features, selected)
 }
 
 #' @title Create feature table
@@ -235,13 +340,21 @@ create_feature_table <- function(new_feature, input, values) {
 #' @keywords assay
 #' @noRd
 update_feature <- function(new_feature, input, values) {
-  new_feature_table <- paste0(new_feature, "_table")
-  req(new_feature_table)
-  existing_feature <- input[[new_feature]]
-  assay_df <- values[["assay_df"]]
-  mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
-  assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
-  values[["assay_df"]] <- assay_df
+  tryCatch({
+    existing_feature <- input[[new_feature]]
+    assay_df <- values[["assay_df"]]
+    if (tolower(existing_feature) == "well") {
+      new_feature_text <- paste0(new_feature, "_text")
+      assay_df[[new_feature]] <- input[[new_feature_text]]
+    } else {
+      new_feature_table <- paste0(new_feature, "_table")
+      mappings_table <- rhandsontable::hot_to_r(isolate(input[[new_feature_table]]))
+      assay_df[[new_feature]] <- mappings_table[match(assay_df[[existing_feature]], mappings_table[[existing_feature]]), 2]
+    }
+    values[["assay_df"]] <- assay_df
+  }, error = function(error_message) {
+    print(error_message)
+  })
 }
 
 #' @title Assay to plate dataframe

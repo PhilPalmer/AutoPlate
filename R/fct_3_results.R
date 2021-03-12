@@ -62,6 +62,10 @@ setup_code <- function() {
 #' @keywords plot title
 #' @export
 init_title <- function(assay_df, full_title = FALSE) {
+  features <- c("bleed", "experiment_id", "virus")
+  for (feature in features) {
+    if (all(unique(assay_df[feature]) %in% c(NA, ""))) assay_df[feature] <- NA
+  }
   if ((nchar(toString(unique(assay_df$virus)))>50) && full_title == FALSE) {
     virus_title <-  "- All Viruses"
   }
@@ -81,7 +85,12 @@ init_title <- function(assay_df, full_title = FALSE) {
 #' @export
 update_cols_order <- function(assay_df) {
   treatments <- unique(assay_df$treatment)
-  treatment_cols <- metafolio::gg_color_hue(length(treatments),0,360)
+  colorblind_safe <- c("#000000", "#ff0066", "#0f7f80", "#410080", "#ab66ff", "#66ccfd")
+  if (length(treatments) > length(colorblind_safe)) {
+    treatment_cols <- gg_color_hue(length(treatments),0,360)
+  } else {
+    treatment_cols <- colorblind_safe
+  }
   negative_control <- c("pbs", "negative_control")
   posotive_control <- unique(assay_df[assay_df$type == "m",]$treatment)
   if (any(negative_control %in% tolower(treatments))) {
@@ -89,7 +98,7 @@ update_cols_order <- function(assay_df) {
     treatments <- c(treatments[negative_control_index],treatments[-negative_control_index])
     treatment_cols[1] <- "grey"
   }
-  if (!is.na(posotive_control)) {
+  if (length(posotive_control > 0)) {
     posotive_control_index <- which(treatments %in% posotive_control)
     treatments <- c(treatments[-posotive_control_index],treatments[posotive_control_index])
     treatment_cols[length(treatments)] <- "black"
@@ -116,10 +125,16 @@ plot_data_exploration <- function(assay_df) {
     ggplot2::facet_wrap(.~virus) +
     ggplot2::ylim(c(-100, 110)) +
     ggplot2::scale_x_continuous(trans="log10") +
-    ggplot2::theme_classic() +
+    ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+    ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+    ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+    ggplot2::annotation_logticks(side="b", outside = TRUE) +
+    ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
+    ggplot2::geom_vline(ggplot2::aes(xintercept=-Inf)) + 
+    ggplot2::coord_cartesian(clip="off") +
     ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
-    ggplot2::ylab("Neutralisation") +
-    ggplot2::xlab("Dilution") +
+    ggplot2::ylab("% Neutralisation") +
+    ggplot2::xlab("Serum Dilution") +
     ggplot2::ggtitle(title)
   return(data_exploration_plot)
 }
@@ -173,11 +188,18 @@ plot_drc <- function(assay_df, drm) {
       ggplot2::geom_point(data=assay_df, ggplot2::aes(y=neutralisation)) +
       ggplot2::facet_wrap("treatment") +  
       ggplot2::scale_x_continuous(trans="log10") +
-      ggplot2::theme_classic() +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::theme(strip.background = ggplot2::element_blank()) +
-      ggplot2::ylab("Neutralisation") +
-      ggplot2::xlab("Dilution") +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+      ggplot2::annotation_logticks(side="b", outside = TRUE) +
+      ggplot2::geom_hline(yintercept=50, linetype="dotted") +
+      ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
+      ggplot2::geom_vline(ggplot2::aes(xintercept=-Inf)) + 
+      ggplot2::coord_cartesian(clip="off") +
+      ggplot2::ylab("% Neutralisation") +
+      ggplot2::xlab("Serum Dilution") +
       ggplot2::ggtitle(title)
   return(drc_plot)
 }
@@ -232,17 +254,18 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   # Average Neutralisation
   avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(log_ic50_dilution))
   ied_order <- avied$treatment[order(avied$av)]
-  plot_type <- if(plot_type == tolower("boxplot")) ggplot2::geom_boxplot() else ggplot2::geom_jitter()
   title <- init_title(assay_df)
 
   # Generate plot
   ic50_boxplot <- ggplot2::ggplot(ied, ggplot2::aes(x=treatment, y=log_ic50_dilution, colour=treatment))+
-      plot_type +
+      { if (plot_type == tolower("boxplot")) ggplot2::geom_boxplot() } +
       ggplot2::geom_point() +
       ggplot2::scale_x_discrete(limits=ied_order) +
-      ggplot2::ylab("Individual IC50 log10") +
+      ggplot2::ylab("IC50 Dilution log10") +
       ggplot2::xlab("Treatment") +
-      ggplot2::theme_classic() +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::ggtitle(title) +
       ggplot2::coord_flip() + 
@@ -271,8 +294,8 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
     model <- drc::drm(',drm_string,')
 
     # Generate plot
-    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")$ic50_boxplot
-    plotly::ggplotly(ic50_boxplot)
+    ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type="',plot_type,'")
+    plotly::ggplotly(ic50_boxplot$ic50_boxplot)
   ')
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
@@ -298,7 +321,10 @@ plot_cv_boxplot <- function(assay_df) {
       ggplot2::scale_y_continuous(trans="log10") +
       ggplot2::ylab("Log10 raw luminescence value") +
       ggplot2::xlab("Cell only or Virus only") +
-      ggplot2::theme_classic() +
+      ggplot2::annotation_logticks(side="l") +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
+      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
       ggplot2::ggtitle(title)
   return(cv_boxplot)
 }

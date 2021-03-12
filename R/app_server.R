@@ -16,17 +16,20 @@ app_server <- function( input, output, session ) {
   # Define variables
   ##################
   values <- reactiveValues()
+  values[["assay_type"]] <- "pMN"
   report_filepath <- "inst/app/www/report.Rmd"
-  dilutions_filepath <- "data-raw/dilutions.csv"
-  dilutions <- utils::read.csv(dilutions_filepath,
-    header = TRUE,
-    stringsAsFactors = FALSE,
-    check.names = FALSE
-  )
+  data(dilutions_pmn)
+  data(dilutions_ella)
 
   #########
   # 0) Home
   #########
+
+  # Create dropdown to select assay type
+  output$assay_type <- renderUI({
+    selectInput("assay_type", "Select the type of assay you wish to analyse", c("pMN", "ELLA"), "pMN")
+  })
+  observeEvent(input$assay_type, values[["assay_type"]] <- input$assay_type)
 
   output$steps <- renderText({
     HTML(paste0(
@@ -102,22 +105,12 @@ app_server <- function( input, output, session ) {
   # Create messages to display to user
   output$message_input_files <- renderUI({
     if (is.null(values[["luminescence_files"]])) {
-      shinydashboard::box(HTML(paste0(
-        "<h4>Start here!</h4><p>Upload your CSV files first to use the app, which meet the following criteria:<p>
-            <ul>
-                <li>Each file must contain the following columns: 
-                    \"ID,SequenceID,WellPosition,ScanPosition,Tag,RLU,RLU(RQ),Timestamp(ms)\"
-                <li>(Recommended) the file names end with the plate number, such as \"n1.csv\" for plate 1, 
-                    for example: \"Luminescence Quick Read 2020.01.01 10_10_10 n1.csv\"
-            </ul>
-        </p>
-        <h5>OR</h5>
-        <button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/golem/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data</a>
+      HTML(paste0(
+        "<button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
+          Or try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data!</a>
         </button>
         "
-        # TODO: update example data link to `main` branch once merged
-      )), width = 12, background = "yellow")
+      ))
     }
   })
   output$message_drm_string <- renderText({
@@ -190,8 +183,12 @@ app_server <- function( input, output, session ) {
     req(values[["luminescence_files"]], input$plate_tabs)
     # Define variables
     luminescence_files <- values[["luminescence_files"]]
-    header <- colnames(utils::read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
     cols <- c("types", "dilution", "bleed")
+    if (tolower(values[["assay_type"]]) == "ella") {
+      header <- c()
+    } else {
+      header <- colnames(utils::read.csv(luminescence_files$datapath[1], nrows = 1, header = TRUE))
+    }
     # Get the current plate number from the plate tab
     plate_n <- sub("^\\S+\\s+", "", input$plate_tabs)
     # Initialise plate number
@@ -213,40 +210,35 @@ app_server <- function( input, output, session ) {
     }
     # Initialise the main assay dataframe from the users uploaded luminescence files
     if (is.null(values[["plate_data"]]) & !all(cols %in% header)) {
-      assay_df <-
-        apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
-        dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
-        tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
+      assay_df <- init_assay_df(values[["luminescence_files"]], values[["assay_type"]])
       # Initialise new columns
       assay_df <- init_cols(assay_df)
       # Rename columns
-      assay_df <- dplyr::rename(assay_df, rlu = RLU, machine_id = ID, rlu.rq = RLU.RQ., timestamp = Timestamp.ms., sequence_id = SequenceID, scan_position = ScanPosition, tag = Tag)
+      assay_df <- dplyr::rename_all(assay_df, dplyr::recode, RLU="rlu", ID="machine_id", RLU.RQ.="rlu.rq", Timestamp.ms.="timestamp", SequenceID="sequence_id", ScanPosition="scan_position", Tag="tag")
       # Populate main assay df with types using the default plate layout
-      assay_df <- init_types(assay_df)
+      assay_df <- init_types(assay_df, values[["assay_type"]])
       # Populate main assay df with default sample_id info
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(2,3), sample_id = 1)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(4,5), sample_id = 2)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(6,7), sample_id = 3)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(8,9), sample_id = 4)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(10,11), sample_id = 5)
-      assay_df <- init_sample(assay_df = assay_df, wcols = c(12), sample_id = "Antibody")
-      assay_df$sample_id <- ifelse(assay_df$wcol == 12, "Antibody", assay_df$sample_id)
+      assay_df <- init_samples(assay_df, values[["assay_type"]])
       # Populate main assay df with concentration/dilution info
-      assay_df <- update_dilutions(assay_df, dilutions)
+      assay_df <- update_dilutions(assay_df, dilutions(), values[["assay_type"]])
       # Calculate normalised luminescence values
       assay_df <- calc_neut(assay_df)
       values[["assay_df"]] <- assay_df
     }
-    # Update main assay dataframe with new dilutions
+    # TODO: extract date
+    assay_df <- values[["assay_df"]]
+    return(assay_df)
+  })
+
+  # Update main assay dataframe with new dilutions
+  observeEvent(input$dilutions, {
+    req(values[["luminescence_files"]])
     if (!is.null(input$dilutions)) {
       assay_df <- values[["assay_df"]]
       dilutions <- rhandsontable::hot_to_r(input$dilutions)
-      assay_df <- update_dilutions(assay_df, dilutions)
+      assay_df <- update_dilutions(assay_df, dilutions, values[["assay_type"]])
       values[["assay_df"]] <- assay_df
     }
-    # TODO: extract date
-    return(assay_df)
   })
 
   # Update the sample_id and types of the main assay dataframe based on user input
@@ -308,30 +300,35 @@ app_server <- function( input, output, session ) {
   })
 
   # Make dilutions table
-  observe({
+  dilutions <- reactive({
+    if (is.null(values[["dilutions"]])) {
+      dilutions <- if (tolower(values[["assay_type"]]) == "ella") dilutions_ella else dilutions_pmn
+    } else {
+      dilutions <- values[["dilutions"]]
+    }
+    return(dilutions)
+  })
+  # If user changes the assay type update the dilutions
+  observeEvent(input$assay_type, {
+    values[["dilutions"]] <- NULL
+    values[["dilutions"]] <- dilutions()
+  })
+  # Update dilutions based on user input
+  observeEvent(input$dilutions, {
     if (!is.null(input[["dilutions"]])) {
-      values[["previous"]] <- isolate(values[["dilutions"]])
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/28
       tryCatch({
           dilutions <- rhandsontable::hot_to_r(input[["dilutions"]])
         }, error = function(error_message) {
           print(error_message)
       })
-    } else {
-      if (is.null(values[["dilutions"]])) {
-        dilutions <- dilutions
-      } else {
-        dilutions <- values[["dilutions"]]
-      }
     }
-    values[["dilutions"]] <- dilutions
   })
   # Render dilutions table
   output$dilutions <- rhandsontable::renderRHandsontable({
-    dilutions <- values[["dilutions"]]
-    row.names(dilutions) <- LETTERS[1:dim(dilutions)[1]]
+    values[["dilutions"]] <- dilutions()
     if (!is.null(dilutions)) {
-      rhandsontable::rhandsontable(dilutions, stretchH = "all")
+      rhandsontable::rhandsontable(values[["dilutions"]], stretchH = "all")
     }
   })
 
@@ -352,6 +349,24 @@ app_server <- function( input, output, session ) {
   observeEvent(input$go_treatment, update_feature("treatment", input, values))
   observeEvent(input$go_virus, update_feature("virus", input, values))
   observeEvent(input$go_experiment_id, update_feature("experiment_id", input, values))
+
+  # Creature table to display which features have been entered
+  output$features_table <- formattable::renderFormattable({
+    req(values[["luminescence_files"]])
+    assay_df <- values[["assay_df"]]
+    features <- c("types", "sample_id", "dilution", "virus", "treatment", "bleed", "experiment_id")
+    features_df <- setNames(data.frame(matrix(ncol = 2, nrow = length(features))), c("Feature", "Entered"))
+    features_df$Feature <- features
+    for (feature in features) {
+      empty <- all(unique(assay_df[feature]) %in% c(NA, ""))
+      features_df[features_df$Feature == feature,]$Entered <- if(empty) FALSE else TRUE
+    }
+    formattable::formattable(features_df, list(
+      Entered = formattable::formatter("span",
+        style = x ~ formattable::style(color = ifelse(x, "green", "red")),
+        x ~ formattable::icontext(ifelse(x, "ok", "remove"), ifelse(x, "Yes", "No")))
+    ))
+  })
 
   #######
   # 2) QC
@@ -492,19 +507,23 @@ app_server <- function( input, output, session ) {
   # Download plots
   output$download_data_exploration <- downloadHandler(
     filename = "data_exploration.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["data_exploration"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["data_exploration"]], width = 10, height = 8)
   )
   output$download_drc <- downloadHandler(
     filename = "drc.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["drc"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["drc"]], width = 10, height = 8)
   )
   output$download_ic50 <- downloadHandler(
     filename = "ic50_boxplot.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["ic50_boxplot"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["ic50_boxplot"]], width = 10, height = 8)
+  )
+  output$download_ied <- downloadHandler(
+    filename = "ied.csv",
+    content = function(file) utils::write.table(values[["ied"]], file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
-    content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10)
+    content = function(file) ggplot2::ggsave(file, plot = values[["cv_boxplot"]], width = 10, height = 8)
   )
 
   # Create dropdown to select virus for DRC & IC50 plots
@@ -524,18 +543,26 @@ app_server <- function( input, output, session ) {
   output$data_exploration <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
-    eval(parse(text=data_exploration_code("plot")))
-    values[["data_exploration"]] <- data_exploration_plot
+    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+    values[["data_exploration"]] <- plot_data_exploration(data)
+    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+    plotly::ggplotly(values[["data_exploration"]])  %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
   })
   output$drc <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-        eval(parse(text=drc_code("plot",input$drm_string,input$virus_drc)))
-        values[["drc"]] <- drc_plot
-      }, error = function(error_message) {
-        print(error_message)
+      virus_to_plot <- input$virus_drc
+      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+      model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+      values[["drc"]] <- plot_drc(data, model)
+      drc_plotly <- plotly::ggplotly(values[["drc"]])
+      m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+      drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
+      drc_plotly 
+    }, error = function(error_message) {
+      print(error_message)
     })
   })
   output$ic50_boxplot <- plotly::renderPlotly({
@@ -543,8 +570,17 @@ app_server <- function( input, output, session ) {
     data <- values[["assay_df"]]
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
-      eval(parse(text=ic50_boxplot_code("plot",input$drm_string,input$ic50_is_boxplot,input$virus_ic50)))
-      values[["ic50_boxplot"]] <- ic50_boxplot
+      virus_to_plot <- input$virus_ic50
+      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+      model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+      plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
+      ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type)
+      ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
+      values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
+      values[["ied"]] <- ic50_boxplot$ied
+      m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+      ic50_boxplotly <- ic50_boxplotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
+      ic50_boxplotly 
       }, error = function(error_message) {
         print(error_message)
     })
@@ -552,8 +588,13 @@ app_server <- function( input, output, session ) {
   output$cv_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
-    eval(parse(text=cv_boxplot_code("plot"))) 
-    values[["cv_boxplot"]] <- cv_boxplot
-    plotly::ggplotly(cv_boxplot) %>% plotly::layout(boxmode = "group")
+    data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
+      dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+      dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
+    values[["cv_boxplot"]] <- plot_cv_boxplot(data)
+    cv_boxplotly <- plotly::ggplotly(values[["cv_boxplot"]]) 
+    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+    cv_boxplotly <- cv_boxplotly %>% plotly::layout(boxmode = "group", autosize = F, width = 1000, height = 800, margin = m)
+    cv_boxplotly
   })
 }

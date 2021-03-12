@@ -29,10 +29,13 @@ Imports:
     processx,
     golem,
     config,
-    pkgload
+    pkgload,
+    readxl,
+    ggprism
 Suggests: 
     testthat,
-    covr
+    covr,
+    formattable
 VignetteBuilder: knitr
 Depends: 
     magrittr,

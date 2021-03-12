@@ -4,14 +4,16 @@
 \alias{init_sample}
 \title{Init sample ID}
 \usage{
-init_sample(assay_df, wcols, sample_id)
+init_sample(assay_df, wells, sample_id, n_samples = 5)
 }
 \arguments{
 \item{assay_df}{dataframe, containing biological assay data from plate reader}
 
-\item{wcols}{vector, list of column numbers to update for each plate}
+\item{wells}{vector, list of well column numbers and row letters to update for each plate}
 
 \item{sample_id}{character, name to set sample_id to for specified columns}
+
+\item{n_samples}{integer, total number of samples per plate (default = 5)}
 }
 \value{
 dataframe, containing the initialised sample_id column

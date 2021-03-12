@@ -35,6 +35,9 @@ usethis::use_package("grDevices")
 usethis::use_package("graphics")
 usethis::use_package("stats")
 usethis::use_package("utils")
+usethis::use_package("readxl")
+usethis::use_package("ggprism")
+usethis::use_package("formattable", "suggests")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
@@ -66,11 +69,18 @@ usethis::use_test( "app" )
 
 ## Vignette ----
 usethis::use_vignette("autoplate")
+usethis::use_vignette("r_lib")
+usethis::use_vignette("run_your_own_app")
+usethis::use_vignette("shiny_app")
+usethis::use_vignette("web_app")
 devtools::build_vignettes()
 
 # Add code coverage
 usethis::use_coverage()
 usethis::use_github_action("test-coverage")
+
+# Add more GitHub actions
+usethis::use_github_action(url = "https://raw.githubusercontent.com/r-lib/actions/master/examples/pkgdown.yaml")
 
 ## Code coverage ----
 ## (You'll need GitHub there)
