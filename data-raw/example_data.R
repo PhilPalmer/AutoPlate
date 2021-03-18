@@ -7,3 +7,4 @@ pmn_platelist_H1N1_example_data <- utils::read.csv(pmn_platelist_filepath,
   check.names=FALSE
 )
 usethis::use_data(pmn_platelist_H1N1_example_data, overwrite = TRUE)
+
