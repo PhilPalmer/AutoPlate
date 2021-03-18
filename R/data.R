@@ -26,7 +26,7 @@ NULL
 #'
 #' @docType data
 #' @keywords datasets
-#' @name pmn_platelist_H1N1_example_data
-#' @usage data(pmn_platelist_H1N1_example_data)
+#' @name example_data_pmn_platelist_H1N1
+#' @usage data(example_data_pmn_platelist_H1N1)
 #' @format A data frame with 1152 rows and 14 variables
 NULL
