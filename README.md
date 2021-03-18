@@ -114,13 +114,13 @@ data exported from AutoPlate:
 
 ``` r
 # Load an example dataset
-data("pmn_platelist_H1N1_example_data")
-data <- pmn_platelist_H1N1_example_data
+data("example_data_pmn_platelist_H1N1")
+data <- example_data_pmn_platelist_H1N1
 
 # OR
 
 # Load your own dataset - make sure your file path is correct!
-platelist_file <- "data-raw/pmn_platelist_H1N1_example_data.csv"
+platelist_file <- "data-raw/example_data_pmn_platelist_H1N1.csv"
 data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
 ```
 
