@@ -119,8 +119,8 @@ app_server <- function( input, output, session ) {
 
   # Use example data on click of button
   observeEvent(input$example_data, {
-    values[["luminescence_files"]] <- structure(list(name = "example_H1N1_data_pmn_platelist.csv", 
-      size = NA, type = "text/csv", datapath = "data-raw/pmn_platelist_H1N1_example_data.csv"), 
+    values[["luminescence_files"]] <- structure(list(name = "example_data_pmn_platelist_H1N1.csv", 
+      size = NA, type = "text/csv", datapath = "data-raw/example_data_pmn_platelist_H1N1.csv"), 
       class = "data.frame", row.names = c(NA, -1L))
   })
   # Reload everything if the user uploads a new dataset
