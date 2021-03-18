@@ -250,7 +250,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   ied$plate_number <- assay_df$plate_number[match(ied$sample_id, assay_df$sample_id)]
   ied$virus <- assay_df$virus[match(ied$sample_id, assay_df$sample_id)]
   ied <- dplyr::rename(ied, log_ic50_dilution = Estimate, log_ic50_dilution_std_error = "Std. Error")
-  ied$raw_ic50_dilution <- 10^ied$log_ic50_dilution
+  ied$raw_ic50_dilution <- exp(ied$log_ic50_dilution)
   ied <- ied[c("sample_id","treatment","raw_ic50_dilution","log_ic50_dilution","log_ic50_dilution_std_error","virus","plate_number")]
   control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$log_ic50_dilution)
   # Average Neutralisation
@@ -263,7 +263,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
       { if (plot_type == tolower("boxplot")) ggplot2::geom_boxplot() } +
       ggplot2::geom_point() +
       ggplot2::scale_x_discrete(limits=ied_order) +
-      ggplot2::ylab("IC50 Dilution log10") +
+      ggplot2::ylab("IC50 Dilution natural log") +
       ggplot2::xlab("Treatment") +
       ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
       ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
