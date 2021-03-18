@@ -28,5 +28,5 @@ NULL
 #' @keywords datasets
 #' @name pmn_platelist_H1N1_example_data
 #' @usage data(pmn_platelist_H1N1_example_data)
-#' @format A data frame with 1152 rows and 20 variables
+#' @format A data frame with 1152 rows and 14 variables
 NULL
