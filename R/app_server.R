@@ -519,7 +519,19 @@ app_server <- function( input, output, session ) {
   )
   output$download_ied <- downloadHandler(
     filename = "ied.csv",
-    content = function(file) utils::write.table(values[["ied"]], file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+    content = function(file) {
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      tryCatch({
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
+        ied <- plot_ic50_boxplot(data, model, plot_type)$ied
+        }, error = function(error_message) {
+          print(error_message)
+      })
+      utils::write.table(ied, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+    }
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
@@ -577,7 +589,6 @@ app_server <- function( input, output, session ) {
       ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type)
       ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
       values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
-      values[["ied"]] <- ic50_boxplot$ied
       m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
       ic50_boxplotly <- ic50_boxplotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
       ic50_boxplotly 
