@@ -251,6 +251,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
   ied$virus <- assay_df$virus[match(ied$sample_id, assay_df$sample_id)]
   ied <- dplyr::rename(ied, log_ic50_dilution = Estimate, log_ic50_dilution_std_error = "Std. Error")
   ied$raw_ic50_dilution <- 10^ied$log_ic50_dilution
+  ied <- ied[c("sample_id","treatment","raw_ic50_dilution","log_ic50_dilution","log_ic50_dilution_std_error","virus","plate_number")]
   control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$log_ic50_dilution)
   # Average Neutralisation
   avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(log_ic50_dilution))
