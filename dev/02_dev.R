@@ -59,7 +59,7 @@ golem::add_css_file( "styles" )
 ## Add internal datasets ----
 ## If you have data in your package
 usethis::use_data_raw( name = "dilutions", open = FALSE )
-usethis::use_data_raw( name = "pmn_platelist_H1N1_example_data", open = FALSE )
+usethis::use_data_raw( name = "example_data", open = FALSE )
 
 ## Tests ----
 ## Add one line by test you want to create
