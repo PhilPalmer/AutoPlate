@@ -107,7 +107,7 @@ app_server <- function( input, output, session ) {
     if (is.null(values[["luminescence_files"]])) {
       HTML(paste0(
         "<button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Or try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data!</a>
+          Or try with example data!
         </button>
         "
       ))
