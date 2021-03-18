@@ -39,5 +39,5 @@ NULL
 #' @keywords datasets
 #' @name example_data_pmn_plate_n1
 #' @usage data(example_data_pmn_plate_n1)
-#' @format A data frame with 1152 rows and 14 variables
+#' @format A data frame containing 96 rows and 2 variables
 NULL

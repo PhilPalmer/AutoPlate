@@ -5,7 +5,7 @@
 \alias{example_data_pmn_plate_n1}
 \title{pMN Plate 1 Example Data}
 \format{
-A data frame with 1152 rows and 14 variables
+A data frame containing 96 rows and 2 variables
 }
 \usage{
 data(example_data_pmn_plate_n1)
