@@ -28,7 +28,7 @@ NULL
 #' @keywords datasets
 #' @name example_data_pmn_platelist_H1N1
 #' @usage data(example_data_pmn_platelist_H1N1)
-#' @format A data frame with 1152 rows and 14 variables
+#' @format A data frame with 1152 rows and 14 variables, see more info on the variables [here](https://philpalmer.github.io/AutoPlate/articles/web_app.html#columns-1)
 NULL
 
 #' pMN Plate 1 Example Data
@@ -39,7 +39,7 @@ NULL
 #' @keywords datasets
 #' @name example_data_pmn_plate_n1
 #' @usage data(example_data_pmn_plate_n1)
-#' @format A data frame containing 96 rows and 2 variables
+#' @format A data frame containing 96 rows and 2 variables, see more info on the variables [here](https://philpalmer.github.io/AutoPlate/articles/web_app.html#columns-1)
 NULL
 
 #' Example data column descriptions

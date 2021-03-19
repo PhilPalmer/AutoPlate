@@ -5,7 +5,7 @@
 \alias{example_data_pmn_platelist_H1N1}
 \title{pMN Platelist H1N1 Example Data}
 \format{
-A data frame with 1152 rows and 14 variables
+A data frame with 1152 rows and 14 variables, see more info on the variables \href{https://philpalmer.github.io/AutoPlate/articles/web_app.html#columns-1}{here}
 }
 \usage{
 data(example_data_pmn_platelist_H1N1)

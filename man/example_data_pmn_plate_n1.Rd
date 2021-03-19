@@ -5,7 +5,7 @@
 \alias{example_data_pmn_plate_n1}
 \title{pMN Plate 1 Example Data}
 \format{
-A data frame containing 96 rows and 2 variables
+A data frame containing 96 rows and 2 variables, see more info on the variables \href{https://philpalmer.github.io/AutoPlate/articles/web_app.html#columns-1}{here}
 }
 \usage{
 data(example_data_pmn_plate_n1)
