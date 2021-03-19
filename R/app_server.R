@@ -83,11 +83,9 @@ app_server <- function( input, output, session ) {
     create_tooltip("Dilutions will be used to set the corresponding rows in the 96-well plate")
   })
   output$tooltip_plates <- renderText({
-    create_tooltip("Specify the samples (eg \"Mouse 1\") and type (eg \"x\") for each well
-        c = cell only control
-        m = monoclonal antibody (posotive control)
-        v = virus (or pseudotype) only control
-        x = serum sample")
+    data("example_data_column_descriptions")
+    feature_description <- example_data_column_descriptions[example_data_column_descriptions$column_name==input$plate_feature,]$column_description
+    create_tooltip(feature_description)
   })
   output$tooltip_features <- renderText({
     create_tooltip("Set the values for new features such as the \"virus\" based on existing features such as the \"sample_id\" (i.e. mouse number)")
