@@ -15,3 +15,11 @@ example_data_pmn_plate_n1 <- utils::read.csv(pmn_plate_filepath,
   check.names=FALSE
 )
 usethis::use_data(example_data_pmn_plate_n1, overwrite = TRUE)
+
+column_descriptions_filepath <- "data-raw/example_data_column_descriptions.csv"
+example_data_column_descriptions <- utils::read.csv(column_descriptions_filepath,
+  header=TRUE,
+  stringsAsFactors=FALSE,
+  check.names=FALSE
+)
+usethis::use_data(example_data_column_descriptions, overwrite = TRUE)

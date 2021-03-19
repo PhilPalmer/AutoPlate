@@ -41,3 +41,14 @@ NULL
 #' @usage data(example_data_pmn_plate_n1)
 #' @format A data frame containing 96 rows and 2 variables
 NULL
+
+#' Example data column descriptions
+#'
+#' A dataset containing an example data column descriptions
+#'
+#' @docType data
+#' @keywords datasets
+#' @name example_data_column_descriptions
+#' @usage data(example_data_column_descriptions)
+#' @format A data frame containing 13 rows and 3 variables
+NULL
