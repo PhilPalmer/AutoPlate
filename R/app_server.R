@@ -16,7 +16,6 @@ app_server <- function( input, output, session ) {
   # Define variables
   ##################
   values <- reactiveValues()
-  values[["assay_type"]] <- "pMN"
   report_filepath <- "inst/app/www/report.Rmd"
   data(dilutions_pmn)
   data(dilutions_ella)
