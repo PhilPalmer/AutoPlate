@@ -6,6 +6,8 @@
 \alias{autoplate-package}
 \title{autoplate: AutoPlate}
 \description{
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
 AutoPlate is an R Shiny web application (and UI) that helps you automate the analysis of biological assays conducted on 96-well plates.
 }
 \seealso{

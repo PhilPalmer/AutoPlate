@@ -13,8 +13,6 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 status](https://github.com/PhilPalmer/AutoPlate/workflows/R-CMD-check/badge.svg)](https://github.com/PhilPalmer/AutoPlate/actions)
 <!-- badges: end -->
 
-View the [AutoPlate website](https://philpalmer.github.io/AutoPlate/) for the best browsing experience
-
 ## Introduction
 
 [AutoPlate](https://philpalmer.shinyapps.io/AutoPlate/) is an [R Shiny
@@ -32,11 +30,11 @@ if there’s an assay that you would like us to support\!
 ## Ways of using AutoPlate
 You can use AutoPlate in two ways: 
 1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
-    - Run the app `vignette("shiny_app")`
-    - See docs `vignette("web_app")`
-    - Run your own app `vignette("run_your_own_app")`
+    - [Run the app](https://philpalmer.github.io/AutoPlate/articles/shiny_app.html)
+    - [See docs](https://philpalmer.github.io/AutoPlate/articles/web_app.html)
+    - [Run your own app](https://philpalmer.github.io/AutoPlate/articles/run_your_own_app.html)
 2. [**R library**](#r-library-quick-start) - you can use only the functions you need to customise your own analysis!
-    - See docs `vignette("r_lib")`
+    - [See docs](https://philpalmer.github.io/AutoPlate/articles/r_lib.html)
     - [See all functions](reference/index.html)
 
 ## Web Application Quick Start
@@ -114,13 +112,13 @@ data exported from AutoPlate:
 
 ``` r
 # Load an example dataset
-data("pmn_platelist_H1N1_example_data")
-data <- pmn_platelist_H1N1_example_data
+data("example_data_pmn_platelist_H1N1")
+data <- example_data_pmn_platelist_H1N1
 
 # OR
 
 # Load your own dataset - make sure your file path is correct!
-platelist_file <- "data-raw/pmn_platelist_H1N1_example_data.csv"
+platelist_file <- "data-raw/example_data_pmn_platelist_H1N1.csv"
 data <- read.csv(platelist_file, header=TRUE, stringsAsFactors=FALSE, check.names=FALSE)
 ```
 

@@ -16,7 +16,6 @@ app_server <- function( input, output, session ) {
   # Define variables
   ##################
   values <- reactiveValues()
-  values[["assay_type"]] <- "pMN"
   report_filepath <- "inst/app/www/report.Rmd"
   data(dilutions_pmn)
   data(dilutions_ella)
@@ -83,11 +82,9 @@ app_server <- function( input, output, session ) {
     create_tooltip("Dilutions will be used to set the corresponding rows in the 96-well plate")
   })
   output$tooltip_plates <- renderText({
-    create_tooltip("Specify the samples (eg \"Mouse 1\") and type (eg \"x\") for each well
-        c = cell only control
-        m = monoclonal antibody (posotive control)
-        v = virus (or pseudotype) only control
-        x = serum sample")
+    data("example_data_column_descriptions")
+    feature_description <- example_data_column_descriptions[example_data_column_descriptions$column_name==input$plate_feature,]$column_description
+    create_tooltip(feature_description)
   })
   output$tooltip_features <- renderText({
     create_tooltip("Set the values for new features such as the \"virus\" based on existing features such as the \"sample_id\" (i.e. mouse number)")
@@ -107,7 +104,7 @@ app_server <- function( input, output, session ) {
     if (is.null(values[["luminescence_files"]])) {
       HTML(paste0(
         "<button id=\"example_data\" type=\"button\" class=\"btn btn-default action-button\">
-          Or try with <a href=\"https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/pmn_platelist_H1N1_example_data.csv\" target=\"_blank\" >example data!</a>
+          Or try with example data!
         </button>
         "
       ))
@@ -119,8 +116,8 @@ app_server <- function( input, output, session ) {
 
   # Use example data on click of button
   observeEvent(input$example_data, {
-    values[["luminescence_files"]] <- structure(list(name = "example_H1N1_data_pmn_platelist.csv", 
-      size = NA, type = "text/csv", datapath = "data-raw/pmn_platelist_H1N1_example_data.csv"), 
+    values[["luminescence_files"]] <- structure(list(name = "example_data_pmn_platelist_H1N1.csv", 
+      size = NA, type = "text/csv", datapath = "data-raw/example_data_pmn_platelist_H1N1.csv"), 
       class = "data.frame", row.names = c(NA, -1L))
   })
   # Reload everything if the user uploads a new dataset
@@ -519,7 +516,19 @@ app_server <- function( input, output, session ) {
   )
   output$download_ied <- downloadHandler(
     filename = "ied.csv",
-    content = function(file) utils::write.table(values[["ied"]], file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+    content = function(file) {
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      tryCatch({
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
+        ied <- plot_ic50_boxplot(data, model, plot_type)$ied
+        }, error = function(error_message) {
+          print(error_message)
+      })
+      utils::write.table(ied, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+    }
   )
   output$download_cv_boxplot <- downloadHandler(
     filename = "cv_boxplot.svg",
@@ -577,7 +586,6 @@ app_server <- function( input, output, session ) {
       ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type)
       ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
       values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
-      values[["ied"]] <- ic50_boxplot$ied
       m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
       ic50_boxplotly <- ic50_boxplotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
       ic50_boxplotly 
