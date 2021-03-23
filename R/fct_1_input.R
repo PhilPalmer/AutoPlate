@@ -58,12 +58,12 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
     assay_df <-
         apply(luminescence_files, 1, function(df) ella_to_assay_df(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*([0-9]+).xls", '\\1', tolower(filename)))
+        dplyr::mutate(plate_number = gsub(pattern = ".*[^0-9]([0-9]+).xls", '\\1', tolower(filename)))
   } else {
     assay_df <-
         apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*([0-9]+).csv", '\\1', tolower(filename))) %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*[^0-9]([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
   }
   return(assay_df)
