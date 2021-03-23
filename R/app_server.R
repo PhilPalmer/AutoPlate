@@ -381,7 +381,7 @@ app_server <- function( input, output, session ) {
       utils::write.table(apply(assay_df, 2, as.character),
         file = file,
         append = FALSE,
-        quote = FALSE,
+        quote = TRUE,
         sep = ",",
         row.names = F,
         col.names = T
