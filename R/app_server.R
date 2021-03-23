@@ -518,16 +518,21 @@ app_server <- function( input, output, session ) {
     filename = "ied.csv",
     content = function(file) {
       req(values[["luminescence_files"]])
-      data <- values[["assay_df"]]
+      assay_df <- values[["assay_df"]]
       tryCatch({
-        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-        plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
-        ied <- plot_ic50_boxplot(data, model, plot_type)$ied
-        }, error = function(error_message) {
-          print(error_message)
+        all_ieds = data.frame()
+        for (virus_to_keep in unique(assay_df$virus)) {
+          data <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_keep)
+          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+          plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
+          ied <- plot_ic50_boxplot(data, model, plot_type)$ied
+          all_ieds <- dplyr::bind_rows(all_ieds,ied)
+        }
+        all_ieds <- all_ieds[match(row.names(all_ieds)[order(nchar(row.names(all_ieds)), row.names(all_ieds))], row.names(all_ieds)),]
+      }, error = function(error_message) {
+        print(error_message)
       })
-      utils::write.table(ied, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+      utils::write.table(all_ieds, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
     }
   )
   output$download_cv_boxplot <- downloadHandler(
