@@ -29,7 +29,7 @@ See the [Quick Start](../index.html#web-application-quick-start)
 | Extension         | `.csv`  |
 | Example           | [`example_data_pmn_plate_n1.csv`](https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/example_data_pmn_plate_n1.csv) | |
 | Required columns  | `WellPosition`, `RLU` |
-| Plate number      | The end of the filename can be used to specify the filename eg `n1.csv` for plate 1. If numbers are not provided the filename will be used instead |
+| Plate number      | The end of the filename can be used to specify the filename eg `1.csv` for plate 1. If numbers are not provided the filename will be used instead |
 | Number of files   | One CSV file per plate. Multiple files can be uploaded |
 
 
@@ -42,7 +42,7 @@ See the [Quick Start](../index.html#web-application-quick-start)
 | Extension         | `.xls`, `xlsx` |
 | Example           |  |
 | Required columns  |  |
-| Plate number      | The end of the filename can be used to specify the filename eg `n1.xls` for plate 1. If numbers are not provided the filename will be used instead |
+| Plate number      | The end of the filename can be used to specify the filename eg `1.xls` for plate 1. If numbers are not provided the filename will be used instead |
 | Number of files   | One Excel file per plate. Multiple files can be uploaded |
 
 
