@@ -329,6 +329,12 @@ app_server <- function( input, output, session ) {
     }
   })
 
+  # Display RLU values for the currently selected plate
+  output$plate_preview <- renderPlot({
+    req(values[["luminescence_files"]])
+    plot_heatmap(values[["plate_n"]], isolate(values[["assay_df"]]), "rlu", "RLU")
+  })
+
   # Create dropdown for features: bleed, treatment, virus & experiment_id
   output$bleed <- renderUI(create_feature_dropdown("bleed", input, values))
   output$treatment <- renderUI(create_feature_dropdown("treatment", input, values))

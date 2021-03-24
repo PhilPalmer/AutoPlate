@@ -144,8 +144,14 @@ app_ui <- function(request) {
                 HTML("<p>Enter data for any well or feature. Make sure the <code>types</code>, <code>sample_id</code> and <code>dilution</code> are entered correctly</p>"),
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
+                div(br(), class = 'inline space'),
+                div(br(),shinyWidgets::switchInput(inputId = "show_plate_preview", value = FALSE, onLabel = "Show", offLabel = "Hide"), class = 'inline control'),
                 uiOutput("plate_tabs"),
-                rhandsontable::rHandsontableOutput("plate_data")
+                rhandsontable::rHandsontableOutput("plate_data"),
+                conditionalPanel(
+                  condition = "input.show_plate_preview && input.plate_tabs != 'Template'",
+                  plotOutput("plate_preview")
+                )
               ),
               shinydashboard::box(
                 title = "5) Other features",
