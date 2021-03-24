@@ -519,6 +519,7 @@ app_server <- function( input, output, session ) {
     content = function(file) {
       req(values[["luminescence_files"]])
       assay_df <- values[["assay_df"]]
+      assay_df$dilution <- as.numeric(as.character(assay_df$dilution))
       tryCatch({
         all_ieds = data.frame()
         for (virus_to_keep in unique(assay_df$virus)) {
