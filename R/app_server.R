@@ -557,6 +557,7 @@ app_server <- function( input, output, session ) {
   output$data_exploration <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
+    data$dilution <- as.numeric(as.character(data$dilution))
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
     values[["data_exploration"]] <- plot_data_exploration(data)
     m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
@@ -565,6 +566,7 @@ app_server <- function( input, output, session ) {
   output$drc <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
+    data$dilution <- as.numeric(as.character(data$dilution))
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
       virus_to_plot <- input$virus_drc
@@ -582,6 +584,7 @@ app_server <- function( input, output, session ) {
   output$ic50_boxplot <- plotly::renderPlotly({
     req(values[["luminescence_files"]])
     data <- values[["assay_df"]]
+    data$dilution <- as.numeric(as.character(data$dilution))
     # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
     tryCatch({
       virus_to_plot <- input$virus_ic50
