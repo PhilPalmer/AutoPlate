@@ -382,7 +382,13 @@ assay_to_plate_df <- function(assay_df, plate_n, feature) {
   # TODO: update sample names?
   # TODO: update documentation
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
+  sample_ids <- c()
+  for (wcol in sort(unique(plate_df$wcol))) {
+    sample_id <- toString(unique(plate_df[plate_df$wcol == wcol,]$sample_id))
+    sample_ids <- c(sample_ids,sample_id)
+  }
   plate_df <- as.data.frame(matrix(plate_df[[feature]], byrow=T, ncol=12, nrow=8))
   row.names(plate_df) <- LETTERS[1:length(row.names(plate_df))]
+  colnames(plate_df) <- paste(colnames(plate_df),sample_ids,sep=" ")
   return(plate_df)
 }
