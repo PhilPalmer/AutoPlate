@@ -69,6 +69,23 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
   return(assay_df)
 }
 
+#' @title Replace names
+#'
+#' @description Out with the old in with the new
+#' @param df dataframe, a dataframe containing all of the old column names
+#' @param oldnames vector, list of column names to be replaced. Must have the same order and length as new names
+#' @param newnames vector, list of column names to replaced the old ones. Must have the same order and length as old names
+#' @return dataframe, dataframe with updated column names
+#' @keywords replace column names
+#' @export
+replace_names <- function(df, oldnames, newnames) {
+  header <- colnames(df)
+  if (all(oldnames %in% header)) {
+    df <- df %>% dplyr::rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
+  }
+  return(df)
+}
+
 #' @title Init cols
 #'
 #' @description Initialise columns for assay dataframe
@@ -77,16 +94,11 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
 #' @keywords assay
 #' @export
 init_cols <- function(assay_df) {
-  assay_df$filename <- gsub(".csv","",assay_df$filename)
-  assay_df$types <- ""
-  assay_df$sample_id <- ""
-  assay_df$dilution <- ""
-  assay_df$bleed <- ""
-  assay_df$treatment <- ""
-  assay_df$virus <- ""
-  assay_df$experiment_id <- ""
-  assay_df$neutralisation <- as.numeric("")
-  assay_df$exclude <- FALSE
+  cols <- c("types","sample_id","dilution","bleed","treatment","virus","experiment_id","neutralisation","exclude")
+  vals <- c(rep("", each=7),as.numeric(""),FALSE)
+  for(i in 1:length(cols)){
+    if (!(cols[i] %in% colnames(assay_df))) assay_df[cols[i]] <- vals[i]
+  }
   return(assay_df)
 }
 
