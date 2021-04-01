@@ -198,8 +198,9 @@ app_server <- function( input, output, session ) {
     if (is.null(values[["plate_data"]]) & all(cols %in% header)) {
       assay_df <- utils::read.csv(luminescence_files$datapath[1], header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
       # Update deprecated colnames if present
-      assay_df <- replace_names(assay_df, oldnames=c("subject", "inoculate", "primary", "study"), newnames=c("sample_id", "treatment", "virus", "experiment_id"))
-      assay_df <- replace_names(assay_df, oldnames=c("mouse", "inoc", "dil", "neu"), newnames=c("sample_id", "inoculate", "dilution", "neutralisation"))
+      oldnames <- c("subject","mouse","inoculate","inoc","primary","study","dil","neu","plate")
+      newnames <- c("sample_id","sample_id","treatment","treatment","virus","experiment_id","dilution","neutralisation","plate_number")
+      assay_df <- replace_names(assay_df, oldnames, newnames)
       assay_df <- init_cols(assay_df)
       values[["assay_df"]] <- assay_df
     }

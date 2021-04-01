@@ -7,7 +7,7 @@
 replace_names(df, oldnames, newnames)
 }
 \arguments{
-\item{df}{dataframe, a dataframe containing all of the old column names}
+\item{df}{dataframe, a dataframe containing some old column names}
 
 \item{oldnames}{vector, list of column names to be replaced. Must have the same order and length as new names}
 

@@ -72,16 +72,17 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
 #' @title Replace names
 #'
 #' @description Out with the old in with the new
-#' @param df dataframe, a dataframe containing all of the old column names
+#' @param df dataframe, a dataframe containing some old column names
 #' @param oldnames vector, list of column names to be replaced. Must have the same order and length as new names
 #' @param newnames vector, list of column names to replaced the old ones. Must have the same order and length as old names
 #' @return dataframe, dataframe with updated column names
 #' @keywords replace column names
 #' @export
 replace_names <- function(df, oldnames, newnames) {
-  header <- colnames(df)
-  if (all(oldnames %in% header)) {
-    df <- df %>% dplyr::rename_with(~ newnames[which(oldnames == .x)], .cols = oldnames)
+  for (i in 1:length(oldnames)) {
+    if (oldnames[i] %in% colnames(df)) {
+      colnames(df)[which(names(df) == oldnames[i])] <- newnames[i]
+    }
   }
   return(df)
 }
@@ -96,9 +97,10 @@ replace_names <- function(df, oldnames, newnames) {
 init_cols <- function(assay_df) {
   cols <- c("types","sample_id","dilution","bleed","treatment","virus","experiment_id","neutralisation","exclude")
   vals <- c(rep("", each=7),as.numeric(""),FALSE)
-  for(i in 1:length(cols)){
+  for (i in 1:length(cols)) {
     if (!(cols[i] %in% colnames(assay_df))) assay_df[cols[i]] <- vals[i]
   }
+  if ("filename" %in% colnames(assay_df)) assay_df$filename <- gsub(".csv","",assay_df$filename)
   return(assay_df)
 }
 
