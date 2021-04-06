@@ -293,9 +293,8 @@ app_ui <- function(request) {
             fluidRow(
               shinydashboard::box(
                 width = 12,
-                uiOutput(outputId = "tooltip_download_report"),
-                downloadButton("download_report", "Download HTML Report"),
-                br(), br(),
+                div(uiOutput(outputId = "tooltip_download_report"), downloadButton("download_report", "Download HTML Report"), class = 'inline control'),
+                div(numericInput("plot_text_size", "Plot text size", value = 12, width = "50%"), class = 'inline control'),
                 textInput("drm_string", uiOutput(outputId = "message_drm_string"), value = "formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)", width = "100%"),
                 shinydashboard::tabBox(
                   width = 12,

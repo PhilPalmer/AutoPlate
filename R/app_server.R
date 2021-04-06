@@ -565,7 +565,7 @@ app_server <- function( input, output, session ) {
     data <- values[["assay_df"]]
     data$dilution <- as.numeric(as.character(data$dilution))
     data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    values[["data_exploration"]] <- plot_data_exploration(data)
+    values[["data_exploration"]] <- plot_data_exploration(data, text_size=strtoi(input$plot_text_size))
     m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
     plotly::ggplotly(values[["data_exploration"]])  %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
   })
@@ -578,7 +578,7 @@ app_server <- function( input, output, session ) {
       virus_to_plot <- input$virus_drc
       data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
       model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-      values[["drc"]] <- plot_drc(data, model)
+      values[["drc"]] <- plot_drc(data, model, text_size=strtoi(input$plot_text_size))
       drc_plotly <- plotly::ggplotly(values[["drc"]])
       m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
       drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
@@ -597,7 +597,7 @@ app_server <- function( input, output, session ) {
       data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
       model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
       plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
-      ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type)
+      ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type, text_size=strtoi(input$plot_text_size))
       ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
       values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
       m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
@@ -613,7 +613,7 @@ app_server <- function( input, output, session ) {
     data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
       dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
       dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
-    values[["cv_boxplot"]] <- plot_cv_boxplot(data)
+    values[["cv_boxplot"]] <- plot_cv_boxplot(data, text_size=strtoi(input$plot_text_size))
     cv_boxplotly <- plotly::ggplotly(values[["cv_boxplot"]]) 
     m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
     cv_boxplotly <- cv_boxplotly %>% plotly::layout(boxmode = "group", autosize = F, width = 1000, height = 800, margin = m)
