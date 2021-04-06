@@ -383,7 +383,7 @@ update_feature <- function(new_feature, input, values) {
 assay_to_plate_df <- function(assay_df, plate_n, feature) {
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
   sample_ids <- c()
-  for (wcol in sort(unique(plate_df$wcol))) {
+  for (wcol in unique(plate_df$wcol)) {
     sample_id <- toString(unique(plate_df[plate_df$wcol == wcol,]$sample_id))
     sample_ids <- c(sample_ids,sample_id)
   }
