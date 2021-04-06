@@ -4,7 +4,7 @@
 \alias{plot_ic50_boxplot}
 \title{Plot IC50 boxplot}
 \usage{
-plot_ic50_boxplot(assay_df, drm, plot_type = "boxplot")
+plot_ic50_boxplot(assay_df, drm, plot_type = "boxplot", text_size = 12)
 }
 \arguments{
 \item{assay_df}{dataframe, main assay dataframe}
@@ -12,6 +12,8 @@ plot_ic50_boxplot(assay_df, drm, plot_type = "boxplot")
 \item{drm}{DRM object, the dose response model}
 
 \item{plot_type}{character, either "boxplot" (default) or "jitter"}
+
+\item{text_size}{integer, base text size to be used for the plot (default = 12)}
 }
 \value{
 list, containing IC50 boxplot ggplot2 object and individual effective dose dataframe

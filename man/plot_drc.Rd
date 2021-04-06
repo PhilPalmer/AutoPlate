@@ -4,12 +4,14 @@
 \alias{plot_drc}
 \title{Plot DRC}
 \usage{
-plot_drc(assay_df, drm)
+plot_drc(assay_df, drm, text_size = 12)
 }
 \arguments{
 \item{assay_df}{dataframe, main assay dataframe}
 
 \item{drm}{DRM object, the dose response model}
+
+\item{text_size}{integer, base text size to be used for the plot (default = 12)}
 }
 \value{
 plot, dose-response curve plot ggplot2 object

@@ -4,10 +4,12 @@
 \alias{plot_data_exploration}
 \title{Plot data exploration}
 \usage{
-plot_data_exploration(assay_df)
+plot_data_exploration(assay_df, text_size = 12)
 }
 \arguments{
 \item{assay_df}{dataframe, main assay dataframe}
+
+\item{text_size}{integer, base text size to be used for the plot (default = 12)}
 }
 \value{
 plot, data exploration plot ggplot2 object
