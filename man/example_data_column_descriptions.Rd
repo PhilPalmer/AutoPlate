@@ -5,7 +5,7 @@
 \alias{example_data_column_descriptions}
 \title{Example data column descriptions}
 \format{
-A data frame containing 13 rows and 3 variables
+A data frame containing 13 rows and 4 variables
 }
 \usage{
 data(example_data_column_descriptions)
