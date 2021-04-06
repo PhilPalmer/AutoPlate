@@ -111,10 +111,11 @@ update_cols_order <- function(assay_df) {
 #'
 #' @description Function to generate a data exploration plot from assay data frame
 #' @param assay_df dataframe, main assay dataframe
+#' @param text_size integer, base text size to be used for the plot (default = 12)
 #' @return plot, data exploration plot ggplot2 object 
 #' @keywords data exploration plot
 #' @export
-plot_data_exploration <- function(assay_df) {
+plot_data_exploration <- function(assay_df, text_size=12) {
   # Preprocessing
   attach(update_cols_order(assay_df), warn.conflicts=FALSE)
   title <- init_title(assay_df)
@@ -125,9 +126,8 @@ plot_data_exploration <- function(assay_df) {
     ggplot2::facet_wrap(.~virus) +
     ggplot2::ylim(c(-100, 110)) +
     ggplot2::scale_x_continuous(trans="log10") +
-    ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
-    ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
-    ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+    ggprism::theme_prism(palette = "colorblind_safe", base_size = text_size) +
+    ggplot2::theme(axis.title=ggplot2::element_text(size=text_size+2,face="bold")) +
     ggplot2::annotation_logticks(side="b", outside = TRUE) +
     ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
     ggplot2::geom_vline(ggplot2::aes(xintercept=-Inf)) + 
@@ -166,10 +166,11 @@ data_exploration_code <- function(code) {
 #' @description Function to generate a dose-response curve (DRC) plot from assay data frame
 #' @param assay_df dataframe, main assay dataframe
 #' @param drm DRM object, the dose response model
+#' @param text_size integer, base text size to be used for the plot (default = 12)
 #' @return plot, dose-response curve plot ggplot2 object 
 #' @keywords plot drc
 #' @export
-plot_drc <- function(assay_df, drm) {
+plot_drc <- function(assay_df, drm, text_size=12) {
   # Preprocessing
   attach(update_cols_order(assay_df), warn.conflicts=FALSE)
   assay_df$sample_id <- unlist(assay_df$sample_id)        
@@ -188,11 +189,10 @@ plot_drc <- function(assay_df, drm) {
       ggplot2::geom_point(data=assay_df, ggplot2::aes(y=neutralisation)) +
       ggplot2::facet_wrap("treatment") +  
       ggplot2::scale_x_continuous(trans="log10") +
-      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::theme(strip.background = ggplot2::element_blank()) +
-      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
-      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = text_size) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=text_size+2,face="bold")) +
       ggplot2::annotation_logticks(side="b", outside = TRUE) +
       ggplot2::geom_hline(yintercept=50, linetype="dotted") +
       ggplot2::geom_hline(ggplot2::aes(yintercept=-Inf)) + 
@@ -236,11 +236,12 @@ drc_code <- function(code, drm_string, virus) {
 #' @param assay_df dataframe, main assay dataframe
 #' @param drm DRM object, the dose response model
 #' @param plot_type character, either "boxplot" (default) or "jitter"
+#' @param text_size integer, base text size to be used for the plot (default = 12)
 #' @return list, containing IC50 boxplot ggplot2 object and individual effective dose dataframe
 #' @keywords plot code
 #' @importFrom stats median
 #' @export
-plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
+plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot", text_size=12) {
   # Preprocessing
   attach(update_cols_order(assay_df), warn.conflicts=FALSE)
   assay_df$sample_id <- as.character(assay_df$sample_id)
@@ -265,9 +266,8 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot") {
       ggplot2::scale_x_discrete(limits=ied_order) +
       ggplot2::ylab("IC50 Dilution natural log") +
       ggplot2::xlab("Treatment") +
-      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
-      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
-      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = text_size) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=text_size+2,face="bold")) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::ggtitle(title) +
       ggplot2::coord_flip() + 
@@ -308,10 +308,11 @@ ic50_boxplot_code <- function(code, drm_string, ic50_is_boxplot, virus) {
 #'
 #' @description Function to generate a cell-virus boxplot plot from assay data frame
 #' @param assay_df dataframe, main assay dataframe
+#' @param text_size integer, base text size to be used for the plot (default = 12)
 #' @return plot, cell-virus boxplot ggplot2 object 
 #' @keywords boxplot cell virus
 #' @export
-plot_cv_boxplot <- function(assay_df) {
+plot_cv_boxplot <- function(assay_df, text_size=12) {
   # Preprocessing
   assay_df$plate_number <- as.factor(assay_df$plate_number)
   title <- init_title(assay_df)
@@ -324,9 +325,8 @@ plot_cv_boxplot <- function(assay_df) {
       ggplot2::ylab("Log10 raw luminescence value") +
       ggplot2::xlab("Cell only or Virus only") +
       ggplot2::annotation_logticks(side="l") +
-      ggprism::theme_prism(palette = "colorblind_safe", base_size = 14) +
-      ggplot2::theme(axis.title=ggplot2::element_text(size=18,face="bold")) +
-      ggplot2::theme(legend.text=ggplot2::element_text(size=16)) +
+      ggprism::theme_prism(palette = "colorblind_safe", base_size = 12) +
+      ggplot2::theme(axis.title=ggplot2::element_text(size=text_size+2,face="bold")) +
       ggplot2::ggtitle(title)
   return(cv_boxplot)
 }
