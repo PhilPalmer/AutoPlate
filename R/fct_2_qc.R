@@ -138,3 +138,28 @@ init_types_boxplot <- function(assay_df) {
     ggplot2::ggtitle(title)
   return(types_boxplot)
 }
+
+#' @title Assay to PRISM dataframe
+#'
+#' @description Convert full assay dataframe to an exportable format for PRISM for the specified feature
+#' @param assay_df dataframe, containing biological assay data from plate reader
+#' @param feature feature to generate the plate data format for (default = `neutralisation`)
+#' @return dataframe, PRISM dataframe in 96-well plate format for all plates
+#' @keywords assay PRISM
+#' @export
+assay_to_prism_df <- function(assay_df, feature = "neutralisation") {
+  plates <- sort(unique(assay_df$plate_number))
+  prism_df <- data.frame()
+  for (plate in plates) {
+    plate_df <- assay_to_plate_df(assay_df, plate, feature)
+    plate_df <- rbind(names(plate_df), plate_df)
+    colnames(plate_df) <- paste0("V", 1:length(names(plate_df)))
+    row.names(plate_df)[1] <- "sample_ids"
+    plate_df[1,] <- gsub(pattern = "V[0-9]+ (.*)", '\\1', plate_df[1,])
+    plate_df <- tibble::rownames_to_column(plate_df, "row")
+    plate_df <- rbind(c("plate_number", plate, rep("",length(names(plate_df))-2)), plate_df)
+    plate_df[nrow(plate_df)+1,] <- ""
+    prism_df <- dplyr::bind_rows(prism_df,plate_df)
+  }
+  return(prism_df)
+}

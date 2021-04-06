@@ -374,16 +374,35 @@ app_server <- function( input, output, session ) {
   # 2) QC
   #######
 
-  # Download/export data to CSV
+  # Download/export all data to CSV
   output$download_data <- downloadHandler(
     # TODO: generate more unique name for file based on experiment ID etc.
     filename = function() {
-      paste("pmn_platelist", ".csv", sep = "")
+      paste0("pmn_platelist", ".csv")
     },
     content = function(file) {
       assay_df <- assay_df()
       assay_df <- assay_df[order(assay_df$plate_number),]
       utils::write.table(apply(assay_df, 2, as.character),
+        file = file,
+        append = FALSE,
+        quote = TRUE,
+        sep = ",",
+        row.names = F,
+        col.names = T
+      )
+    }
+  )
+  # Download/export data for PRISM to CSV
+  output$download_prism <- downloadHandler(
+    filename = function() {
+      paste0("plate_neutralisations", ".csv")
+    },
+    content = function(file) {
+      assay_df <- assay_df()
+      assay_df <- assay_df[order(assay_df$plate_number),]
+      prism_df <- assay_to_prism_df(assay_df)
+      utils::write.table(apply(prism_df, 2, as.character),
         file = file,
         append = FALSE,
         quote = TRUE,

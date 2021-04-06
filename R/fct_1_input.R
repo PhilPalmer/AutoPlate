@@ -381,8 +381,6 @@ update_feature <- function(new_feature, input, values) {
 #' @keywords assay
 #' @export
 assay_to_plate_df <- function(assay_df, plate_n, feature) {
-  # TODO: update sample names?
-  # TODO: update documentation
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
   sample_ids <- c()
   for (wcol in sort(unique(plate_df$wcol))) {

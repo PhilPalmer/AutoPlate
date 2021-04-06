@@ -283,7 +283,8 @@ app_ui <- function(request) {
                   placeholder = "1,2A1,3A1:B12"
                 ),
                 uiOutput(outputId = "tooltip_download_data"),
-                downloadButton("download_data", "Download CSV data"),
+                downloadButton("download_data", "Download full CSV"),
+                downloadButton("download_prism", "Download PRISM CSV"),
                 uiOutput("heatmaps")
               )
             )
