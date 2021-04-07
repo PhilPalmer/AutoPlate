@@ -363,7 +363,7 @@ app_server <- function( input, output, session ) {
     features_df <- setNames(data.frame(matrix(ncol = 2, nrow = length(features))), c("Feature", "Entered"))
     features_df$Feature <- features
     for (feature in features) {
-      empty <- all(unique(assay_df[feature]) %in% c(NA, ""))
+      empty <- all(unique(as.character(assay_df[[feature]])) %in% c(NA, ""))
       features_df[features_df$Feature == feature,]$Entered <- if(empty) FALSE else TRUE
     }
     formattable::formattable(features_df, list(
