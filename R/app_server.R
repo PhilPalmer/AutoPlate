@@ -436,7 +436,8 @@ app_server <- function( input, output, session ) {
   observeEvent(input$tabset_qc, {
     feature <- gsub(" ", "_", tolower(input$tabset_qc), fixed = TRUE)
     assay_df <- isolate(values[["assay_df"]])
-    plates <- sort(unique(assay_df$plate_number))
+    plates <- unique(assay_df$plate_number)
+    if (length(plates) > 0) plates <- plates[order(nchar(plates), plates)]
     values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)
     lapply(values[["heatmap_input"]]$plates, function(i) {
       output[[paste("plot", i, sep = "")]] <- renderPlot({
