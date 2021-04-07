@@ -18,6 +18,7 @@
 #' @export
 plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
+  if (all(is.na(unique(plate_df[feature])))) plate_df[feature][is.na(plate_df[feature])] <- ""
   feature_list <- unlist(plate_df[[feature]], use.names = FALSE)
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
