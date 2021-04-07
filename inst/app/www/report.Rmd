@@ -27,14 +27,8 @@ library(autoplate)
 platelist_file <- "pmn_platelist.csv"
 assay_df <- utils::read.csv(platelist_file, header = TRUE, stringsAsFactors = FALSE, check.names = FALSE)
 # Fix column types
-cols <- c("wcol","bleed","treatment","virus","experiment_id")
-assay_df$dilution<- as.integer(assay_df$dilution)
-assay_df[cols] <- sapply(assay_df[cols], as.character)
+assay_df <- update_col_types(assay_df, example_data_column_descriptions)
 init_title(assay_df, full_title = TRUE)
-# Replace NA cols with empty string
-for (col in cols[-1]) {
-  if (all(is.na(unique(assay_df[col])))) assay_df[col][is.na(assay_df[col])] <- ""
-}
 ```
 
 ## Let's take a look at the data
