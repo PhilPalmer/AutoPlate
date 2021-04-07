@@ -405,7 +405,7 @@ app_server <- function( input, output, session ) {
       assay_df <- assay_df()
       assay_df <- assay_df[order(assay_df$plate_number),]
       prism_df <- assay_to_prism_df(assay_df)
-      utils::write.table(apply(prism_df, 2, as.character),
+      utils::write.table(prism_df,
         file = file,
         append = FALSE,
         quote = TRUE,
