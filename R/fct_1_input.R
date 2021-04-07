@@ -69,6 +69,28 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
   return(assay_df)
 }
 
+#' @title Update column types
+#'
+#' @description Update column type for each column in dataframe
+#' @param assay_df dataframe, containing some columns as specified in types_df
+#' @param types_df dataframe, containing columns `column_name` and `column_type`
+#' @return dataframe, dataframe with updated column types (by default columns are updated to `character` type)
+#' @keywords update column types
+#' @export
+update_col_types <- function(df, types_df) {
+  for (colname in colnames(df)) {
+    if (colname %in% types_df$column_name) {
+      type <- types_df[types_df$column_name == colname,]$column_type
+      if (type == "character") df[[colname]] <- as.character(df[[colname]])
+      if (type == "integer" || type == "numeric") df[[colname]] <- as.numeric(unlist(df[[colname]]))
+      if (type == "logical") df[[colname]] <- as.logical(unlist(df[[colname]]))
+    } else {
+      df[[colname]] <- as.character(df[[colname]])
+    }
+  }
+  return(df)
+}
+
 #' @title Replace names
 #'
 #' @description Out with the old in with the new
