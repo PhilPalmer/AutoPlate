@@ -156,7 +156,9 @@ assay_to_prism_df <- function(assay_df, feature = "neutralisation") {
     colnames(plate_df) <- paste0("V", 1:length(names(plate_df)))
     row.names(plate_df)[1] <- "sample_ids"
     plate_df[1,] <- gsub(pattern = "V[0-9]+ (.*)", '\\1', plate_df[1,])
-    plate_df <- tibble::rownames_to_column(plate_df, "row")
+    plate_df <- data.frame(row = row.names(plate_df), plate_df)
+    row.names(plate_df) <- 1:dim(plate_df)[1]
+    plate_df[] <- lapply(plate_df, as.character)
     plate_df <- rbind(c("plate_number", plate, rep("",length(names(plate_df))-2)), plate_df)
     plate_df[nrow(plate_df)+1,] <- ""
     prism_df <- dplyr::bind_rows(prism_df,plate_df)
