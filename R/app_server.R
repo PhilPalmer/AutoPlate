@@ -219,6 +219,8 @@ app_server <- function( input, output, session ) {
       assay_df <- update_dilutions(assay_df, dilutions(), values[["assay_type"]])
       # Calculate normalised luminescence values
       assay_df <- calc_neut(assay_df)
+      # Ensure the assay dataframe types are correct
+      assay_df <- update_col_types(assay_df, example_data_column_descriptions)
       values[["assay_df"]] <- assay_df
     }
     # TODO: extract date
@@ -267,6 +269,7 @@ app_server <- function( input, output, session ) {
           # Otherwise it would be changed back to the default when updating the main assay dataframe 
           updateTabsetPanel(session, "plate_tabs", selected = paste("Plate", values[["plate_n"]]))
           updateSelectInput(session, "plate_feature", selected = values[["plate_feature"]])
+          assay_df <- update_col_types(assay_df, example_data_column_descriptions)
           values[["assay_df"]] <- assay_df
         },
         error = function(error_message) {
