@@ -584,63 +584,71 @@ app_server <- function( input, output, session ) {
   })
 
   # Generate and render results plots
-  output$data_exploration <- plotly::renderPlotly({
-    req(values[["luminescence_files"]])
-    data <- values[["assay_df"]]
-    data$dilution <- as.numeric(as.character(data$dilution))
-    data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-    values[["data_exploration"]] <- plot_data_exploration(data, text_size=strtoi(input$plot_text_size))
-    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
-    plotly::ggplotly(values[["data_exploration"]])  %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
-  })
-  output$drc <- plotly::renderPlotly({
-    req(values[["luminescence_files"]])
-    data <- values[["assay_df"]]
-    data$dilution <- as.numeric(as.character(data$dilution))
-    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
-    tryCatch({
-      virus_to_plot <- input$virus_drc
-      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
-      model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-      values[["drc"]] <- plot_drc(data, model, text_size=strtoi(input$plot_text_size))
-      drc_plotly <- plotly::ggplotly(values[["drc"]])
+  plotlyBars::withBars(
+    output$data_exploration <- plotly::renderPlotly({
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      data$dilution <- as.numeric(as.character(data$dilution))
+      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+      values[["data_exploration"]] <- plot_data_exploration(data, text_size=strtoi(input$plot_text_size))
       m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
-      drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
-      drc_plotly 
-    }, error = function(error_message) {
-      print(error_message)
+      plotly::ggplotly(values[["data_exploration"]])  %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
     })
-  })
-  output$ic50_boxplot <- plotly::renderPlotly({
-    req(values[["luminescence_files"]])
-    data <- values[["assay_df"]]
-    data$dilution <- as.numeric(as.character(data$dilution))
-    # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
-    tryCatch({
-      virus_to_plot <- input$virus_ic50
-      data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
-      model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-      plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
-      ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type, text_size=strtoi(input$plot_text_size))
-      ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
-      values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
-      m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
-      ic50_boxplotly <- ic50_boxplotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
-      ic50_boxplotly 
+  )
+  plotlyBars::withBars(
+    output$drc <- plotly::renderPlotly({
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      data$dilution <- as.numeric(as.character(data$dilution))
+      # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+      tryCatch({
+        virus_to_plot <- input$virus_drc
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        values[["drc"]] <- plot_drc(data, model, text_size=strtoi(input$plot_text_size))
+        drc_plotly <- plotly::ggplotly(values[["drc"]])
+        m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+        drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
+        drc_plotly 
       }, error = function(error_message) {
-        print(error_message)
+        shiny::validate(toString(error_message))
+      })
     })
-  })
-  output$cv_boxplot <- plotly::renderPlotly({
-    req(values[["luminescence_files"]])
-    data <- values[["assay_df"]]
-    data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
-      dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
-      dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
-    values[["cv_boxplot"]] <- plot_cv_boxplot(data, text_size=strtoi(input$plot_text_size))
-    cv_boxplotly <- plotly::ggplotly(values[["cv_boxplot"]]) 
-    m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
-    cv_boxplotly <- cv_boxplotly %>% plotly::layout(boxmode = "group", autosize = F, width = 1000, height = 800, margin = m)
-    cv_boxplotly
-  })
+  )
+  plotlyBars::withBars(
+    output$ic50_boxplot <- plotly::renderPlotly({
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      data$dilution <- as.numeric(as.character(data$dilution))
+      # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
+      tryCatch({
+        virus_to_plot <- input$virus_ic50
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
+        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
+        ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type, text_size=strtoi(input$plot_text_size))
+        ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
+        values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
+        m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+        ic50_boxplotly <- ic50_boxplotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
+        ic50_boxplotly 
+        }, error = function(error_message) {
+          shiny::validate(toString(error_message))
+      })
+    })
+  )
+  plotlyBars::withBars(
+    output$cv_boxplot <- plotly::renderPlotly({
+      req(values[["luminescence_files"]])
+      data <- values[["assay_df"]]
+      data <- dplyr::filter(data, types %in% c("c", "v"), exclude == FALSE)  %>%
+        dplyr::mutate(types = ifelse( (types == "c"), "cell", types)) %>%
+        dplyr::mutate(types = ifelse( (types == "v"), "virus", types))
+      values[["cv_boxplot"]] <- plot_cv_boxplot(data, text_size=strtoi(input$plot_text_size))
+      cv_boxplotly <- plotly::ggplotly(values[["cv_boxplot"]]) 
+      m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
+      cv_boxplotly <- cv_boxplotly %>% plotly::layout(boxmode = "group", autosize = F, width = 1000, height = 800, margin = m)
+      cv_boxplotly
+    })
+  )
 }

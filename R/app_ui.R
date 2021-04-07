@@ -307,7 +307,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("data_exploration")),
+                      tabPanel("View Plot", plotlyBars::withBarsUI(plotly::plotlyOutput("data_exploration"))),
                       tabPanel("View code", uiOutput("data_exploration_code"))
                     )
                   ),
@@ -318,7 +318,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("drc")),
+                      tabPanel("View Plot", plotlyBars::withBarsUI(plotly::plotlyOutput("drc"))),
                       tabPanel("View code", uiOutput("drc_code"))
                     )
                   ),
@@ -335,7 +335,7 @@ app_ui <- function(request) {
                     br(),br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
+                      tabPanel("View Plot", plotlyBars::withBarsUI(plotly::plotlyOutput("ic50_boxplot"))),
                       tabPanel("View code", uiOutput("ic50_boxplot_code"))
                     )
                   ),
@@ -345,7 +345,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("cv_boxplot")),
+                      tabPanel("View Plot", plotlyBars::withBarsUI(plotly::plotlyOutput("cv_boxplot"))),
                       tabPanel("View code", uiOutput("cv_boxplot_code"))
                     )
                   )

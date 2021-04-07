@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+library(plotly)
+
 # Launch the ShinyApp (Do not remove this comment)
 # To deploy, run: rsconnect::deployApp(appTitle="AutoPlate")
 # Or use the blue button on top of this file
