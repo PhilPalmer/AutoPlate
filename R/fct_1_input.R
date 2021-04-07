@@ -72,7 +72,7 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
 #' @title Update column types
 #'
 #' @description Update column type for each column in dataframe
-#' @param assay_df dataframe, containing some columns as specified in types_df
+#' @param df dataframe, containing some columns as specified in types_df
 #' @param types_df dataframe, containing columns `column_name` and `column_type`
 #' @return dataframe, dataframe with updated column types (by default columns are updated to `character` type)
 #' @keywords update column types

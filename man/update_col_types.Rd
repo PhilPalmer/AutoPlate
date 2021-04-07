@@ -7,9 +7,9 @@
 update_col_types(df, types_df)
 }
 \arguments{
-\item{types_df}{dataframe, containing columns \code{column_name} and \code{column_type}}
+\item{df}{dataframe, containing some columns as specified in types_df}
 
-\item{assay_df}{dataframe, containing some columns as specified in types_df}
+\item{types_df}{dataframe, containing columns \code{column_name} and \code{column_type}}
 }
 \value{
 dataframe, dataframe with updated column types (by default columns are updated to \code{character} type)
