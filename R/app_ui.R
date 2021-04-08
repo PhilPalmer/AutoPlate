@@ -22,7 +22,7 @@ app_ui <- function(request) {
         ), class = "dropdown")
       ),
       shinydashboard::dashboardSidebar(
-        shinydashboard::sidebarMenu(
+        shinydashboard::sidebarMenu(id = "tab",
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
           shinydashboard::menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
           shinydashboard::menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
