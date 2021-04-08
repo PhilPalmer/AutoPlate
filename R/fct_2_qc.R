@@ -37,6 +37,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_col <- all_col[match(plate_levels,all_levels)]
   col <- if (feature %in% c("dilution","rlu","neutralisation")) col else plate_col
   # Generate heatmap plot
+  par(mar=c(4, 4, 4, 5.5))
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
 
