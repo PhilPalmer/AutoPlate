@@ -29,6 +29,13 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
   col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis::viridis else rainbow
   side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
+  # Make colours consistent between heatmap plots
+  set.seed(42)
+  all_levels <- sample(sort(unique(assay_df[[feature]])))
+  plate_levels <- sort(unique(plate_df[[feature]]))
+  all_col <- col(length(all_levels))
+  plate_col <- all_col[match(plate_levels,all_levels)]
+  col <- if (feature %in% c("dilution","rlu","neutralisation")) col else plate_col
   # Generate heatmap plot
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
 }
