@@ -444,20 +444,25 @@ app_server <- function( input, output, session ) {
   })
 
   # Generate plots for each plate on change of the QC tabs
-  observeEvent(input$tabset_qc, {
-    feature <- gsub(" ", "_", tolower(input$tabset_qc), fixed = TRUE)
-    assay_df <- isolate(values[["assay_df"]])
-    plates <- unique(assay_df$plate_number)
-    if (length(plates) > 0) plates <- plates[order(nchar(plates), plates)]
-    values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)
-    lapply(values[["heatmap_input"]]$plates, function(i) {
-      output[[paste("plot", i, sep = "")]] <- renderPlot({
-        assay_df <- isolate(values[["assay_df"]])
-        if (!(feature %in% c("average luminescence values","types_boxplot"))) {
-          plot_heatmap(i, assay_df, values[["heatmap_input"]]$feature, input$tabset_qc)
-        }
+  heatmap_listen <- reactive({
+    list(input$tabset_qc,input$tab)
+  })
+  observeEvent(heatmap_listen(), {
+    if (input$tab == "qc") {
+      feature <- gsub(" ", "_", tolower(input$tabset_qc), fixed = TRUE)
+      assay_df <- isolate(values[["assay_df"]])
+      plates <- unique(assay_df$plate_number)
+      if (length(plates) > 0) plates <- plates[order(nchar(plates), plates)]
+      values[["heatmap_input"]] <- list("feature" = feature, "plates" = plates)
+      lapply(values[["heatmap_input"]]$plates, function(i) {
+        output[[paste("plot", i, sep = "")]] <- renderPlot({
+          assay_df <- isolate(values[["assay_df"]])
+          if (!(feature %in% c("average luminescence values","types_boxplot"))) {
+            plot_heatmap(i, assay_df, values[["heatmap_input"]]$feature, input$tabset_qc)
+          }
+        })
       })
-    })
+    }
   })
   # Create divs to display heatmaps
   output$heatmaps <- renderUI({
