@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot cell-virus boxplot — plot_cv_boxplot • autoplate</title>
+<title>Update column types — update_col_types • autoplate</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Plot cell-virus boxplot — plot_cv_boxplot" />
-<meta property="og:description" content="Function to generate a cell-virus boxplot plot from assay data frame" />
+<meta property="og:title" content="Update column types — update_col_types" />
+<meta property="og:description" content="Update column type for each column in dataframe" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,33 +119,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot cell-virus boxplot</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_3_results.R'><code>R/fct_3_results.R</code></a></small>
-    <div class="hidden name"><code>plot_cv_boxplot.Rd</code></div>
+    <h1>Update column types</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_1_input.R'><code>R/fct_1_input.R</code></a></small>
+    <div class="hidden name"><code>update_col_types.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Function to generate a cell-virus boxplot plot from assay data frame</p>
+    <p>Update column type for each column in dataframe</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_cv_boxplot</span><span class='op'>(</span><span class='va'>assay_df</span>, text_size <span class='op'>=</span> <span class='fl'>12</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>update_col_types</span><span class='op'>(</span><span class='va'>df</span>, <span class='va'>types_df</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>assay_df</th>
-      <td><p>dataframe, main assay dataframe</p></td>
+      <th>df</th>
+      <td><p>dataframe, containing some columns as specified in types_df</p></td>
     </tr>
     <tr>
-      <th>text_size</th>
-      <td><p>integer, base text size to be used for the plot (default = 12)</p></td>
+      <th>types_df</th>
+      <td><p>dataframe, containing columns <code>column_name</code> and <code>column_type</code></p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>plot, cell-virus boxplot ggplot2 object</p>
+    <p>dataframe, dataframe with updated column types (by default columns are updated to <code>character</code> type)</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

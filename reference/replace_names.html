@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot cell-virus boxplot — plot_cv_boxplot • autoplate</title>
+<title>Replace names — replace_names • autoplate</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Plot cell-virus boxplot — plot_cv_boxplot" />
-<meta property="og:description" content="Function to generate a cell-virus boxplot plot from assay data frame" />
+<meta property="og:title" content="Replace names — replace_names" />
+<meta property="og:description" content="Out with the old in with the new" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,33 +119,37 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot cell-virus boxplot</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_3_results.R'><code>R/fct_3_results.R</code></a></small>
-    <div class="hidden name"><code>plot_cv_boxplot.Rd</code></div>
+    <h1>Replace names</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_1_input.R'><code>R/fct_1_input.R</code></a></small>
+    <div class="hidden name"><code>replace_names.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Function to generate a cell-virus boxplot plot from assay data frame</p>
+    <p>Out with the old in with the new</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_cv_boxplot</span><span class='op'>(</span><span class='va'>assay_df</span>, text_size <span class='op'>=</span> <span class='fl'>12</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>replace_names</span><span class='op'>(</span><span class='va'>df</span>, <span class='va'>oldnames</span>, <span class='va'>newnames</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>assay_df</th>
-      <td><p>dataframe, main assay dataframe</p></td>
+      <th>df</th>
+      <td><p>dataframe, a dataframe containing some old column names</p></td>
     </tr>
     <tr>
-      <th>text_size</th>
-      <td><p>integer, base text size to be used for the plot (default = 12)</p></td>
+      <th>oldnames</th>
+      <td><p>vector, list of column names to be replaced. Must have the same order and length as new names</p></td>
+    </tr>
+    <tr>
+      <th>newnames</th>
+      <td><p>vector, list of column names to replaced the old ones. Must have the same order and length as old names</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>plot, cell-virus boxplot ggplot2 object</p>
+    <p>dataframe, dataframe with updated column names</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

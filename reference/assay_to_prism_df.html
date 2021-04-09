@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot cell-virus boxplot — plot_cv_boxplot • autoplate</title>
+<title>Assay to PRISM dataframe — assay_to_prism_df • autoplate</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,8 @@
 
 
 
-<meta property="og:title" content="Plot cell-virus boxplot — plot_cv_boxplot" />
-<meta property="og:description" content="Function to generate a cell-virus boxplot plot from assay data frame" />
+<meta property="og:title" content="Assay to PRISM dataframe — assay_to_prism_df" />
+<meta property="og:description" content="Convert full assay dataframe to an exportable format for PRISM for the specified feature" />
 <meta property="og:image" content="/logo.png" />
 
 
@@ -119,33 +119,33 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot cell-virus boxplot</h1>
-    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_3_results.R'><code>R/fct_3_results.R</code></a></small>
-    <div class="hidden name"><code>plot_cv_boxplot.Rd</code></div>
+    <h1>Assay to PRISM dataframe</h1>
+    <small class="dont-index">Source: <a href='https://github.com/PhilPalmer/AutoPlate/blob/master/R/fct_2_qc.R'><code>R/fct_2_qc.R</code></a></small>
+    <div class="hidden name"><code>assay_to_prism_df.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Function to generate a cell-virus boxplot plot from assay data frame</p>
+    <p>Convert full assay dataframe to an exportable format for PRISM for the specified feature</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_cv_boxplot</span><span class='op'>(</span><span class='va'>assay_df</span>, text_size <span class='op'>=</span> <span class='fl'>12</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>assay_to_prism_df</span><span class='op'>(</span><span class='va'>assay_df</span>, feature <span class='op'>=</span> <span class='st'>"neutralisation"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>assay_df</th>
-      <td><p>dataframe, main assay dataframe</p></td>
+      <td><p>dataframe, containing biological assay data from plate reader</p></td>
     </tr>
     <tr>
-      <th>text_size</th>
-      <td><p>integer, base text size to be used for the plot (default = 12)</p></td>
+      <th>feature</th>
+      <td><p>feature to generate the plate data format for (default = <code>neutralisation</code>)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>plot, cell-virus boxplot ggplot2 object</p>
+    <p>dataframe, PRISM dataframe in 96-well plate format for all plates</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
