@@ -31,7 +31,8 @@ Imports:
     config,
     pkgload,
     readxl,
-    ggprism
+    ggprism,
+    shinycssloaders
 Suggests: 
     testthat,
     covr,

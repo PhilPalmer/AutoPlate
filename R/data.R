@@ -50,5 +50,5 @@ NULL
 #' @keywords datasets
 #' @name example_data_column_descriptions
 #' @usage data(example_data_column_descriptions)
-#' @format A data frame containing 13 rows and 3 variables
+#' @format A data frame containing 13 rows and 4 variables
 NULL

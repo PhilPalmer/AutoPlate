@@ -22,7 +22,7 @@ app_ui <- function(request) {
         ), class = "dropdown")
       ),
       shinydashboard::dashboardSidebar(
-        shinydashboard::sidebarMenu(
+        shinydashboard::sidebarMenu(id = "tab",
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
           shinydashboard::menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
           shinydashboard::menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
@@ -144,8 +144,14 @@ app_ui <- function(request) {
                 HTML("<p>Enter data for any well or feature. Make sure the <code>types</code>, <code>sample_id</code> and <code>dilution</code> are entered correctly</p>"),
                 uiOutput(outputId = "tooltip_plates"),
                 div(uiOutput("plate_feature"), class = 'inline control'),
+                div(br(), class = 'inline space'),
+                div(br(),shinyWidgets::switchInput(inputId = "show_plate_preview", value = FALSE, onLabel = "Show", offLabel = "Hide"), class = 'inline control'),
                 uiOutput("plate_tabs"),
-                rhandsontable::rHandsontableOutput("plate_data")
+                rhandsontable::rHandsontableOutput("plate_data"),
+                conditionalPanel(
+                  condition = "input.show_plate_preview && input.plate_tabs != 'Template'",
+                  plotOutput("plate_preview")
+                )
               ),
               shinydashboard::box(
                 title = "5) Other features",
@@ -277,7 +283,8 @@ app_ui <- function(request) {
                   placeholder = "1,2A1,3A1:B12"
                 ),
                 uiOutput(outputId = "tooltip_download_data"),
-                downloadButton("download_data", "Download CSV data"),
+                downloadButton("download_data", "Download full CSV"),
+                downloadButton("download_prism", "Download PRISM CSV"),
                 uiOutput("heatmaps")
               )
             )
@@ -287,9 +294,8 @@ app_ui <- function(request) {
             fluidRow(
               shinydashboard::box(
                 width = 12,
-                uiOutput(outputId = "tooltip_download_report"),
-                downloadButton("download_report", "Download HTML Report"),
-                br(), br(),
+                div(uiOutput(outputId = "tooltip_download_report"), downloadButton("download_report", "Download HTML Report"), class = 'inline control'),
+                div(numericInput("plot_text_size", "Plot text size", value = 12, width = "50%"), class = 'inline control'),
                 textInput("drm_string", uiOutput(outputId = "message_drm_string"), value = "formula=neutralisation~dilution, curveid=sample_id, fct=drc::LL2.4(), data=data, pmodels=data.frame(1,1,1,sample_id), upperl=c(NA,NA,100,NA), lowerl=c(0,NA,NA,0)", width = "100%"),
                 shinydashboard::tabBox(
                   width = 12,
@@ -301,7 +307,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("data_exploration")),
+                      tabPanel("View Plot",  shinycssloaders::withSpinner(plotly::plotlyOutput("data_exploration"))),
                       tabPanel("View code", uiOutput("data_exploration_code"))
                     )
                   ),
@@ -312,7 +318,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("drc")),
+                      tabPanel("View Plot", shinycssloaders::withSpinner(plotly::plotlyOutput("drc"))),
                       tabPanel("View code", uiOutput("drc_code"))
                     )
                   ),
@@ -329,7 +335,7 @@ app_ui <- function(request) {
                     br(),br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("ic50_boxplot")),
+                      tabPanel("View Plot",  shinycssloaders::withSpinner(plotly::plotlyOutput("ic50_boxplot"))),
                       tabPanel("View code", uiOutput("ic50_boxplot_code"))
                     )
                   ),
@@ -339,7 +345,7 @@ app_ui <- function(request) {
                     br(), br(),
                     shinydashboard::tabBox(
                       width = 12, height = "100vh",
-                      tabPanel("View Plot", plotly::plotlyOutput("cv_boxplot")),
+                      tabPanel("View Plot",  shinycssloaders::withSpinner(plotly::plotlyOutput("cv_boxplot"))),
                       tabPanel("View code", uiOutput("cv_boxplot_code"))
                     )
                   )

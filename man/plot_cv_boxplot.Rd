@@ -4,10 +4,12 @@
 \alias{plot_cv_boxplot}
 \title{Plot cell-virus boxplot}
 \usage{
-plot_cv_boxplot(assay_df)
+plot_cv_boxplot(assay_df, text_size = 12)
 }
 \arguments{
 \item{assay_df}{dataframe, main assay dataframe}
+
+\item{text_size}{integer, base text size to be used for the plot (default = 12)}
 }
 \value{
 plot, cell-virus boxplot ggplot2 object

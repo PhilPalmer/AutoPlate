@@ -58,15 +58,55 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
     assay_df <-
         apply(luminescence_files, 1, function(df) ella_to_assay_df(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).xls", '\\1', tolower(filename)))
+        dplyr::mutate(plate_number = gsub(pattern = ".*[^0-9]([0-9]+).xls", '\\1', tolower(filename)))
   } else {
     assay_df <-
         apply(luminescence_files, 1, function(df) read_plus(df["name"], df["datapath"])) %>%
         dplyr::bind_rows() %>%
-        dplyr::mutate(plate_number = gsub(pattern = ".*n([0-9]+).csv", '\\1', tolower(filename))) %>%
+        dplyr::mutate(plate_number = gsub(pattern = ".*[^0-9]([0-9]+).csv", '\\1', tolower(filename))) %>%
         tidyr::separate(col = WellPosition, into = c("wrow", "wcol"), sep = ":")
   }
   return(assay_df)
+}
+
+#' @title Update column types
+#'
+#' @description Update column type for each column in dataframe
+#' @param df dataframe, containing some columns as specified in types_df
+#' @param types_df dataframe, containing columns `column_name` and `column_type`
+#' @return dataframe, dataframe with updated column types (by default columns are updated to `character` type)
+#' @keywords update column types
+#' @export
+update_col_types <- function(df, types_df) {
+  for (colname in colnames(df)) {
+    if (colname %in% types_df$column_name) {
+      type <- types_df[types_df$column_name == colname,]$column_type
+      if (type == "character") df[[colname]] <- as.character(df[[colname]])
+      if (type == "integer" || type == "numeric") df[[colname]] <- as.numeric(unlist(df[[colname]]))
+      if (type == "logical") df[[colname]] <- as.logical(unlist(df[[colname]]))
+    } else {
+      df[[colname]] <- as.character(df[[colname]])
+    }
+  }
+  return(df)
+}
+
+#' @title Replace names
+#'
+#' @description Out with the old in with the new
+#' @param df dataframe, a dataframe containing some old column names
+#' @param oldnames vector, list of column names to be replaced. Must have the same order and length as new names
+#' @param newnames vector, list of column names to replaced the old ones. Must have the same order and length as old names
+#' @return dataframe, dataframe with updated column names
+#' @keywords replace column names
+#' @export
+replace_names <- function(df, oldnames, newnames) {
+  for (i in 1:length(oldnames)) {
+    if (oldnames[i] %in% colnames(df)) {
+      colnames(df)[which(names(df) == oldnames[i])] <- newnames[i]
+    }
+  }
+  return(df)
 }
 
 #' @title Init cols
@@ -77,16 +117,12 @@ init_assay_df <- function(luminescence_files, assay_type="pMN") {
 #' @keywords assay
 #' @export
 init_cols <- function(assay_df) {
-  assay_df$filename <- gsub(".csv","",assay_df$filename)
-  assay_df$types <- ""
-  assay_df$sample_id <- ""
-  assay_df$dilution <- ""
-  assay_df$bleed <- ""
-  assay_df$treatment <- ""
-  assay_df$virus <- ""
-  assay_df$experiment_id <- ""
-  assay_df$neutralisation <- as.numeric("")
-  assay_df$exclude <- FALSE
+  cols <- c("types","sample_id","dilution","bleed","treatment","virus","experiment_id","neutralisation","exclude")
+  vals <- c(rep("", each=7),as.numeric(""),FALSE)
+  for (i in 1:length(cols)) {
+    if (!(cols[i] %in% colnames(assay_df))) assay_df[cols[i]] <- vals[i]
+  }
+  if ("filename" %in% colnames(assay_df)) assay_df$filename <- gsub(".csv","",assay_df$filename)
   return(assay_df)
 }
 
@@ -367,10 +403,14 @@ update_feature <- function(new_feature, input, values) {
 #' @keywords assay
 #' @export
 assay_to_plate_df <- function(assay_df, plate_n, feature) {
-  # TODO: update sample names?
-  # TODO: update documentation
   plate_df <- isolate(assay_df[assay_df$plate_number == plate_n, ])
+  sample_ids <- c()
+  for (wcol in unique(plate_df$wcol)) {
+    sample_id <- toString(unique(plate_df[plate_df$wcol == wcol,]$sample_id))
+    sample_ids <- c(sample_ids,sample_id)
+  }
   plate_df <- as.data.frame(matrix(plate_df[[feature]], byrow=T, ncol=12, nrow=8))
   row.names(plate_df) <- LETTERS[1:length(row.names(plate_df))]
+  colnames(plate_df) <- paste(colnames(plate_df),sample_ids,sep=" ")
   return(plate_df)
 }

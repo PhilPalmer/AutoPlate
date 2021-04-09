@@ -38,6 +38,7 @@ usethis::use_package("utils")
 usethis::use_package("readxl")
 usethis::use_package("ggprism")
 usethis::use_package("formattable", "suggests")
+usethis::use_package("shinycssloaders")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
