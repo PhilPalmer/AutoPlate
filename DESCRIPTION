@@ -32,7 +32,7 @@ Imports:
     pkgload,
     readxl,
     ggprism,
-    plotlyBars
+    shinycssloaders
 Suggests: 
     testthat,
     covr,
@@ -41,4 +41,3 @@ VignetteBuilder: knitr
 Depends: 
     magrittr,
     R (>= 2.10)
-Remotes: andrewsali/plotlyBars
