@@ -600,7 +600,6 @@ app_server <- function( input, output, session ) {
 
   # Generate and render results plots
   output$data_exploration <- plotly::renderPlotly({
-    if (input$tab == "results") {
       req(values[["luminescence_files"]])
       data <- values[["assay_df"]]
       tryCatch({
@@ -612,10 +611,8 @@ app_server <- function( input, output, session ) {
       }, error = function(error_message) {
         shiny::validate(toString(error_message))
       })
-    }
   })
   output$drc <- plotly::renderPlotly({
-    if (input$tab == "results") {
       req(values[["luminescence_files"]])
       data <- values[["assay_df"]]
       data$dilution <- as.numeric(as.character(data$dilution))
@@ -632,10 +629,8 @@ app_server <- function( input, output, session ) {
       }, error = function(error_message) {
         shiny::validate(toString(error_message))
       })
-    }
   })
   output$ic50_boxplot <- plotly::renderPlotly({
-    if (input$tab == "results") {
       req(values[["luminescence_files"]])
       data <- values[["assay_df"]]
       data$dilution <- as.numeric(as.character(data$dilution))
@@ -654,10 +649,8 @@ app_server <- function( input, output, session ) {
         }, error = function(error_message) {
           shiny::validate(toString(error_message))
       })
-    }
   })
   output$cv_boxplot <- plotly::renderPlotly({
-    if (input$tab == "results") {
       req(values[["luminescence_files"]])
       data <- values[["assay_df"]]
       tryCatch({
@@ -672,6 +665,5 @@ app_server <- function( input, output, session ) {
       }, error = function(error_message) {
         shiny::validate(toString(error_message))
       })
-    }
   })
 }
