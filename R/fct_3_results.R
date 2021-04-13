@@ -254,6 +254,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot", text_size=12) 
   ied$raw_ic50_dilution <- exp(ied$log_ic50_dilution)
   ied <- ied[c("sample_id","treatment","raw_ic50_dilution","log_ic50_dilution","log_ic50_dilution_std_error","virus","plate_number")]
   control_median <- median(ied[tolower(ied$treatment) %in% tolower(c("PBS", "negative_control")),]$log_ic50_dilution)
+  min_diution <- log(min(assay_df$dilution))
   # Average Neutralisation
   avied <- dplyr::summarise(dplyr::group_by(ied, treatment), av=median(log_ic50_dilution))
   ied_order <- avied$treatment[order(avied$av)]
@@ -270,8 +271,7 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot", text_size=12) 
       ggplot2::theme(axis.title=ggplot2::element_text(size=text_size+2,face="bold")) +
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::ggtitle(title) +
-      ggplot2::coord_flip() + 
-      ggplot2::geom_hline(yintercept=c(control_median), linetype="dotted", color="grey")
+      ggplot2::geom_hline(yintercept=c(min_diution), linetype="dotted", color="grey")
   return(list(ic50_boxplot=ic50_boxplot, ied=ied))
 }
 
