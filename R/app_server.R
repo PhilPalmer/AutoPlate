@@ -619,8 +619,17 @@ app_server <- function( input, output, session ) {
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
       tryCatch({
         virus_to_plot <- input$virus_drc
-        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
-        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+        data$sample_id <- paste(data$sample_id,data$virus)
+        if (!(is.null(values[["assay_df_to_plot"]])) && identical(data,values[["assay_df_to_plot"]]) && identical(input$drm_string,values[["drm_string"]])) {
+          model <- values[["drm"]]
+        } else {
+          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+          values[["drm"]] <- model
+          values[["drm_string"]] <- input$drm_string
+          values[["assay_df_to_plot"]] <- data
+        }
+        data <- dplyr::filter(data, virus == virus_to_plot)
         values[["drc"]] <- plot_drc(data, model, text_size=strtoi(input$plot_text_size))
         drc_plotly <- plotly::ggplotly(values[["drc"]])
         m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
@@ -637,8 +646,17 @@ app_server <- function( input, output, session ) {
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
       tryCatch({
         virus_to_plot <- input$virus_ic50
-        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_plot)
-        model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+        data$sample_id <- paste(data$sample_id,data$virus)
+        if (!(is.null(values[["assay_df_to_plot"]])) && identical(data,values[["assay_df_to_plot"]]) && identical(input$drm_string,values[["drm_string"]])) {
+          model <- values[["drm"]]
+        } else {
+          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+          values[["drm"]] <- model
+          values[["drm_string"]] <- input$drm_string
+          values[["assay_df_to_plot"]] <- data
+        }
+        data <- dplyr::filter(data, virus == virus_to_plot)
         plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
         ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type, text_size=strtoi(input$plot_text_size))
         ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
