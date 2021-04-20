@@ -272,6 +272,15 @@ plot_ic50_boxplot <- function(assay_df, drm, plot_type="boxplot", text_size=12) 
       ggplot2::scale_colour_manual(breaks=treatments,values=treatment_cols) +
       ggplot2::ggtitle(title) +
       ggplot2::geom_hline(yintercept=c(min_diution), linetype="dotted", color="grey")
+
+  # Remove virus IDs from sample names if present
+  sample_ids <- c()
+  for (i in 1:length(ied$sample_id)){
+    virus <- paste0(" ",ied$virus[i])
+    sample_id <- gsub(virus, "", ied$sample_id[i], fixed=TRUE)
+    sample_ids <- c(sample_ids,sample_id)
+  }
+  ied$sample_id <- sample_ids
   return(list(ic50_boxplot=ic50_boxplot, ied=ied))
 }
 
@@ -353,4 +362,28 @@ cv_boxplot_code <- function(code) {
   if (code == "plot") code_text <- plot
   if (code == "all") code_text <- paste0(setup,plot)
   return(code_text)
+}
+
+#' @title Get dose-response model
+#'
+#' @description Preprocess the data assay dataframe for model fitting and fit the dose-response model (DRM) - fetch the cached DRM if it's been precomputed
+#' @param data dataframe, main assay dataframe
+#' @param input object, R shiny server input parameter/object
+#' @param values object, R shiny reactive values object
+#' @return list containing the DRM, assay dataframe and reactive values
+#' @keywords assay
+#' @noRd
+get_drm <- function(data, input, values, virus_to_plot=NULL) {
+  data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
+  data$sample_id <- paste(data$sample_id,data$virus)
+  if (!(is.null(values[["assay_df_to_plot"]])) && identical(data,values[["assay_df_to_plot"]]) && identical(input$drm_string,values[["drm_string"]])) {
+    model <- values[["drm"]]
+  } else {
+    model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
+    values[["drm"]] <- model
+    values[["drm_string"]] <- input$drm_string
+    values[["assay_df_to_plot"]] <- data
+  }
+  if (!(is.null(virus_to_plot))) data <- dplyr::filter(data, virus == virus_to_plot)
+  return(list(model=model, data=data, values=values))
 }

@@ -565,19 +565,12 @@ app_server <- function( input, output, session ) {
       assay_df <- values[["assay_df"]]
       assay_df$dilution <- as.numeric(as.character(assay_df$dilution))
       tryCatch({
-        all_ieds = data.frame()
-        for (virus_to_keep in unique(assay_df$virus)) {
-          data <- dplyr::filter(assay_df, types %in% c("x", "m"), exclude == FALSE, virus == virus_to_keep)
-          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-          plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
-          ied <- plot_ic50_boxplot(data, model, plot_type)$ied
-          all_ieds <- dplyr::bind_rows(all_ieds,ied)
-        }
-        all_ieds <- all_ieds[match(row.names(all_ieds)[order(nchar(row.names(all_ieds)), row.names(all_ieds))], row.names(all_ieds)),]
+        m <- get_drm(assay_df, input, values)
+        ied <- plot_ic50_boxplot(m$data, m$model)$ied
       }, error = function(error_message) {
         print(error_message)
       })
-      utils::write.table(all_ieds, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
+      utils::write.table(ied, file=file, append=FALSE, quote=FALSE, sep=",", row.names=F, col.names=T)
     }
   )
   output$download_cv_boxplot <- downloadHandler(
@@ -618,19 +611,9 @@ app_server <- function( input, output, session ) {
       data$dilution <- as.numeric(as.character(data$dilution))
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
       tryCatch({
-        virus_to_plot <- input$virus_drc
-        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-        data$sample_id <- paste(data$sample_id,data$virus)
-        if (!(is.null(values[["assay_df_to_plot"]])) && identical(data,values[["assay_df_to_plot"]]) && identical(input$drm_string,values[["drm_string"]])) {
-          model <- values[["drm"]]
-        } else {
-          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-          values[["drm"]] <- model
-          values[["drm_string"]] <- input$drm_string
-          values[["assay_df_to_plot"]] <- data
-        }
-        data <- dplyr::filter(data, virus == virus_to_plot)
-        values[["drc"]] <- plot_drc(data, model, text_size=strtoi(input$plot_text_size))
+        m <- get_drm(data, input, values, input$virus_drc)
+        values <- m$values
+        values[["drc"]] <- plot_drc(m$data, m$model, text_size=strtoi(input$plot_text_size))
         drc_plotly <- plotly::ggplotly(values[["drc"]])
         m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
         drc_plotly <- drc_plotly %>% plotly::layout(autosize = F, width = 1000, height = 800, margin = m)
@@ -645,20 +628,10 @@ app_server <- function( input, output, session ) {
       data$dilution <- as.numeric(as.character(data$dilution))
       # Catch errors to prevent https://github.com/PhilPalmer/AutoPlate/issues/13
       tryCatch({
-        virus_to_plot <- input$virus_ic50
-        data <- dplyr::filter(data, types %in% c("x", "m"), exclude == FALSE)
-        data$sample_id <- paste(data$sample_id,data$virus)
-        if (!(is.null(values[["assay_df_to_plot"]])) && identical(data,values[["assay_df_to_plot"]]) && identical(input$drm_string,values[["drm_string"]])) {
-          model <- values[["drm"]]
-        } else {
-          model <- eval(parse(text=paste0("drc::drm(",input$drm_string,")")))
-          values[["drm"]] <- model
-          values[["drm_string"]] <- input$drm_string
-          values[["assay_df_to_plot"]] <- data
-        }
-        data <- dplyr::filter(data, virus == virus_to_plot)
+        m <- get_drm(data, input, values, input$virus_ic50)
+        values <- m$values
         plot_type <- if(input$ic50_is_boxplot) "boxplot" else "jitter"
-        ic50_boxplot <- plot_ic50_boxplot(data, model, plot_type, text_size=strtoi(input$plot_text_size))
+        ic50_boxplot <- plot_ic50_boxplot(m$data, m$model, plot_type, text_size=strtoi(input$plot_text_size))
         ic50_boxplotly <- plotly::ggplotly(ic50_boxplot$ic50_boxplot)
         values[["ic50_boxplot"]] <- ic50_boxplot$ic50_boxplot
         m <- list(l = 50, r = 50, b = 100, t = 100, pad = 4)
