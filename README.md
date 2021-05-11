@@ -27,6 +27,8 @@ dose-response curves can be fit. In the future, other assays such as
 ELISA, HIA or even any custom assay may be supported. Let us know
 if there’s an assay that you would like us to support\!
 
+<img src="man/figures/pmn_autoplate.jpg" height=300/>
+
 ## Ways of using AutoPlate
 You can use AutoPlate in two ways: 
 1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
