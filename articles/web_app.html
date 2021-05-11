@@ -89,12 +89,30 @@
     
     
 <p>See the <a href="../index.html#web-application-quick-start">Quick Start</a></p>
-<div id="supported-input-formats" class="section level2">
+<p>The AutoPlate web interface consists of three steps:</p>
+<div id="input" class="section level2">
 <h2 class="hasAnchor">
-<a href="#supported-input-formats" class="anchor"></a>Supported Input Formats</h2>
-<div id="pmn-csv-plate" class="section level3">
+<a href="#input" class="anchor"></a>1) Input</h2>
+<p>Upload your luminescence rawdata from the plate reader and specify any metadata required for dose-response curve analysis.</p>
+<div id="select-the-assay-type" class="section level3">
 <h3 class="hasAnchor">
-<a href="#pmn-csv-plate" class="anchor"></a>1) pMN CSV plate</h3>
+<a href="#select-the-assay-type" class="anchor"></a>1.1) Select the assay type</h3>
+<p>Select the type of assay which you wish to analyse data for, currently supported assays are <code>pMN</code> and <code>ELLA</code></p>
+<p><img src="images/1_1_assay_type.png"></p>
+</div>
+<div id="upload-your-luminescence-files-" class="section level3">
+<h3 class="hasAnchor">
+<a href="#upload-your-luminescence-files-" class="anchor"></a>1.2) Upload your luminescence files.</h3>
+<p>Upload your luminescence files directly from the plate reader or try out the app using example data. Holding down <code>Shift</code> or <code>Ctrl</code> should allow you to select multiple plates.</p>
+<p><em>Note: the uploaded files must correspond to the selected assay type</em></p>
+<p><img src="images/1_2_input_files.png"></p>
+<div id="supported-input-formats" class="section level4">
+<h4 class="hasAnchor">
+<a href="#supported-input-formats" class="anchor"></a>Supported Input Formats</h4>
+<p>Luminescence files that contain the raw luminescence values for each well can be uploaded directly from the plate reader. CSV format is used for the <a href="#pmn-csv-plate">pMN assay</a> and Excel format for the <a href="#ella-excel-plate">ELLA assay</a>. Users can also upload a previously exported CSV file generated from a later step in <a href="#autoplate-csv-plates">AutoPlate</a> if they want to re-load a dataset that has already been analysed.</p>
+<div id="pmn-csv-plate" class="section level5">
+<h5 class="hasAnchor">
+<a href="#pmn-csv-plate" class="anchor"></a>1) pMN CSV plate</h5>
 <table class="table">
 <colgroup>
 <col width="56%">
@@ -134,9 +152,9 @@
 </tbody>
 </table>
 </div>
-<div id="ella-excel-plate" class="section level3">
-<h3 class="hasAnchor">
-<a href="#ella-excel-plate" class="anchor"></a>2) ELLA Excel plate</h3>
+<div id="ella-excel-plate" class="section level5">
+<h5 class="hasAnchor">
+<a href="#ella-excel-plate" class="anchor"></a>2) ELLA Excel plate</h5>
 <table class="table">
 <colgroup>
 <col width="56%">
@@ -176,9 +194,9 @@
 </tbody>
 </table>
 </div>
-<div id="autoplate-csv-plates" class="section level3">
-<h3 class="hasAnchor">
-<a href="#autoplate-csv-plates" class="anchor"></a>3) AutoPlate CSV plates</h3>
+<div id="autoplate-csv-plates" class="section level5">
+<h5 class="hasAnchor">
+<a href="#autoplate-csv-plates" class="anchor"></a>3) AutoPlate CSV plates</h5>
 <table class="table">
 <colgroup>
 <col width="56%">
@@ -218,9 +236,9 @@
 </tbody>
 </table>
 </div>
-<div id="columns" class="section level3">
-<h3 class="hasAnchor">
-<a href="#columns" class="anchor"></a>Columns</h3>
+<div id="description-of-all-columns" class="section level5">
+<h5 class="hasAnchor">
+<a href="#description-of-all-columns" class="anchor"></a>Description of all columns</h5>
 <table class="table">
 <colgroup>
 <col width="5%">
@@ -342,6 +360,154 @@
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+</div>
+<div id="specify-your-dilutions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#specify-your-dilutions" class="anchor"></a>1.3) Specify your dilutions</h3>
+<p>Both the serum and control concentration/dilutions can be specified by an interactive table, containing default values. The Serum concentrations/dilutions correspond to wells of type <code>x</code> and the control concentrations/dilutions correspond to wells of type <code>m</code>.</p>
+<p>The <strong>pMN</strong> assay uses <strong>vertical dilutions</strong> so any updates made to the dilutions table will update all wells of the relevant type (<code>x</code> or <code>m</code>) which are on the same row eg <code>A</code></p>
+<p><img src="images/1_3_pmn_dilutions.png"></p>
+<p>The <strong>ELLA</strong> assay uses <strong>horizontal dilutions</strong> so any updates made to the dilutions table will update all wells of the relevant type (<code>x</code>) which are on the same column eg <code>1</code></p>
+<p><img src="images/1_3_ella_dilutions.png"></p>
+<p>Alternatively, any custom modifications to the dilutions can be set in the <a href="#update-the-plate-data-table">plate data table</a> and modifications for all plates can be easily set on the <a href="#template-tab">template tab</a></p>
+</div>
+<div id="update-the-plate-data-table" class="section level3">
+<h3 class="hasAnchor">
+<a href="#update-the-plate-data-table" class="anchor"></a>1.4) Update the plate data table</h3>
+<p>Data for <a href="#description-of-all-columns">any feature</a> can be entered by selecting that feature from the dropdown menu and entering the data using the plate data table. The most important features to ensure that they are set correctly using the plate data table are the <code>types</code>, <code>sample_id</code> and <code>dilution</code>.</p>
+<p>All three of these features will have default values:</p>
+<ul>
+<li><p><code>sample_id</code> - the sample IDs will automatically increment both across and between plates</p></li>
+<li><p><code>dilution</code> - the default dilutions will be defined by the <a href="#specify-your-dilutions">dilutions table</a>. These can be modified either per plate or for all plates using the <a href="#template-tab">template tab</a></p></li>
+<li><p><code>types</code> - will have a default plate layout (shown and described below). This can be updated for all plates using the <a href="#template-tab">template tab</a></p></li>
+</ul>
+<p>Most wells are type <code>x</code> (experimental); these are a known dilution of sample neutralising the virus of interest. Type <code>m</code> indicates the positive control (<code>m</code> was originally for monoclonal antibodies), these wells are treated the same as type <code>x</code> but can be easily filtered or coloured differently and may be diluted differently. The final types are <code>v</code> and <code>c</code> which are used to convert virus marker measurements into neutralisation and normalise the data. Type <code>c</code> contains cells only and represents 100% neutralisation because there is no virus to enter cells and express the marker. Type <code>v</code> contains cells and virus-only but (no treatment) and represents 0% neutralisation because no virus neutralisation occurs.</p>
+<p><img src="images/1_4_types_table.png"></p>
+<p>It may also be useful to <code>exclude</code> wells from the analysis, for example, if the controls have not worked. Wells can be excluded by selecting exclude from the dropdown menu and ticking any wells you wish to remove from the analysis.</p>
+<p><img src="images/1_4_exclude_table.png"></p>
+<p>There is also an option to show the raw RLU values for a given plate by clicking the toggle button above the plate data table.</p>
+<p><img src="images/1_4_rlu_heatmap.png"></p>
+<div id="template-tab" class="section level5">
+<h5 class="hasAnchor">
+<a href="#template-tab" class="anchor"></a>Template tab</h5>
+<p>Any modifications made to the template tab will update the selected feature for all plates. For example, this may be useful to set a different <code>types</code> plate layout if yours differs from the default one.</p>
+</div>
+</div>
+<div id="other-features" class="section level3">
+<h3 class="hasAnchor">
+<a href="#other-features" class="anchor"></a>1.5) Other features</h3>
+<p>Features such as the <code>virus</code>, <code>treatment</code>, <code>bleed</code> and <code>experiment_id</code> can be set by the <a href="#update-the-plate-data-table">plate date table</a>. However, the values for these features will often be the same for many wells and so it may be time-consuming to specify them for each individual well. Therefore, in the “other features” section these features can be set based on any other existing feature.</p>
+<p>For example, if I want to specify the <code>treatment</code> that each sample was inoculated with you can select <code>sample_id</code> from the dropdown menu. This will then display a table of all samples and you can specify the treatment (eg vaccine) used for each sample.</p>
+<p>The default value in the dropdown menu is for each <code>well</code>. Meaning that AutoPlate will update the selected tab (eg <code>virus</code>) for all wells on all plates.</p>
+<p><em>NOTE: Make sure you click <code>Submit</code> once you have entered all the information for the selected feature</em></p>
+<p><img src="images/1_5_other_features_input.png"></p>
+<p>To help prevent you from forgetting to add information for these features, AutoPlate displays a table showing which features it has data for. In the following table no information has been entered for either the <code>virus</code>, <code>treatment</code>, <code>bleed</code> or <code>experiment_id</code> <img src="images/1_5_other_features_output.png"></p>
+</div>
+</div>
+<div id="quality-control" class="section level2">
+<h2 class="hasAnchor">
+<a href="#quality-control" class="anchor"></a>2) Quality Control</h2>
+<p>Visualise the data you entered in step 1 and check that the controls have worked for each plate/well</p>
+<p><em>Note: If you notice any issues with the data at the QC step it is possible to return to step 1 to correct the data entered for any feature</em></p>
+<div id="average-luminescence-table" class="section level3">
+<h3 class="hasAnchor">
+<a href="#average-luminescence-table" class="anchor"></a>2.1) Average luminescence table</h3>
+<p>The table displaying the average viral and cell luminescence can be used to check that there is a substantial difference in the average luminescence between virus-only and cell-only wells and that an adequate number of control wells have been included in the analysis</p>
+<p><img src="images/2_1_av_lum_table.png"></p>
+</div>
+<div id="heatmaps" class="section level3">
+<h3 class="hasAnchor">
+<a href="#heatmaps" class="anchor"></a>2.2) Heatmaps</h3>
+<p>Heatmaps are generated for various key features (well types, sample ID, dilution, virus, RLU, neutralisation, treatment, bleed and experiment ID). For all these features a heatmap is used to show the value for each of these features for all plates in a 96-well plate format i.e., an 8 x 12 grid to check that the values have been entered correctly</p>
+<p><img src="images/2_2_types_heatmap.png"></p>
+</div>
+<div id="types-boxplot" class="section level3">
+<h3 class="hasAnchor">
+<a href="#types-boxplot" class="anchor"></a>2.3) Types boxplot</h3>
+<p>A boxplot of all the different well types for each plate is generated. This plot can be used to check differences in control values between plates. It is important to check that the virus wells have approximately the highest luminescence and cell wells have the lowest because it is these wells that are used for the normalisation when calculating the neutralisation. In our experience, if the virus- only wells do not have the highest values on a plate, the dose-response curves estimated from that plate are shifted downwards, and this may underestimate the neutralising capacity of the sample sera.</p>
+<p><img src="images/2_3_types_boxplot.png"></p>
+</div>
+<div id="excluding-wells" class="section level3">
+<h3 class="hasAnchor">
+<a href="#excluding-wells" class="anchor"></a>2.4) Excluding wells</h3>
+<p>A user can choose to exclude any wells from the analysis. To do this they can specify a string consisting of comma-separated values of either whole plates, individual wells or a range of wells. Wells can also be excluded from the <a href="#update-the-plate-data-table">plate data table</a> in the input step. Wells could be excluded for any number of reasons but are most commonly excluded when the controls have failed or when wells were left empty on a particular plate. A heatmap is also generated to show which wells will be excluded from the analysis, allowing users to verify that the correct wells have been excluded from the analysis.</p>
+<p>To exclude wells from the analysis you can enter any combination of the following separated by commas:</p>
+<ul>
+<li><p>whole plates - by number, eg: <code>1,2,3</code></p></li>
+<li><p>individual wells - by their plate number, row and column, eg: <code>1A1,1D6,3H12</code></p></li>
+<li><p>range of wells - by their plate numbers, rows and columns, eg: <code>1A1:A12,2B6:H12</code></p></li>
+</ul>
+<p><img src="images/2_4_exclude_wells.png"></p>
+</div>
+<div id="downloading-full-csv-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#downloading-full-csv-data" class="anchor"></a>2.5) Downloading full CSV data</h3>
+<p>Users can export the formatted dataset containing all assay data as a CSV from AutoPlate (<a href="https://github.com/PhilPalmer/AutoPlate/blob/main/data-raw/example_data_pmn_platelist_H1N1.csv">see an example of the format</a>). This allows the data to be shared or analysed with different statistical software. This dataset can also be uploaded in <a href="#upload-your-luminescence-files-">step 1.2</a> of AutoPlate so that shared data can be analysed in AutoPlate or old data can be reanalysed.</p>
+<p><img src="images/2_5_download_full.png"></p>
+</div>
+<div id="downloading-prism-csv-data" class="section level3">
+<h3 class="hasAnchor">
+<a href="#downloading-prism-csv-data" class="anchor"></a>2.6) Downloading PRISM CSV data</h3>
+<p>Data can also be downloaded in CSV a format displaying the neutralisations such that it can easily be loading into and plotted in <a href="https://www.graphpad.com/scientific-software/prism/">GraphPad PRISM</a></p>
+<p><img src="images/2_6_download_prism.png"></p>
+</div>
+</div>
+<div id="results" class="section level2">
+<h2 class="hasAnchor">
+<a href="#results" class="anchor"></a>3) Results</h2>
+<p>Fit dose-response curves to analyse the data entered in previous steps, calculate the IC50 values and generate plots to visualise the results.</p>
+<p>Four plots are generated on the results page. Each of the interactive plots can be viewed, downloaded (in SVG or PNG format), reproduced in R using the displayed code and customised with various options such as the plot text size.</p>
+<div id="data-exploration-plot" class="section level3">
+<h3 class="hasAnchor">
+<a href="#data-exploration-plot" class="anchor"></a>3.1) Data exploration plot</h3>
+<p>The data exploration plot fits a loess smooth to each treatment group to illustrate the dose-response relationship of treatment groups outside of the dose-response curve model</p>
+<p><img src="images/3_1_data_exploration.png"></p>
+</div>
+<div id="dose-response-curve-drc" class="section level3">
+<h3 class="hasAnchor">
+<a href="#dose-response-curve-drc" class="anchor"></a>3.2) Dose-response curve (DRC)</h3>
+<p>By measuring neutralisation along a dilution series, a dose-response curve (DRC) can be estimated for a given antibody/sera. When this dilution is displayed on a log scale the curve follows a classic S shape which is well represented by the 4-parameter log-logistic regression curve (the default for AutoPlate).</p>
+<p>The <a href="#dose-response-model-drm">dose-response model (DRM)</a> will be fit to the treatments for each of the viruses independently. The DRC(s) for each virus can be displayed by selecting the virus from the dropdown menu.</p>
+<p><img src="images/3_2_drc.png"></p>
+</div>
+<div id="ic50-boxplot" class="section level3">
+<h3 class="hasAnchor">
+<a href="#ic50-boxplot" class="anchor"></a>3.3) IC50 boxplot</h3>
+<p>Neutralisation potency is usually reported as the IC50 of a dose-response curve. To simplify visual comparison of treatments a boxplot of just the IC50 values of each curve is displayed.</p>
+<p>The <a href="#dose-response-model-drm">dose-response model (DRM)</a> will be fit to the treatments for each of the viruses independently. The IC50 boxplots for each virus can be displayed by selecting the virus from the dropdown menu.</p>
+<p>There is also an option to toggle the boxplot between a scatter plot and boxplot. The scatter plot option may be useful to see the underlying data points when there are very few samples.</p>
+<p><img src="images/3_3_ic50_boxplot.png"></p>
+<div id="download-individual-effective-dose-ied-table" class="section level4">
+<h4 class="hasAnchor">
+<a href="#download-individual-effective-dose-ied-table" class="anchor"></a>Download individual effective dose (IED) table</h4>
+<p>A table containing all of the IC50 values for each sample can be downloaded in CSV format from the IC50 boxplot tab.</p>
+<p><img src="images/3_3_download_ied.png"></p>
+</div>
+</div>
+<div id="virus-cell-boxplot" class="section level3">
+<h3 class="hasAnchor">
+<a href="#virus-cell-boxplot" class="anchor"></a>3.4) Virus-cell boxplot</h3>
+<p>The virus-cell boxplot can be used to check that the controls have worked as expected. There should be a clear separation between the virus and cell groups and little variation between plates.</p>
+<p><img src="images/3_4_vc_boxplot.png"></p>
+</div>
+<div id="download-the-report" class="section level3">
+<h3 class="hasAnchor">
+<a href="#download-the-report" class="anchor"></a>3.5) Download the report</h3>
+<p>All the information displayed within AutoPlate, such as the quality control and results plots can be downloaded as a shareable HTML report file. As well as including all the plots generated in AutoPlate, it also contains the specific code and R package versions needed to reproduce them.</p>
+<p><img src="images/3_5_download_report.png"></p>
+</div>
+<div id="dose-response-model-drm" class="section level3">
+<h3 class="hasAnchor">
+<a href="#dose-response-model-drm" class="anchor"></a>3.6) Dose-response model (DRM)</h3>
+<p><img src="images/3_6_drm.png"></p>
+<p>The dose-response model (DRM) is the model that is fit to your data for each virus in order to generate the dose-response curve(s) and IC50 boxplot(s). The model is defined and fit using the R package <a href="https://cran.r-project.org/web/packages/drc/drc.pdf">drc</a>. Defining the model allows a great deal of flexibility as the equation, model type, which parameters are shared between treatment groups and any upper/lower limits for the parameters can all be modified.</p>
+<p>By default, for the dose-response model, the dose is the <code>dilution</code>, and the <code>neutralisation</code> is the response, the sample IDs are used to group the data. The model used is the four-parameter log-logistic function (or <a href="https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/LL.4">LL2.4</a>) which can be denoted by the expression below, where b is the slope around the IC50, c is the curve minimum, d is the curve maximum and e is the log IC50 value. This model was chosen as the default option because we found that models more readily converge when estimating log(IC50) than IC50 itself. By default, a single curve minimum, curve maximum, and gradient is estimated for the whole population to improve comparisons between samples. The upper limit of the curve maximum is set to 100 and the lower limit for the gradient around the IC50 and the IC50 value are set to zero to prevent a negative gradient or IC50 value.</p>
+<p><span class="math display">\[
+f(x)=c+\frac {d - c}{1 + exp(b(log(x) - e))}
+\]</span></p>
+<p>If you wish to customise the DRM, <a href="https://www.rdocumentation.org/packages/drc/versions/2.5-12/topics/drm">read more here</a></p>
 </div>
 </div>
   </div>
