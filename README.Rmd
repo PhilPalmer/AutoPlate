@@ -28,6 +28,8 @@ knitr::opts_chunk$set(
 
 Currently, the only supported assay types are the [Pseudotype Micro Neutralisation (pMN)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/) and ELLA assays, for which dose-response curves can be fit. In the future, other assays such as ELISA, HIA or even any custom assay may be supported. Let us know if there's an assay that you would like us to support!
 
+<img src="man/figures/pmn_autoplate.jpg" height=300/>
+
 ## Ways of using AutoPlate
 You can use AutoPlate in two ways: 
 1. [**Web application**](#web-application-quick-start) - - this is the easiest way to run AutoPlate!
