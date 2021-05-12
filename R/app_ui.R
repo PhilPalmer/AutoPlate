@@ -26,7 +26,8 @@ app_ui <- function(request) {
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
           shinydashboard::menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
           shinydashboard::menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
-          shinydashboard::menuItem("3) Results", tabName = "results", icon = icon("chart-line"))
+          shinydashboard::menuItem("3) Results", tabName = "results", icon = icon("chart-line")),
+          shinydashboard::menuItem("Demo", tabName = "video", icon = icon("youtube"))
         )
       ),
       shinydashboard::dashboardBody(
@@ -353,6 +354,16 @@ app_ui <- function(request) {
                   )
                   # tabPanel("Posotive Control")
                 )
+              )
+            )
+          ),
+          shinydashboard::tabItem(
+            tabName = "video",
+            fluidRow(
+              shinydashboard::box(
+                width = 10,
+                collapsible=TRUE,
+                HTML('<iframe width="1200" height="675" src="https://www.youtube.com/embed/WehIcuA7xRk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
               )
             )
           )
