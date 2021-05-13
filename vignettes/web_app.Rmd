@@ -18,7 +18,9 @@ knitr::opts_chunk$set(
 
 See the [Quick Start](../index.html#web-application-quick-start)
 
-The AutoPlate web interface consists of three steps:
+The AutoPlate web interface consists of three simple steps.
+Once you have input your data in Step 1 you will need to click on Steps 2 (QC) or Step 3 (Results) to continue the analysis.
+It is possible to return to previous steps or skip ahead at any given point.
 
 ## 1) Input
 

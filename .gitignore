@@ -5,4 +5,7 @@
 rsconnect/
 inst/doc
 Meta
-doc
+doc*
+tests
+R/test.R
+check

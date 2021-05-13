@@ -18,7 +18,7 @@ app_ui <- function(request) {
     shinydashboard::dashboardPage(
       shinydashboard::dashboardHeader(title = "AutoPlate",
         tags$li(tags$a(
-          span(icon("book"),"Docs"), href = "https://philpalmer.github.io/AutoPlate/", target = "_blank"
+          span(icon("book"),"Docs"), href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html", target = "_blank"
         ), class = "dropdown")
       ),
       shinydashboard::dashboardSidebar(
@@ -26,7 +26,8 @@ app_ui <- function(request) {
           shinydashboard::menuItem("Home", tabName = "home", icon = icon("home")),
           shinydashboard::menuItem("1) Input", tabName = "input", icon = icon("sign-in-alt")),
           shinydashboard::menuItem("2) QC", tabName = "qc", icon = icon("check-square")),
-          shinydashboard::menuItem("3) Results", tabName = "results", icon = icon("chart-line"))
+          shinydashboard::menuItem("3) Results", tabName = "results", icon = icon("chart-line")),
+          shinydashboard::menuItem("Demo", tabName = "video", icon = icon("youtube"))
         )
       ),
       shinydashboard::dashboardBody(
@@ -55,7 +56,8 @@ app_ui <- function(request) {
                       ),
                       h4("What biological assays can I analyse?"),
                       p("Currently, the only supported assay types are the ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6526431/", " Pseudotype Micro Neutralisation (pMN)", .noWS = "outside"),
-                        " and ELLA assays, for which dose-response curves can be fit.",
+                        " and ", a(href = "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5091984/", "ELLA", .noWS = "outside"),
+                        " assays, for which dose-response curves can be fit.",
                         "In the future, other assays such as ELISA, HIA or even any custom assay may be supported.",
                         "Let us know if there's an assay that you would like us to support!",
                         .noWS = c("after-begin", "before-end")
@@ -64,7 +66,8 @@ app_ui <- function(request) {
                       p("An analysis can be run in three simple steps:"),
                       tags$ol(
                         uiOutput(outputId = "steps")
-                      )
+                      ),
+                      p("See ",a(href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html", "here")," for more info on how to use AutoPlate")
                     )
                   ),
                   shiny::fluidRow(
@@ -114,7 +117,7 @@ app_ui <- function(request) {
                     span("Please upload all input luminescence files",
                       tags$a(
                           "(see supported input formats)",
-                          href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html",
+                          href = "https://philpalmer.github.io/AutoPlate/articles/web_app.html#supported-input-formats",
                           target = "_blank"
                         )
                     ),
@@ -351,6 +354,16 @@ app_ui <- function(request) {
                   )
                   # tabPanel("Posotive Control")
                 )
+              )
+            )
+          ),
+          shinydashboard::tabItem(
+            tabName = "video",
+            fluidRow(
+              shinydashboard::box(
+                width = 10,
+                collapsible=TRUE,
+                HTML('<iframe width="1200" height="675" src="https://www.youtube.com/embed/WehIcuA7xRk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>')
               )
             )
           )
