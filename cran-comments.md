@@ -12,22 +12,25 @@ See more info [here](https://github.com/PhilPalmer/AutoPlate/actions)
 There were no ERRORs or WARNINGs. 
 
 There were 3 NOTES:
+```
 ❯ checking package dependencies ... NOTE
   Imports includes 22 non-default packages.
   Importing from so many packages makes the package vulnerable to any of
   them becoming unavailable.  Move as many as possible to Suggests and
   use conditionally.
-
+```
 The package has a lot of dependencies. 
 Depending on the fucntions the user needs the R package should continue to work if some of the packages cannot be installed.
 
+```
 ❯ checking top-level files ... NOTE
   Non-standard files/directories found at top level:
     ‘dev’ ‘pkgdown’
-
+```
 While the `dev` directory is non-standard for R packages it standard for [Golem](https://github.com/ThinkR-open/golem) R Shiny apps
 `pkgdown` directory only contains a `.yml` configuration file to ensure the website for the documentation is built correctly
 
+```
 ❯ checking R code for possible problems ... NOTE
 app_server: no visible global function definition for ‘setNames’
   app_server : <anonymous>: no visible binding for global variable
@@ -65,8 +68,11 @@ app_server: no visible global function definition for ‘setNames’
     data("example_data_column_descriptions")
   See section ‘Good practice’ in ‘?data’.
   ......
+```
 
 Edited for brevity
-I don't believe that any of these variables should be global varialbes. They are mainly the names of columns in a dataframe which is used as an input to serveral funcions
+
+I don't believe that any of these variables should be global varialbes. They are mainly the names of columns in a dataframe which is used as an input to serveral functions
+
 The `autoplate` R library can either be run as a Shiny app or the functions used in the app can be run within R. 
 These notes regarding attaching data in the global environment will only happen when running the R shiny app and not when using the functions from the package.
