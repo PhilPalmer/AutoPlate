@@ -1,3 +1,7 @@
+#!/usr/bin/env Rscript
+
+utils::globalVariables(c('dilutions_pmn', 'dilutions_ella', 'example_data_column_descriptions'))
+
 #' Default dilutions pMN data
 #'
 #' A dataset containing the default pMN serum and control dilutions
