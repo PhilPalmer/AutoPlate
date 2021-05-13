@@ -3,9 +3,14 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^doc$
+^docs$
 ^Meta$
 ^codecov\.yml$
 ^\.github$
 ^app\.R$
 ^rsconnect$
 ^data-raw$
+^tests
+^R/test.R
+^cran-comments\.md$
+^check
