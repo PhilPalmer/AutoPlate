@@ -38,7 +38,8 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_col <- all_col[match(plate_levels,all_levels)]
   col <- if (feature %in% cont_features) col else plate_col
   if (feature %in% cont_features) {
-    feature_vals <- assay_df[feature][!is.na(assay_df[feature])]
+    feature_vals <- round(assay_df[feature][!is.na(assay_df[feature])], 0)
+    plate_df[feature] <- round(plate_df[feature], 0)
     min <- min(feature_vals)
     max <- max(feature_vals)
     breaks <- c(min, max)
