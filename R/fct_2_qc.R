@@ -46,6 +46,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   } else {
     breaks <- NULL
   }
+  breaks <- if (feature == "dilution") exp(seq(0, log(max), length.out = 10)) else breaks
   # Generate heatmap plot
   par(mar=c(4, 4, 4, 6))
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side), breaks=breaks)
