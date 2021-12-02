@@ -17,17 +17,18 @@
 #' @importFrom graphics plot
 #' @export
 plot_heatmap <- function(plate_number, assay_df, feature, title) {
+  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "experiment_id", "bleed", "exclude")
+  cont_features <- c("dilution","rlu","neutralisation")
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
   if (all(is.na(unique(plate_df[feature])))) plate_df[feature][is.na(plate_df[feature])] <- ""
   feature_list <- unlist(plate_df[[feature]], use.names = FALSE)
   vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
   row.names(vals) <- LETTERS[1:8]
   # Set params for plot based on the feature
-  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "experiment_id", "bleed", "exclude")
   fmt.cells <- c("%.5s", "%.8s", "%.5s", "%.15s", "%.0f", "%.0f", "%.15s", "%.8s", "%.8s", "%.8s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
-  col <- if (feature %in% c("dilution", "rlu", "neutralisation")) viridis::viridis else rainbow
+  col <- if (feature %in% cont_features) viridis::viridis else rainbow
   side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
   # Make colours consistent between heatmap plots
   set.seed(42)
@@ -35,10 +36,18 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
   plate_levels <- sort(unique(plate_df[[feature]]))
   all_col <- col(length(all_levels))
   plate_col <- all_col[match(plate_levels,all_levels)]
-  col <- if (feature %in% c("dilution","rlu","neutralisation")) col else plate_col
+  col <- if (feature %in% cont_features) col else plate_col
+  if (feature %in% cont_features) {
+    feature_vals <- assay_df[feature][!is.na(assay_df[feature])]
+    min <- min(feature_vals)
+    max <- max(feature_vals)
+    breaks <- c(min, max)
+  } else {
+    breaks <- NULL
+  }
   # Generate heatmap plot
   par(mar=c(4, 4, 4, 5.5))
-  plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side))
+  plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side), breaks=breaks)
 }
 
 #' @title Exclude wells
