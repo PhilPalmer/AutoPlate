@@ -46,7 +46,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
     breaks <- NULL
   }
   # Generate heatmap plot
-  par(mar=c(4, 4, 4, 5.5))
+  par(mar=c(4, 4, 4, 6))
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side), breaks=breaks)
 }
 
