@@ -47,8 +47,7 @@ plot_heatmap <- function(plate_number, assay_df, feature, title) {
     all_levels <- sample(sort(unique(assay_df[[feature]])))
     plate_levels <- sort(unique(plate_df[[feature]]))
     all_col <- col(length(all_levels))
-    plate_col <- all_col[match(plate_levels,all_levels)]
-    col <- plate_col
+    col <- all_col[match(plate_levels,all_levels)]
     breaks <- NULL
   }
 
