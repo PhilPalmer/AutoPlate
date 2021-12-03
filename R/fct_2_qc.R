@@ -17,36 +17,44 @@
 #' @importFrom graphics plot
 #' @export
 plot_heatmap <- function(plate_number, assay_df, feature, title) {
-  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "experiment_id", "bleed", "exclude")
-  cont_features <- c("dilution","rlu","neutralisation")
+  # Make the dataframe for the single input plate
   plate_df <- assay_df[assay_df$plate_number == plate_number, ]
   if (all(is.na(unique(plate_df[feature])))) plate_df[feature][is.na(plate_df[feature])] <- ""
-  feature_list <- unlist(plate_df[[feature]], use.names = FALSE)
-  vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
-  row.names(vals) <- LETTERS[1:8]
-  # Set params for plot based on the feature
+
+  # Define vars
+  set.seed(42)
+  features <- c("types", "sample_id", "dilution", "virus", "rlu", "neutralisation", "treatment", "experiment_id", "bleed", "exclude")
+  cont_features <- c("dilution","rlu","neutralisation")
+  # Define text length for different features
   fmt.cells <- c("%.5s", "%.8s", "%.5s", "%.15s", "%.0f", "%.0f", "%.15s", "%.8s", "%.8s", "%.8s")
   features <- do.call(rbind, Map(data.frame, features = features, fmt.cells = fmt.cells))
   fmt.cell <- as.character(features[feature, ]$fmt.cells)
+  # Set different colour schemes and legend positions for some features
   col <- if (feature %in% cont_features) viridis::viridis else rainbow
   side <- if (feature %in% c("sample_id", "treatment", "experiment_id", "bleed", "exclude")) 3 else 4
-  # Make colours consistent between heatmap plots
-  set.seed(42)
-  all_levels <- sample(sort(unique(assay_df[[feature]])))
-  plate_levels <- sort(unique(plate_df[[feature]]))
-  all_col <- col(length(all_levels))
-  plate_col <- all_col[match(plate_levels,all_levels)]
-  col <- if (feature %in% cont_features) col else plate_col
+  # Make feature list to make the matrix using rounded values if feature is continuous
+  plate_df[feature] <- if (feature %in% cont_features) round(plate_df[feature], 0) else plate_df[feature]
+  feature_list <- unlist(plate_df[[feature]], use.names = FALSE) 
+
+  # Make colours consistent between heatmaps depending on if the feature is continuous or categorical
   if (feature %in% cont_features) {
     feature_vals <- round(assay_df[feature][!is.na(assay_df[feature])], 0)
-    plate_df[feature] <- round(plate_df[feature], 0)
     min <- min(feature_vals)
     max <- max(feature_vals)
     breaks <- c(min, max)
+    breaks <- if (feature == "dilution") exp(seq(0, log(max), length.out = 10)) else breaks
   } else {
+    all_levels <- sample(sort(unique(assay_df[[feature]])))
+    plate_levels <- sort(unique(plate_df[[feature]]))
+    all_col <- col(length(all_levels))
+    col <- all_col[match(plate_levels,all_levels)]
     breaks <- NULL
   }
-  breaks <- if (feature == "dilution") exp(seq(0, log(max), length.out = 10)) else breaks
+
+  # Make matrix for feature values
+  vals <- matrix(feature_list, byrow = T, ncol = 12, nrow = 8)
+  row.names(vals) <- LETTERS[1:8]
+
   # Generate heatmap plot
   par(mar=c(4, 4, 4, 6))
   plot(vals, col = col, fmt.cell = fmt.cell, main = paste("Plate", plate_number, title), key = list(side = side), breaks=breaks)
